@@ -1,5 +1,16 @@
-# Norm-IRC-Net
+# ft_irc
 ### <a href="">Sujet</a>
+
+## Client IRC
+On va utiliser le client `irssi`, pour l'installer il faut d'abord installer brew, avec la commande suivante:
+```
+rm -rf $HOME/.brew && git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew && echo 'export PATH=$HOME/.brew/bin:$PATH' >> $HOME/.zshrc && source $HOME/.zshrc && brew update
+```
+
+Ensuite installer irssi
+```
+brew install irssi
+```
 
 ## Règles de contribution
 
@@ -26,6 +37,26 @@ Créer une branche et passer dessus
 git checkout -b <branche>
 ```
 
+Delete une branche localement
+```
+git branch -d <branche>
+```
+
+Lister les branches remotes
+```
+git branch -r
+```
+
+Push votre branche sur le remote (a faire des sa creation)
+```
+git push --set-upstream origin <branche>
+```
+
+Merge une branche dans la branche dans laquelle vous etes
+```
+git merge <source>
+```
+
 Il faut d'abord aller sur la branche source, en général `devel`. <br>
 Ensuite il suffite de créer sa branche.
 
@@ -35,3 +66,11 @@ Simplement, si la branche a seulement été créee localement, faites votre prem
 ```
 git push --set-upstream origin <branche>
 ```
+
+### Comment faire un merge local
+Si vous voulez merge une branche localement, allez dans la branche cible, celle DANS laquelle vous voulez merge, puis faites la commande 
+```
+git merge <source>
+```
+
+Ceci dit, preferez les merges via Github, si ca concerne des branches ou vous travaillez a plusieurs dessus
