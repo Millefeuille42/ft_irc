@@ -1,5 +1,8 @@
 # ft_irc
-### <a href="">Sujet</a>
+
+## RTFM
+### <a href="https://cdn.intra.42.fr/pdf/pdf/47620/fr.subject.pdf">Sujet</a>
+### <a href="http://abcdrfc.free.fr/rfc-vf/rfc1459.html" Norme RFC de référence pour IRC>
 
 ## Client IRC
 On va utiliser le client `irssi`, pour l'installer il faut d'abord installer brew, avec la commande suivante:
