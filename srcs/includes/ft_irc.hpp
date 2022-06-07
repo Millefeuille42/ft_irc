@@ -16,6 +16,8 @@
 #include <poll.h>
 #include <cstring>
 
+#include "SockAddress.hpp"
+
 # define ANY_CLIENT INADDR_ANY // Correspond a 0.0.0.0
 # define IPV4 AF_INET // Correspond a Ipv4 quand utilisé
 # define TCP SOCK_STREAM // Correspond au protocole TCP
