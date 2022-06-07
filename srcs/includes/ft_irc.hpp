@@ -16,6 +16,9 @@
 #include <poll.h>
 #include <cstring>
 
+#include <arpa/inet.h>
+#include <vector>
+
 #include "SockAddress.hpp"
 
 # define ANY_CLIENT INADDR_ANY // Correspond a 0.0.0.0
@@ -23,6 +26,8 @@
 # define TCP SOCK_STREAM // Correspond au protocole TCP
 # define IP_PROTOCOL 0
 # define MAX_CLIENTS 3
+
+typedef std::vector<struct pollfd> t_pollVector;
 
 int socketConf(char *port);
 
