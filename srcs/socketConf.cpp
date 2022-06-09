@@ -19,7 +19,7 @@ static int startSocket() {
 	return serverFd;
 }
 
-static void bindSocket(int serverFd, char *port) {
+static void bindSocket(int serverFd, const char *port) {
 	struct sockaddr_in address = {};
 	static int addrLen = sizeof(address);
 	address.sin_family = IPV4;
@@ -31,12 +31,12 @@ static void bindSocket(int serverFd, char *port) {
 	}
 }
 
-int socketConf(char *port) {
+int socketConf(const char *port) {
 	int serverFd = startSocket();
 	bindSocket(serverFd, port);
 	if (listen(serverFd, MAX_CLIENTS)) {
 		throw std::runtime_error("socket listen failed");
 	}
-	std::cout << "Socket listening" << std::endl;
+	std::cout << "Socket up" << std::endl;
 	return serverFd;
 }
