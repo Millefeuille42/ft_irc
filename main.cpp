@@ -10,7 +10,9 @@
 #include <cstdlib>
 #include <poll.h>
 
+#include "User.hpp"
 #include <vector>
+#include <map>
 
 //* struct sockaddr_in {
 //short   sin_family;       /* la famille de protocole */
@@ -19,7 +21,7 @@
 //char    sin_zero[8];      /* remplissage pour faire 16 octets */
 //};
 
-void	printProut(const int &new_socket, std::string buffer) {
+void	printProut(const int &new_socket, std::string buffer, std::string& from) {
 	//std::cout << std::string(buffer) << std::endl;
 	//send(new_socket, "prout", strlen("prout"), 0);
 	if (buffer == "ping\n")
@@ -61,8 +63,10 @@ int main(int ac, char **av) {
 	}
 
 	typedef std::vector<struct pollfd> victor;
+	typedef std::map<int, User> pmap;
 
 	victor paulVictor = victor(0);
+	pmap paulMap = pmap();
 
 	struct pollfd paul;
 	paul.fd = sockfd;
@@ -83,16 +87,22 @@ int main(int ac, char **av) {
 			}
 			paul.fd = new_socket;
 			paulVictor.push_back(paul);
+			paulMap.insert(std::pair<int, User>(paul.fd, User(paul.fd)));
 		}
 		it++;
 		for ( ; it != paulVictor.end(); it++) {
 			if (it->revents == POLLIN) {
 				char buffer[200] = {0};
 				recv(it->fd, buffer, 199, 0);
-				victor::iterator it2 = paulVictor.begin();
-				it2++;
-				for (; it2 != paulVictor.end(); it2++)
-					printProut(it2->fd, std::string(buffer));
+				if (paulMap[it->fd].getFirst() == 0)
+					paulMap[it->fd].setName(std::string(buffer));
+				else {
+					std::string from = paulMap[it->fd].getName();
+					victor::iterator it2 = paulVictor.begin();
+					it2++;
+					for (; it2 != paulVictor.end(); it2++)
+						printProut(it2->fd, std::string(buffer), from);
+				}
 			}
 		}
 	}
