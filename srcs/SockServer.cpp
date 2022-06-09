@@ -6,12 +6,12 @@
 #include "includes/SockServer.hpp"
 
 SockServer::SockServer():
-_port(), _serverFd(), _fds(), _ips() {}
+_port(), _serverFd(), _fds(), _ips(), _buffers() {}
 
 SockServer::SockServer(const std::string & port):
 _port(port),
 _serverFd(generatePollFd(socketConf(_port.c_str()), DATA_IN)),
-_fds(fdVector(0)), _ips(ipMap()) {
+_fds(fdVector(0)), _ips(ipMap()), _buffers(ipMap()) {
 	_fds.push_back(_serverFd);
 	printStart();
 }
@@ -34,6 +34,7 @@ SockServer &SockServer::operator=(const SockServer &src) {
 	_port = src._port;
 	_fds = src._fds;
 	_ips = src._ips;
+	_buffers = src._buffers;
 	return *this;
 }
 
@@ -41,6 +42,7 @@ void SockServer::deleteClient(const fdIterator &client) {
 	transmit(client->fd, _ips[client->fd] + " disconnected\n", std::cerr);
 	std::cerr.flush();
 	_ips.erase(client->fd);
+	_buffers.erase(client->fd);
 	close(client->fd);
 	_fds.erase(client);
 }
@@ -111,9 +113,13 @@ std::string SockServer::readMessage(int fd, bool &err) {
 
 	// If message contains data
 	if (ret > 0) {
-		message = "From " + _ips[fd] + ": " + buffer;
-		transmit(fd, message, std::cout);
-		std::cout.flush();
+		_buffers[fd] += buffer;
+		if ((_buffers[fd]).find('\n') != std::string::npos) {
+			message = "From " + _ips[fd] + ": " + _buffers[fd];
+			transmit(fd, message, std::cout);
+			std::cout.flush();
+			_buffers[fd] = "";
+		}
 		err = false;
 	}
 	return message;

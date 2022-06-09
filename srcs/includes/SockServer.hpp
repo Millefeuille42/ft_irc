@@ -14,7 +14,7 @@ private:
 	t_pollfd _serverFd;
 	fdVector _fds;
 	ipMap	_ips;
-
+	ipMap	_buffers;
 
 public:
 	SockServer();
