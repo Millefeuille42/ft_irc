@@ -21,7 +21,7 @@ User::User(int& fd) : _fd(fd), _first(1) {
 }
 
 User::~User() {
-	close(_fd);
+
 }
 
 bool User::getFirst() const {
@@ -29,7 +29,7 @@ bool User::getFirst() const {
 }
 
 void User::setName(std::string n) {
-	_name = n;
+	_name = n.substr(0, n.size()-1);
 	_first = 0;
 }
 
