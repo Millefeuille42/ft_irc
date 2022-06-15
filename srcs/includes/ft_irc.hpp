@@ -41,5 +41,6 @@ typedef struct pollfd t_pollfd;
 
 int socketConf(const char *port);
 struct pollfd generatePollFd(int fd, short events);
+std::vector<std::string> parseMessage(std::string msg);
 
 #endif //FT_IRC_HPP

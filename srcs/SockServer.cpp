@@ -140,16 +140,7 @@ void SockServer::messageRouter(int fd, std::string &msg) {
 	_commands["USER"] = user;
 	_commands["QUIT"] = quit;
 
-	std::vector<std::string> args;
-	size_t pos;
-	std::string token;
-	std::string msgCpy = msg;
-	while ((pos = msgCpy.find(' ')) != std::string::npos) {
-		token = msgCpy.substr(0, pos);
-		args.push_back(token);
-		msgCpy.erase(0, pos + 1);
-	}
-	args.push_back(msgCpy);
+	std::vector<std::string> args = parseMessage(msg);
 
 	if (_commands.count(args[0])) {
 		command tmp = _commands.find(args[0])->second;
