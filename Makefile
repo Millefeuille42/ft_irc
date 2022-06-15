@@ -5,7 +5,11 @@ CC		=	c++
 FLAGS	=	-Wall -Wextra -Werror -std=c++98
 FLAGS_S	=	-g -fsanitize=address
 
-SRCS	=	#files
+SRCS	=	srcs/main.cpp \
+			srcs/SockAddress.cpp \
+			srcs/socketConf.cpp \
+			srcs/SockServer.cpp \
+			srcs/utils.cpp \
 
 OBJS	=	$(SRCS:.cpp=.o)
 
