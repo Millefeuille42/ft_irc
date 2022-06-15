@@ -45,6 +45,10 @@ void SockServer::deleteClient(const fdIterator &client) {
 }
 
 int SockServer::check() {
+	// If nothing happened, skip
+	if (!_fds.begin()->revents)
+		return 0;
+
 	// If event is not incoming data, an error occurred
 	if (_fds.begin()->revents != POLLIN) {
 		std::cerr << "Error while establishing connexion" << std::endl;
