@@ -31,10 +31,9 @@ Commandes :
 			Définit le pseudonyme d'un utilisateur.
 		USER <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
 
-		SERVEUR <nom de serveur> <compteur de distance> <info>
 		OPER <utilisateur> <mot de passe>
+
 		QUIT [<Message de départ>]
-		SQUIT <serveur> <commentaire>
 
 	Canaux :
 		JOIN <canal>{,<canal>} [<clé>{,<clé>}]
@@ -43,28 +42,21 @@ Commandes :
 		MODE <pseudonyme> {[+|-]|i|w|s|o}
 		TOPIC <canal> [<sujet>]
 		NAMES [<canal>{,<canal>}]
-		LIST [<canal>{,<canal>} [<serveur>]]
+		LIST [<canal>{,<canal>}
 		INVITE <pseudonyme> <canal>
 		KICK <canal> <utilisateur> [<commentaire>]
 
 	Serveurs :
-		VERSION [<serveur>]
-		STATS [<requête> [<serveur>]]
-		LINKS [[<serveur distant>] <masque de serveur >]
-		TIME [<serveur>]
-		CONNECT <serveur destination > [<port> [<serveur distant>]]
-		TRACE [<serveur>]
-		ADMIN [<serveur>]
-		INFO [<serveur>]
+		VERSION
+		TIME
+		INFO
 
 	Messages :
 		PRIVMSG <destinataire>{,<destinataire>} <texte à envoyer >
-		NOTICE <pseudonyme> <texte>
 
 	Requêtes :
 		WHO [<nom> [<o>]]
-		WHOIS [<serveur>] <masque de pseudo>[,<masque de pseudo>[,...]]
-		WHOWAS <pseudonyme> [<compte> [<serveur>]]
+		//WHOIS [<serveur>] <masque de pseudo>[,<masque de pseudo>[,...]]
 
 	Divers :
 		 KILL <pseudonyme> <commentaire>
@@ -73,14 +65,9 @@ Commandes :
 		 ERROR < message d'erreur>
 
 Optionnels :
-	AWAY [message]
-	REHASH
-	RESTART
-	SUMMON <utilisateur> [<serveur>]
-	USERS [<serveur>]
-	WALLOPS [message]
-	USERHOST <pseudonyme>{<espace ><pseudonyme>}
-	ISON <pseudonyme>{<espace><pseudonyme>}
+	//AWAY [message]
+	//USERS [<serveur>]
+	//WALLOPS [message]
 
 Réponses :
 	Erreurs :
