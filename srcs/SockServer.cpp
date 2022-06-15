@@ -105,7 +105,7 @@ int SockServer::getFd() const {
 
 std::string SockServer::readMessage(int fd, bool &err) {
 	std::string message = "";
-	char buffer[1024] = {0};
+	char buffer[1024] = {0}; //TODO Buffer illimité
 	int ret = recv(fd, buffer, 1024, 0);
 	err = true;
 
@@ -125,7 +125,7 @@ void SockServer::printStart() {
 	std::cout << "Started server on port: " << _port << std::endl;
 }
 
-void SockServer::messageRouter(int fd, std::string &msg) {
+void SockServer::messageRouter(int fd, std::string &msg) { //TODO envoyer USER
 	static std::map<std::string, command> _commands;
 	_commands["PASS"] = pass;
 	_commands["NICK"] = nick;
@@ -144,12 +144,13 @@ void SockServer::messageRouter(int fd, std::string &msg) {
 	args.push_back(msg);
 
 	if (_commands.count(args[0])) {
-		_commands[args[0]](*this, args, fd);
+		command tmp = _commands.find(args[0])->second;
+		tmp(*this, args, fd); //TODO envoyer USER
 		return;
 	}
 
 	if (!_users[fd].realName.empty()) {
-		transmit(fd, msg, std::cout);
+		transmit(fd, msg, std::cout); //TODO envoyer USER
 		std::cout.flush();
 	}
 }

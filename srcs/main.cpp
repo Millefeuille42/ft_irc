@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 		}
 
 		// Check if server has a new connection
-		if (server.check())
+		if (server.check()) //TODO Enlever le if dans la fonction et la mettre avant
 			acNum--;
 
 		for (fdIterator it = server.begin(); it != server.end(); it++) {
