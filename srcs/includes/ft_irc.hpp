@@ -27,6 +27,7 @@
 # define IP_PROTOCOL 0
 # define MAX_CLIENTS 50
 # define DATA_IN POLLIN
+# define BUFFER_SIZE 10
 
 extern int g_servFd;
 

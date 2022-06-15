@@ -106,18 +106,24 @@ int SockServer::getFd() const {
 
 std::string SockServer::readMessage(int fd, bool &err) {
 	std::string message;
-	char buffer[1024] = {0}; //TODO Buffer illimité
-	size_t ret = recv(fd, buffer, 1024, 0);
-	err = true;
+	size_t ret = BUFFER_SIZE;
+	while (ret >= BUFFER_SIZE) {
+		err = true;
+		char buffer[BUFFER_SIZE + 1] = {0};
+		ret = recv(fd, buffer, BUFFER_SIZE, 0);
+		buffer[BUFFER_SIZE] = '\0';
 
-	// If message contains data
-	if (ret > 0) {
-		_users[fd].buffer += buffer;
-		if ((_users[fd].buffer).find('\n') != std::string::npos) {
-			message = _users[fd].buffer;
-			_users[fd].buffer = "";
+		// If message contains data
+		if (ret > 0) {
+			_users[fd].buffer += buffer;
+			if ((_users[fd].buffer).find('\n') != std::string::npos) {
+				message = _users[fd].buffer;
+				_users[fd].buffer = "";
+				err = false;
+				break;
+			}
+			err = false;
 		}
-		err = false;
 	}
 	return message;
 }
@@ -137,13 +143,13 @@ void SockServer::messageRouter(int fd, std::string &msg) {
 	std::vector<std::string> args;
 	size_t pos;
 	std::string token;
-	while ((pos = msg.find(' ')) != std::string::npos) {
-		token = msg.substr(0, pos);
+	std::string msgCpy = msg;
+	while ((pos = msgCpy.find(' ')) != std::string::npos) {
+		token = msgCpy.substr(0, pos);
 		args.push_back(token);
-		msg.erase(0, pos + 1);
-		std::cout << token << std::endl;
+		msgCpy.erase(0, pos + 1);
 	}
-	args.push_back(msg);
+	args.push_back(msgCpy);
 
 	if (_commands.count(args[0])) {
 		command tmp = _commands.find(args[0])->second;
@@ -151,7 +157,7 @@ void SockServer::messageRouter(int fd, std::string &msg) {
 		return;
 	}
 
-	if (usr.realName.empty()) {
+	if (!usr.realName.empty()) {
 		transmit(usr, msg, std::cout);
 		std::cout.flush();
 	}
