@@ -1,3 +1,2 @@
-//
-// Created by ericard on 6/15/22.
-//
+//Définit le pseudonyme d'un utilisateur
+//NICK <pseudonyme>

@@ -1,0 +1,2 @@
+//
+//NAMES [<canal>{,<canal>}]

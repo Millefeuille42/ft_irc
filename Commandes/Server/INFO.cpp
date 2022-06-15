@@ -1,3 +1,2 @@
-//
-// Created by ericard on 6/15/22.
-//
+//Donne les informations du serveur
+//INFO

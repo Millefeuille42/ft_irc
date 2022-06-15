@@ -1,4 +1,2 @@
-
-//
-// Created by ericard on 6/15/22.
-//
+//Permet à un utilisateur de se déconnecter en laissant, ou non, un message
+//QUIT [<Message de départ>]

@@ -1,3 +1,2 @@
-//
-// Created by ericard on 6/15/22.
-//
+//Donne la version du serveur
+//VERSION

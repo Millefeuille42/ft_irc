@@ -1,3 +1,2 @@
-//
-// Created by ericard on 6/15/22.
-//
+//Obtenir les privilèges opérateurs
+//OPER <utilisateur> <mot de passe>

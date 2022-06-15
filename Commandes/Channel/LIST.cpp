@@ -1,3 +1,2 @@
 //
-// Created by ericard on 6/15/22.
-//
+//LIST [<canal>{,<canal>}
