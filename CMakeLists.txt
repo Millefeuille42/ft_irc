@@ -12,4 +12,4 @@ add_executable(ft_irc
 		srcs/socketConf.cpp
 
 		srcs/SockAddress.cpp
-		srcs/SockServer.cpp srcs/includes/SockServer.hpp srcs/utils.cpp)
+		srcs/SockServer.cpp srcs/includes/SockServer.hpp srcs/utils.cpp srcs/User.cpp srcs/includes/User.hpp srcs/_SockServer_Commands.cpp srcs/includes/_SockServer_Errors.hpp)

@@ -7,14 +7,16 @@
 
 #include "ft_irc.hpp"
 #include "SockAddress.hpp"
+#include "_SockServer_Errors.hpp"
+
 
 class SockServer {
 private:
+	typedef void(*command)(SockServer &, std::vector<std::string>, int);
 	std::string _port;
 	t_pollfd _serverFd;
 	fdVector _fds;
-	ipMap	_ips;
-	ipMap	_buffers;
+	userMap _users;
 
 public:
 	SockServer();
@@ -32,6 +34,8 @@ public:
 	void transmit(int senderFd, const std::string & message, std::basic_ostream<char> & otp);
 	std::string readMessage(int fd, bool &err);
 
+	void messageRouter( int fd, std::string &msg);
+
 	void printStart();
 
 	t_pollfd *getFds();
@@ -40,6 +44,13 @@ public:
 
 	fdIterator begin();
 	fdIterator end();
+
+	static void pass(SockServer &srv, std::vector<std::string>, int fd);
+	static void user(SockServer &srv, std::vector<std::string>, int fd);
+	static void nick(SockServer &srv, std::vector<std::string>, int fd);
+	static void quit(SockServer &srv, std::vector<std::string>, int fd);
+
+	std::string password;
 };
 
 #endif //SOCKSERVER_HPP

@@ -6,12 +6,12 @@
 #include "includes/SockServer.hpp"
 
 SockServer::SockServer():
-_port(), _serverFd(), _fds(), _ips(), _buffers() {}
+_port(), _serverFd(), _fds(), _users() {}
 
 SockServer::SockServer(const std::string & port):
 _port(port),
 _serverFd(generatePollFd(socketConf(_port.c_str()), DATA_IN)),
-_fds(fdVector(0)), _ips(ipMap()), _buffers(ipMap()) {
+_fds(fdVector(0)), _users(userMap()) {
 	_fds.push_back(_serverFd);
 	printStart();
 }
@@ -33,16 +33,14 @@ SockServer &SockServer::operator=(const SockServer &src) {
 	_serverFd = src._serverFd;
 	_port = src._port;
 	_fds = src._fds;
-	_ips = src._ips;
-	_buffers = src._buffers;
+	_users = src._users;
 	return *this;
 }
 
 void SockServer::deleteClient(const fdIterator &client) {
-	transmit(client->fd, _ips[client->fd] + " disconnected\n", std::cerr);
+	transmit(client->fd, _users[client->fd].nick + " disconnected\n", std::cerr);
 	std::cerr.flush();
-	_ips.erase(client->fd);
-	_buffers.erase(client->fd);
+	_users.erase(client->fd);
 	close(client->fd);
 	_fds.erase(client);
 }
@@ -61,7 +59,7 @@ int SockServer::check() {
 	SockAddress addr = SockAddress(IPV4, ANY_CLIENT, _port.c_str());
 	int newFd = acceptConnection(addr);
 	_fds.push_back(generatePollFd(newFd, POLLIN));
-	_ips[newFd] = addr.getIP();
+	_users[newFd] = User(newFd, addr.getIP());
 
 	transmit(newFd, "New connection from: " + addr.getIP() + '\n', std::cerr);
 	std::cerr.flush();
@@ -106,19 +104,17 @@ int SockServer::getFd() const {
 }
 
 std::string SockServer::readMessage(int fd, bool &err) {
-	std::string message;
+	std::string message = "";
 	char buffer[1024] = {0};
 	int ret = recv(fd, buffer, 1024, 0);
 	err = true;
 
 	// If message contains data
 	if (ret > 0) {
-		_buffers[fd] += buffer;
-		if ((_buffers[fd]).find('\n') != std::string::npos) {
-			message = "From " + _ips[fd] + ": " + _buffers[fd];
-			transmit(fd, message, std::cout);
-			std::cout.flush();
-			_buffers[fd] = "";
+		_users[fd].buffer += buffer;
+		if ((_users[fd].buffer).find('\n') != std::string::npos) {
+			message = _users[fd].buffer;
+			_users[fd].buffer = "";
 		}
 		err = false;
 	}
@@ -127,6 +123,35 @@ std::string SockServer::readMessage(int fd, bool &err) {
 
 void SockServer::printStart() {
 	std::cout << "Started server on port: " << _port << std::endl;
+}
+
+void SockServer::messageRouter(int fd, std::string &msg) {
+	static std::map<std::string, command> _commands;
+	_commands["PASS"] = pass;
+	_commands["NICK"] = nick;
+	_commands["USER"] = user;
+	_commands["QUIT"] = quit;
+
+	std::vector<std::string> args;
+	size_t pos;
+	std::string token;
+	while ((pos = msg.find(' ')) != std::string::npos) {
+		token = msg.substr(0, pos);
+		args.push_back(token);
+		msg.erase(0, pos + 1);
+		std::cout << token << std::endl;
+	}
+	args.push_back(msg);
+
+	if (_commands.count(args[0])) {
+		_commands[args[0]](*this, args, fd);
+		return;
+	}
+
+	if (!_users[fd].realName.empty()) {
+		transmit(fd, msg, std::cout);
+		std::cout.flush();
+	}
 }
 
 

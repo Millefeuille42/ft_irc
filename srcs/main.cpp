@@ -11,12 +11,13 @@ void catchSig(int sig) {
 }
 
 int main(int argc, char **argv) {
-	if (argc != 2) {
-		std::cerr << "Usage: ./ircserv <port>" << std::endl;
+	if (argc != 3) {
+		std::cerr << "Usage: ./ircserv <port> <password>" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	SockServer server = SockServer(argv[1]);
+	server.password = argv[2];
 	signal(SIGTERM, catchSig);
 	signal(SIGINT, catchSig);
 	signal(SIGKILL, catchSig);
@@ -47,6 +48,8 @@ int main(int argc, char **argv) {
 				acNum--;
 				bool err;
 				std::string msg = server.readMessage(it->fd, err);
+				if (!msg.empty())
+					server.messageRouter(it->fd, msg);
 				if (!err)
 					continue;
 			}

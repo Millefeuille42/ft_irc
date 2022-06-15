@@ -17,6 +17,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <csignal>
+#include <cstring>
+
+#include "User.hpp"
 
 # define ANY_CLIENT INADDR_ANY // Correspond a 0.0.0.0
 # define IPV4 AF_INET // Correspond a Ipv4 quand utilisé
@@ -28,7 +31,7 @@
 extern int g_servFd;
 
 typedef std::vector<struct pollfd> fdVector;
-typedef std::map<int, std::string> ipMap;
+typedef std::map<int, User> userMap;
 
 typedef fdVector::iterator fdIterator;
 typedef fdVector::const_iterator const_fdIterator;
