@@ -27,6 +27,7 @@
 # define IP_PROTOCOL 0
 # define MAX_CLIENTS 50
 # define DATA_IN POLLIN
+# define BUFFER_SIZE 10
 
 extern int g_servFd;
 
@@ -40,5 +41,6 @@ typedef struct pollfd t_pollfd;
 
 int socketConf(const char *port);
 struct pollfd generatePollFd(int fd, short events);
+std::vector<std::string> parseMessage(std::string msg);
 
 #endif //FT_IRC_HPP
