@@ -2,7 +2,6 @@
 // Created by mlabouri on 6/8/22.
 //
 
-#include <sys/stat.h>
 #include "includes/SockServer.hpp"
 
 SockServer::SockServer():
@@ -38,7 +37,7 @@ SockServer &SockServer::operator=(const SockServer &src) {
 }
 
 void SockServer::deleteClient(const fdIterator &client) {
-	transmit(client->fd, _users[client->fd].nick + " disconnected\n", std::cerr);
+	transmit(_users[client->fd], _users[client->fd].nick + " disconnected\n", std::cerr);
 	std::cerr.flush();
 	_users.erase(client->fd);
 	close(client->fd);
@@ -61,7 +60,7 @@ int SockServer::check() {
 	_fds.push_back(generatePollFd(newFd, POLLIN));
 	_users[newFd] = User(newFd, addr.getIP());
 
-	transmit(newFd, "New connection from: " + addr.getIP() + '\n', std::cerr);
+	transmit(_users[newFd], "New connection from: " + addr.getIP() + '\n', std::cerr);
 	std::cerr.flush();
 	return 1;
 }
@@ -74,10 +73,12 @@ int SockServer::acceptConnection(SockAddress &addr) const {
 	return connectionFd;
 }
 
-void SockServer::transmit(int senderFd, const std::string &message, std::basic_ostream<char> & otp) {
+void SockServer::transmit(User& user, std::string message, std::basic_ostream<char> & otp) {
+	if (!user.nick.empty())
+		message = user.nick + ": " + message;
 	otp << message;
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
-		if (it->fd == senderFd || it->fd == _fds.begin()->fd)
+		if (it->fd == user.fd || it->fd == _fds.begin()->fd)
 			continue;
 		send(it->fd, message.c_str(), message.size(), 0);
 	}
@@ -104,19 +105,25 @@ int SockServer::getFd() const {
 }
 
 std::string SockServer::readMessage(int fd, bool &err) {
-	std::string message = "";
-	char buffer[1024] = {0}; //TODO Buffer illimité
-	int ret = recv(fd, buffer, 1024, 0);
-	err = true;
+	std::string message;
+	size_t ret = BUFFER_SIZE;
+	while (ret >= BUFFER_SIZE) {
+		err = true;
+		char buffer[BUFFER_SIZE + 1] = {0};
+		ret = recv(fd, buffer, BUFFER_SIZE, 0);
+		buffer[BUFFER_SIZE] = '\0';
 
-	// If message contains data
-	if (ret > 0) {
-		_users[fd].buffer += buffer;
-		if ((_users[fd].buffer).find('\n') != std::string::npos) {
-			message = _users[fd].buffer;
-			_users[fd].buffer = "";
+		// If message contains data
+		if (ret > 0) {
+			_users[fd].buffer += buffer;
+			if ((_users[fd].buffer).find('\n') != std::string::npos) {
+				message = _users[fd].buffer;
+				_users[fd].buffer = "";
+				err = false;
+				break;
+			}
+			err = false;
 		}
-		err = false;
 	}
 	return message;
 }
@@ -125,34 +132,29 @@ void SockServer::printStart() {
 	std::cout << "Started server on port: " << _port << std::endl;
 }
 
-void SockServer::messageRouter(int fd, std::string &msg) { //TODO envoyer USER
+void SockServer::messageRouter(int fd, std::string &msg) {
 	static std::map<std::string, command> _commands;
+	User &usr = _users[fd];
 	_commands["PASS"] = pass;
 	_commands["NICK"] = nick;
 	_commands["USER"] = user;
 	_commands["QUIT"] = quit;
 
-	std::vector<std::string> args;
-	size_t pos;
-	std::string token;
-	while ((pos = msg.find(' ')) != std::string::npos) {
-		token = msg.substr(0, pos);
-		args.push_back(token);
-		msg.erase(0, pos + 1);
-		std::cout << token << std::endl;
-	}
-	args.push_back(msg);
+	std::vector<std::string> args = parseMessage(msg);
+
+	if (usr.pass.empty() && args[0] != "PASS")
+		return;
+	if (usr.nick.empty() && usr.user.empty() && (args[0] != "USER" || args[0] != "NICK") )
+		return;
 
 	if (_commands.count(args[0])) {
 		command tmp = _commands.find(args[0])->second;
-		tmp(*this, args, fd); //TODO envoyer USER
+		tmp(*this, args, usr);
 		return;
 	}
 
-	if (!_users[fd].realName.empty()) {
-		transmit(fd, msg, std::cout); //TODO envoyer USER
+	if (!usr.realName.empty()) {
+		transmit(usr, msg, std::cout);
 		std::cout.flush();
 	}
 }
-
-

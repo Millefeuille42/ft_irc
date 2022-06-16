@@ -9,7 +9,10 @@ SRCS	=	srcs/main.cpp \
 			srcs/SockAddress.cpp \
 			srcs/socketConf.cpp \
 			srcs/SockServer.cpp \
+			srcs/User.cpp \
 			srcs/utils.cpp \
+			srcs/_SockServer_Commands.cpp \
+
 
 OBJS	=	$(SRCS:.cpp=.o)
 
