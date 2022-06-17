@@ -58,7 +58,10 @@ int SockServer::check() {
 	SockAddress addr = SockAddress(IPV4, ANY_CLIENT, _port.c_str());
 	int newFd = acceptConnection(addr);
 	_fds.push_back(generatePollFd(newFd, POLLIN));
-	_users[newFd] = User(newFd, addr.getIP());
+	if (password == "")
+		_users[newFd] = User(newFd, addr.getIP(), 1);
+	else
+		_users[newFd] = User(newFd, addr.getIP());
 
 	transmit(_users[newFd], "New connection from: " + addr.getIP() + '\n', std::cerr);
 	std::cerr.flush();
