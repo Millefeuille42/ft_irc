@@ -3,7 +3,7 @@
 
 #include "../commands.hpp"
 
-void s_pass(SockServer& srv, std::vector<std::string> args, User& user) {
+void u_pass(SockServer& srv, std::vector<std::string> args, User& user) {
 	if (args.size() != 2 || args[0] != "PASS")
 		return ;
 	if (args[1] == srv.password)

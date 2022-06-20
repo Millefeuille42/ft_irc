@@ -33,6 +33,7 @@ extern int g_servFd;
 
 typedef std::vector<struct pollfd> fdVector;
 typedef std::map<int, User> userMap;
+typedef std::vector<std::string> stringVector;
 
 typedef fdVector::iterator fdIterator;
 typedef fdVector::const_iterator const_fdIterator;

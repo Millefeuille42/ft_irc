@@ -5,12 +5,12 @@
 #include "includes/SockServer.hpp"
 
 SockServer::SockServer():
-_port(), _serverFd(), _fds(), _users() {}
+_port(), _serverFd(), _fds(), _users(), _nicks() {}
 
 SockServer::SockServer(const std::string & port):
 _port(port),
 _serverFd(generatePollFd(socketConf(_port.c_str()), DATA_IN)),
-_fds(fdVector(0)), _users(userMap()) {
+_fds(fdVector(0)), _users(userMap()), _nicks(stringVector(0)) {
 	_fds.push_back(_serverFd);
 	printStart();
 }
@@ -39,6 +39,12 @@ SockServer &SockServer::operator=(const SockServer &src) {
 void SockServer::deleteClient(const fdIterator &client) {
 	transmit(_users[client->fd], _users[client->fd].nick + " disconnected\n", std::cerr);
 	std::cerr.flush();
+	for (stringVector::iterator it = _nicks.begin(); it != _nicks.end(); it++) {
+		if (_users[client->fd].nick == *it) {
+			_nicks.erase(it);
+			break ;
+		}
+	}
 	_users.erase(client->fd);
 	close(client->fd);
 	_fds.erase(client);
@@ -93,6 +99,10 @@ t_pollfd *SockServer::getFds() {
 
 size_t SockServer::getSize() {
 	return _fds.size();
+}
+
+stringVector& SockServer::getNicks() {
+	return (_nicks);
 }
 
 fdIterator SockServer::begin() {

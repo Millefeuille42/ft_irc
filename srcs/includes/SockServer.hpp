@@ -17,6 +17,7 @@ private:
 	t_pollfd _serverFd;
 	fdVector _fds;
 	userMap _users;
+	stringVector _nicks;
 
 public:
 	SockServer();
@@ -41,6 +42,7 @@ public:
 	t_pollfd *getFds();
 	size_t getSize();
 	int getFd() const;
+	stringVector& getNicks();
 
 	fdIterator begin();
 	fdIterator end();
