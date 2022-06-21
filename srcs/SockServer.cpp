@@ -5,13 +5,14 @@
 #include "includes/SockServer.hpp"
 
 SockServer::SockServer():
-_port(), _serverFd(), _fds(), _users() {}
+_port(), _serverFd(), _fds(), _users(), _nicks() {}
 
 SockServer::SockServer(const std::string & port):
 _port(port),
 _serverFd(generatePollFd(socketConf(_port.c_str()), DATA_IN)),
-_fds(fdVector(0)), _users(userMap()) {
+_fds(fdVector(0)), _users(userMap()), _nicks(stringVector(0)) {
 	_fds.push_back(_serverFd);
+	initCommands();
 	printStart();
 }
 
@@ -39,6 +40,12 @@ SockServer &SockServer::operator=(const SockServer &src) {
 void SockServer::deleteClient(const fdIterator &client) {
 	transmit(_users[client->fd], _users[client->fd].nick + " disconnected\n", std::cerr);
 	std::cerr.flush();
+	for (stringVector::iterator it = _nicks.begin(); it != _nicks.end(); it++) {
+		if (_users[client->fd].nick == *it) {
+			_nicks.erase(it);
+			break ;
+		}
+	}
 	_users.erase(client->fd);
 	close(client->fd);
 	_fds.erase(client);
@@ -58,7 +65,10 @@ int SockServer::check() {
 	SockAddress addr = SockAddress(IPV4, ANY_CLIENT, _port.c_str());
 	int newFd = acceptConnection(addr);
 	_fds.push_back(generatePollFd(newFd, POLLIN));
-	_users[newFd] = User(newFd, addr.getIP());
+	if (password == "")
+		_users[newFd] = User(newFd, addr.getIP(), 1);
+	else
+		_users[newFd] = User(newFd, addr.getIP());
 
 	transmit(_users[newFd], "New connection from: " + addr.getIP() + '\n', std::cerr);
 	std::cerr.flush();
@@ -90,6 +100,10 @@ t_pollfd *SockServer::getFds() {
 
 size_t SockServer::getSize() {
 	return _fds.size();
+}
+
+stringVector& SockServer::getNicks() {
+	return (_nicks);
 }
 
 fdIterator SockServer::begin() {
@@ -132,20 +146,47 @@ void SockServer::printStart() {
 	std::cout << "Started server on port: " << _port << std::endl;
 }
 
-void SockServer::messageRouter(int fd, std::string &msg) {
-	static std::map<std::string, command> _commands;
-	User &usr = _users[fd];
+void SockServer::initCommands() {
 	_commands["PASS"] = pass;
 	_commands["NICK"] = nick;
 	_commands["USER"] = user;
-	_commands["QUIT"] = quit;
+	//_commands["QUIT"] = quit;
+	//_commands["MODE"] = mode;
+	//_commands["OPER"] = oper;
 
+	//_commands[INVITE] = invite;
+	//_commands[JOIN] = join;
+	//_commands[KICK] = kick;
+	//_commands[LIST] = list;
+	//_commands[MODE] = mode;
+	//_commands[NAMES] = names;
+	//_commands[PART] = part;
+	//_commands[TOPIC] = topic;
+
+	//_commands[PRIVMSG] = privmsg;
+
+	//_commands[ERROR] = error;
+	//_commands[KILL] = kill;
+	//_commands[PING] = ping;
+	//_commands[PONG] = pong;
+
+	//_commands[WHO] = who;
+
+	//_commands[INFO] = info;
+	//_commands[TIME] = time;
+	//_commands[VERSION] = versions;
+}
+
+void SockServer::messageRouter(int fd, std::string &msg) {
+	User &usr = _users[fd];
+
+	std::cout << usr.nick << " : " << msg << std::endl; //Debug
 	std::vector<std::string> args = parseMessage(msg);
 
-	if (usr.pass.empty() && args[0] != "PASS")
-		return;
-	if (usr.nick.empty() && usr.user.empty() && (args[0] != "USER" || args[0] != "NICK") )
-		return;
+	if (usr.nick.empty() && usr.user.empty() && (args[0] != "USER" || args[0] != "NICK") ) {
+		if (usr.pass == 0 && args[0] != "PASS")
+			return;
+	}
 
 	if (_commands.count(args[0])) {
 		command tmp = _commands.find(args[0])->second;

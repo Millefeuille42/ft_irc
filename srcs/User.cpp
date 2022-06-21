@@ -4,10 +4,10 @@
 
 #include "includes/User.hpp"
 
-User::User() : user(), realName(), nick(), pass(), ip(), buffer(), fd(0) {}
+User::User() : user(), realName(), nick(), pass(0), ip(), buffer(), fd(0) {}
 
-User::User(int gFd, const std::string &gIp)
-	: user(), realName(), nick(), pass(), ip(gIp), buffer(), fd(gFd) {}
+User::User(int gFd, const std::string &gIp, bool s_pass)
+	: user(), realName(), nick(), pass(s_pass), ip(gIp), buffer(), fd(gFd) {}
 
 User::User(const User &src) {
 	*this = src;

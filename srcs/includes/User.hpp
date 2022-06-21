@@ -10,7 +10,7 @@
 class User {
 public:
 	User();
-	User(int gFd, const std::string & gIp);
+	User(int gFd, const std::string & gIp, bool s_pass = 0);
 	User(const User& src);
 
 	~User();
@@ -21,7 +21,7 @@ public:
 	std::string user;
 	std::string realName;
 	std::string nick;
-	std::string pass;
+	bool pass;
 	std::string ip;
 	std::string buffer;
 	int fd;

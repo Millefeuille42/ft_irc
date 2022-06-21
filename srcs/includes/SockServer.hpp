@@ -11,46 +11,51 @@
 
 
 class SockServer {
-private:
-	typedef void(*command)(SockServer &, std::vector<std::string>, User&);
-	std::string _port;
-	t_pollfd _serverFd;
-	fdVector _fds;
-	userMap _users;
+	private:
+		typedef void(*command)(SockServer &, std::vector<std::string>, User&);
+		std::string _port;
+		t_pollfd _serverFd;
+		fdVector _fds;
+		userMap _users;
+		stringVector _nicks;
+		std::map<std::string, command> _commands;
 
-public:
-	SockServer();
-	SockServer(const std::string & port);
-	SockServer(const SockServer & src);
+	public:
+		SockServer();
+		SockServer(const std::string & port);
+		SockServer(const SockServer & src);
 
-	~SockServer();
+		~SockServer();
 
-	SockServer &operator=(const SockServer & src);
+		SockServer &operator=(const SockServer & src);
 
-	void deleteClient(const fdIterator &  client);
-	int check();
+		void initCommands();
 
-	int acceptConnection(SockAddress & addr) const;
-	void transmit(User& user, std::string message, std::basic_ostream<char> & otp);
-	std::string readMessage(int fd, bool &err);
+		void deleteClient(const fdIterator &  client);
+		int check();
 
-	void messageRouter( int fd, std::string &msg);
+		int acceptConnection(SockAddress & addr) const;
+		void transmit(User& user, std::string message, std::basic_ostream<char> & otp);
+		std::string readMessage(int fd, bool &err);
 
-	void printStart();
+		void messageRouter( int fd, std::string &msg);
 
-	t_pollfd *getFds();
-	size_t getSize();
-	int getFd() const;
+		void printStart();
 
-	fdIterator begin();
-	fdIterator end();
+		t_pollfd *getFds();
+		size_t getSize();
+		int getFd() const;
+		stringVector& getNicks();
 
-	static void pass(SockServer &srv, std::vector<std::string>, User& user);
-	static void user(SockServer &srv, std::vector<std::string>, User& user);
-	static void nick(SockServer &srv, std::vector<std::string>, User& user);
-	static void quit(SockServer &srv, std::vector<std::string>, User& user);
+		fdIterator begin();
+		fdIterator end();
 
-	std::string password;
+		static void pass(SockServer &srv, std::vector<std::string>, User& user);
+		static void user(SockServer &srv, std::vector<std::string>, User& user);
+		static void nick(SockServer &srv, std::vector<std::string>, User& user);
+		//static void quit(SockServer &srv, std::vector<std::string>, User& user);
+
+		std::string password;
 };
 
 #endif //SOCKSERVER_HPP
