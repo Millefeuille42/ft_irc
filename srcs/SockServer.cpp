@@ -180,12 +180,13 @@ void SockServer::initCommands() {
 void SockServer::messageRouter(int fd, std::string &msg) {
 	User &usr = _users[fd];
 
+	std::cout << usr.nick << " : " << msg << std::endl; //Debug
 	std::vector<std::string> args = parseMessage(msg);
 
-	if (usr.pass == 0 && args[0] != "PASS")
-		return;
-	if (usr.nick.empty() && usr.user.empty() && (args[0] != "USER" || args[0] != "NICK") )
-		return;
+	if (usr.nick.empty() && usr.user.empty() && (args[0] != "USER" || args[0] != "NICK") ) {
+		if (usr.pass == 0 && args[0] != "PASS")
+			return;
+	}
 
 	if (_commands.count(args[0])) {
 		command tmp = _commands.find(args[0])->second;
