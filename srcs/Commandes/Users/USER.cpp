@@ -2,9 +2,10 @@
 //USER <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
 //Ignorer Hote et Nom de serveur
 
-#include "../commands.hpp"
+#include "../../includes/SockServer.hpp"
 
-void u_user(SockServer& srv, std::vector<std::string> args, User& user) {
+void SockServer::user(SockServer& srv, std::vector<std::string> args, User& user) {
+	(void)srv;
 	if (args[0] != "USER" || args.size() < 5)
 		return ;
 	user.user = args[1];
@@ -12,7 +13,7 @@ void u_user(SockServer& srv, std::vector<std::string> args, User& user) {
 		user.realName = args[4];
 	else
 		return ;
-	for (int i = 5; i < args.size(); i++) {
+	for (size_t i = 5; i < args.size(); i++) {
 		user.realName += " " + args[i];
 	}
 }

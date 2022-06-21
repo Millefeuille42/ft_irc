@@ -12,6 +12,7 @@ _port(port),
 _serverFd(generatePollFd(socketConf(_port.c_str()), DATA_IN)),
 _fds(fdVector(0)), _users(userMap()), _nicks(stringVector(0)) {
 	_fds.push_back(_serverFd);
+	initCommands();
 	printStart();
 }
 
@@ -145,17 +146,43 @@ void SockServer::printStart() {
 	std::cout << "Started server on port: " << _port << std::endl;
 }
 
-void SockServer::messageRouter(int fd, std::string &msg) {
-	static std::map<std::string, command> _commands;
-	User &usr = _users[fd];
+void SockServer::initCommands() {
 	_commands["PASS"] = pass;
 	_commands["NICK"] = nick;
 	_commands["USER"] = user;
-	_commands["QUIT"] = quit;
+	//_commands["QUIT"] = quit;
+	//_commands["MODE"] = mode;
+	//_commands["OPER"] = oper;
+
+	//_commands[INVITE] = invite;
+	//_commands[JOIN] = join;
+	//_commands[KICK] = kick;
+	//_commands[LIST] = list;
+	//_commands[MODE] = mode;
+	//_commands[NAMES] = names;
+	//_commands[PART] = part;
+	//_commands[TOPIC] = topic;
+
+	//_commands[PRIVMSG] = privmsg;
+
+	//_commands[ERROR] = error;
+	//_commands[KILL] = kill;
+	//_commands[PING] = ping;
+	//_commands[PONG] = pong;
+
+	//_commands[WHO] = who;
+
+	//_commands[INFO] = info;
+	//_commands[TIME] = time;
+	//_commands[VERSION] = versions;
+}
+
+void SockServer::messageRouter(int fd, std::string &msg) {
+	User &usr = _users[fd];
 
 	std::vector<std::string> args = parseMessage(msg);
 
-	if (usr.pass.empty() && args[0] != "PASS")
+	if (usr.pass == 0 && args[0] != "PASS")
 		return;
 	if (usr.nick.empty() && usr.user.empty() && (args[0] != "USER" || args[0] != "NICK") )
 		return;

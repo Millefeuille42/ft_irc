@@ -1,9 +1,9 @@
 //Définit le pseudonyme d'un utilisateur
 //NICK <pseudonyme>
 
-#include "../commands.hpp"
+#include "../../includes/SockServer.hpp"
 
-void u_nick(SockServer& srv, std::vector<std::string> args, User& user) {
+void SockServer::nick(SockServer& srv, std::vector<std::string> args, User& user) {
 	if (args.size() != 2 || args[0] != "NICK")
 		return ;
 	stringVector::iterator itu;

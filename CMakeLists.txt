@@ -9,7 +9,19 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -Wall -Werror -Wextra -peda
 
 add_executable(ft_irc
         srcs/main.cpp
-		srcs/socketConf.cpp
 
+		srcs/socketConf.cpp
 		srcs/SockAddress.cpp
-		srcs/SockServer.cpp srcs/includes/SockServer.hpp srcs/utils.cpp srcs/User.cpp srcs/includes/User.hpp srcs/_SockServer_Commands.cpp srcs/includes/_SockServer_Errors.hpp)
+		srcs/SockServer.cpp
+		srcs/utils.cpp
+		srcs/User.cpp
+
+		srcs/includes/SockServer.hpp
+		srcs/includes/User.hpp
+		srcs/includes/_SockServer_Errors.hpp
+		srcs/includes/ft_irc.hpp
+		srcs/includes/SockAddress.hpp
+
+		srcs/Commandes/Users/NICK.cpp
+		srcs/Commandes/Users/USER.cpp
+		srcs/Commandes/Users/PASS.cpp)
