@@ -12,7 +12,6 @@ void SockServer::pass(SockServer& srv, std::vector<std::string> args, User& user
 		user.pass = 1;
 	else
 		user.pass = 0;
-	srv.transmit(user, "Pass is good\n", std::cout);
 }
 
 //TODO -> ERRORS
