@@ -3,6 +3,7 @@
 //
 
 #include "includes/ft_irc.hpp"
+#include <algorithm>
 
 struct pollfd generatePollFd(int fd, short events) {
 	struct pollfd ret = {};

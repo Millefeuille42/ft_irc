@@ -38,7 +38,7 @@ SockServer &SockServer::operator=(const SockServer &src) {
 }
 
 void SockServer::deleteClient(const fdIterator &client) {
-	transmit(_users[client->fd], _users[client->fd].nick + " disconnected\n", std::cerr);
+	transmit(_users[client->fd], "disconnected\n", std::cerr);
 	std::cerr.flush();
 	for (stringVector::iterator it = _nicks.begin(); it != _nicks.end(); it++) {
 		if (_users[client->fd].nick == *it) {
@@ -70,7 +70,7 @@ int SockServer::check() {
 	else
 		_users[newFd] = User(newFd, addr.getIP());
 
-	transmit(_users[newFd], "New connection from: " + addr.getIP() + '\n', std::cerr);
+	//transmit(_users[newFd], "New connection from: " + addr.getIP() + '\n', std::cerr);
 	std::cerr.flush();
 	return 1;
 }
@@ -86,6 +86,8 @@ int SockServer::acceptConnection(SockAddress &addr) const {
 void SockServer::transmit(User& user, std::string message, std::basic_ostream<char> & otp) {
 	if (!user.nick.empty())
 		message = user.nick + ": " + message;
+	else
+		message = user.ip + ": " + message;
 	otp << message;
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == user.fd || it->fd == _fds.begin()->fd)
@@ -130,9 +132,16 @@ std::string SockServer::readMessage(int fd, bool &err) {
 		// If message contains data
 		if (ret > 0) {
 			_users[fd].buffer += buffer;
-			if ((_users[fd].buffer).find('\n') != std::string::npos) {
-				message = _users[fd].buffer;
-				_users[fd].buffer = "";
+			size_t nlPos = (_users[fd].buffer).find('\n');
+			if (nlPos != std::string::npos) {
+				message = _users[fd].buffer.substr(0, (int)nlPos);
+				std::string tmp = _users[fd].buffer.substr(nlPos + 1, std::string::npos);
+
+				size_t vPos = message.find('\r');
+				if (vPos != std::string::npos)
+					message.erase(vPos);
+
+				_users[fd].buffer = tmp;
 				err = false;
 				break;
 			}
@@ -180,7 +189,6 @@ void SockServer::initCommands() {
 void SockServer::messageRouter(int fd, std::string &msg) {
 	User &usr = _users[fd];
 
-	std::cout << usr.nick << " : " << msg << std::endl; //Debug
 	std::vector<std::string> args = parseMessage(msg);
 
 	if (usr.nick.empty() && usr.user.empty() && (args[0] != "USER" || args[0] != "NICK") ) {
