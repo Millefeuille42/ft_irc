@@ -190,8 +190,7 @@ void SockServer::messageRouter(int fd, std::string &msg) {
 	User &usr = _users[fd];
 
 	std::vector<std::string> args = parseMessage(msg);
-
-	if (usr.nick.empty() && usr.user.empty() && (args[0] != "USER" || args[0] != "NICK") ) {
+	if ((usr.nick.empty() || usr.user.empty()) && (args[0] != "USER" || args[0] != "NICK") ) {
 		if (usr.pass == 0 && args[0] != "PASS")
 			return;
 	}

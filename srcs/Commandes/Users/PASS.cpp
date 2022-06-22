@@ -10,9 +10,8 @@ void SockServer::pass(SockServer& srv, std::vector<std::string> args, User& user
 		return ;
 	if (args[1] == srv.password)
 		user.pass = 1;
-	else {
+	else
 		user.pass = 0;
-	srv.transmit(user, "Pass is good\n", std::cout);
 }
 
 //TODO -> ERRORS

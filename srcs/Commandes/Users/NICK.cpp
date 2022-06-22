@@ -15,8 +15,8 @@ void SockServer::nick(SockServer& srv, std::vector<std::string> args, User& user
 			return ; //Le Nick existe déjà sur le serveur
 	}
 	user.nick = args[1];
-	if (itu == srv.getNicks().end())
+	if (itu != srv.getNicks().end())
 		srv.getNicks().erase(itu);
 	srv.getNicks().push_back(args[1]);
-	srv.transmit(user, "Nick is set", std::cout);
+	srv.transmit(user, "Nick is set\n", std::cout);
 }

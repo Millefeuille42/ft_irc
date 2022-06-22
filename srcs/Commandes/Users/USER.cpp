@@ -17,5 +17,5 @@ void SockServer::user(SockServer& srv, std::vector<std::string> args, User& user
 	for (size_t i = 5; i < args.size(); i++) {
 		user.realName += " " + args[i];
 	}
-	srv.transmit(user, "Name is set", std::cout);
+	srv.transmit(user, "Name is set\n", std::cout);
 }
