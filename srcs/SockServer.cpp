@@ -97,18 +97,19 @@ void SockServer::transmit(User& user, std::string message, std::basic_ostream<ch
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == user.fd || it->fd == _fds.begin()->fd)
 			continue;
-		sendMessage(it->fd, message, otp);
+		sendMessage(it->fd, message, otp); //TODO Ce serait pas mieux si c'etait hors de la boucle ? Pour recevoir une seule fois
 	}
 }
 
 void SockServer::transmitServ(std::string& message) {
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
-		if (it->fd == _fds.begin()->fd)
+		if (it->fd == _fds.begin()->fd) {
+			if (it + 1 == _fds.end()) //S'il n'y a plus de clients, le serveur recevra tout de même le message.
+				std::cerr << message;
 			continue;
-		sendMessage(it->fd, message, std::cerr);
+		}
+		sendMessage(it->fd, message, std::cerr); //TODO J'ai c/c ici, donc meme question (Si préférence dans la boucle, je laisse)
 	}
-	if (_fds.begin() + 1 == _fds.end())
-		std::cerr << message;
 }
 
 t_pollfd *SockServer::getFds() {
