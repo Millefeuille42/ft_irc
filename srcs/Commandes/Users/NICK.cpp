@@ -3,7 +3,7 @@
 
 #include "../../includes/SockServer.hpp"
 
-void SockServer::nick(SockServer& srv, std::vector<std::string> args, User& user) {
+void SockServer::nick(SockServer& srv, std::vector<std::string>& args, User& user) {
 	std::cout << "Commande NICK" << std::endl; //debug
 	if (args.size() != 2 || args[0] != "NICK")
 		return ;

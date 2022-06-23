@@ -90,15 +90,25 @@ void SockServer::sendMessage(int target, const std::string & message, std::basic
 
 void SockServer::transmit(User& user, std::string message, std::basic_ostream<char> & otp) {
 	if (!user.nick.empty())
-		message = user.nick + ": " + message;
+		message = user.nick + ": " + message + "\n";
 	else
-		message = user.ip + ": " + message;
+		message = user.ip + ": " + message + "\n";
 	otp << message;
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == user.fd || it->fd == _fds.begin()->fd)
 			continue;
 		sendMessage(it->fd, message, otp);
 	}
+}
+
+void SockServer::transmitServ(std::string& message) {
+	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
+		if (it->fd == _fds.begin()->fd)
+			continue;
+		sendMessage(it->fd, message, std::cerr);
+	}
+	if (_fds.begin() + 1 == _fds.end())
+		std::cerr << message;
 }
 
 t_pollfd *SockServer::getFds() {
@@ -164,7 +174,7 @@ void SockServer::initCommands() {
 	_commands["PASS"] = pass;
 	_commands["NICK"] = nick;
 	_commands["USER"] = user;
-	//_commands["QUIT"] = quit;
+	_commands["QUIT"] = quit;
 	//_commands["MODE"] = mode;
 	//_commands["OPER"] = oper;
 
