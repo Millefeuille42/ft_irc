@@ -20,6 +20,7 @@
 #include <cstring>
 
 #include "User.hpp"
+#include "responses.hpp"
 
 # define ANY_CLIENT INADDR_ANY // Correspond a 0.0.0.0
 # define IPV4 AF_INET // Correspond a Ipv4 quand utilisé

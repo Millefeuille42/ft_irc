@@ -83,16 +83,32 @@ int SockServer::acceptConnection(SockAddress &addr) const {
 	return connectionFd;
 }
 
+void SockServer::sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp) {
+	otp << message;
+	send(target, message.c_str(), message.size(), 0);
+}
+
 void SockServer::transmit(User& user, std::string message, std::basic_ostream<char> & otp) {
 	if (!user.nick.empty())
-		message = user.nick + ": " + message;
+		message = user.nick + ": " + message + "\n";
 	else
-		message = user.ip + ": " + message;
+		message = user.ip + ": " + message + "\n";
 	otp << message;
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == user.fd || it->fd == _fds.begin()->fd)
 			continue;
-		send(it->fd, message.c_str(), message.size(), 0);
+		sendMessage(it->fd, message, otp); //TODO Ce serait pas mieux si c'etait hors de la boucle ? Pour recevoir une seule fois
+	}
+}
+
+void SockServer::transmitServ(std::string& message) {
+	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
+		if (it->fd == _fds.begin()->fd) {
+			if (it + 1 == _fds.end()) //S'il n'y a plus de clients, le serveur recevra tout de même le message.
+				std::cerr << message;
+			continue;
+		}
+		sendMessage(it->fd, message, std::cerr); //TODO J'ai c/c ici, donc meme question (Si préférence dans la boucle, je laisse)
 	}
 }
 
@@ -159,7 +175,7 @@ void SockServer::initCommands() {
 	_commands["PASS"] = pass;
 	_commands["NICK"] = nick;
 	_commands["USER"] = user;
-	//_commands["QUIT"] = quit;
+	_commands["QUIT"] = quit;
 	//_commands["MODE"] = mode;
 	//_commands["OPER"] = oper;
 

@@ -21,7 +21,9 @@ add_executable(ft_irc
 		srcs/includes/_SockServer_Errors.hpp
 		srcs/includes/ft_irc.hpp
 		srcs/includes/SockAddress.hpp
+		srcs/includes/responses.hpp
 
 		srcs/Commandes/Users/NICK.cpp
 		srcs/Commandes/Users/USER.cpp
-		srcs/Commandes/Users/PASS.cpp)
+		srcs/Commandes/Users/PASS.cpp
+		srcs/Commandes/Users/QUIT.cpp)

@@ -12,7 +12,7 @@
 
 class SockServer {
 	private:
-		typedef void(*command)(SockServer &, std::vector<std::string>, User&);
+		typedef void(*command)(SockServer &, std::vector<std::string>&, User&);
 		std::string _port;
 		t_pollfd _serverFd;
 		fdVector _fds;
@@ -36,6 +36,7 @@ class SockServer {
 
 		int acceptConnection(SockAddress & addr) const;
 		void transmit(User& user, std::string message, std::basic_ostream<char> & otp);
+		void transmitServ(std::string& message);
 		std::string readMessage(int fd, bool &err);
 
 		void messageRouter( int fd, std::string &msg);
@@ -50,10 +51,13 @@ class SockServer {
 		fdIterator begin();
 		fdIterator end();
 
-		static void pass(SockServer &srv, std::vector<std::string>, User& user);
-		static void user(SockServer &srv, std::vector<std::string>, User& user);
-		static void nick(SockServer &srv, std::vector<std::string>, User& user);
-		//static void quit(SockServer &srv, std::vector<std::string>, User& user);
+		void sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp);
+
+		static void welcome(SockServer &srv, const std::vector<std::string>&, User& user);
+		static void pass(SockServer &srv, std::vector<std::string>& args, User& user);
+		static void user(SockServer &srv, std::vector<std::string>& args, User& user);
+		static void nick(SockServer &srv, std::vector<std::string>& args, User& user);
+		static void quit(SockServer &srv, std::vector<std::string>& args, User& user);
 
 		std::string password;
 };
