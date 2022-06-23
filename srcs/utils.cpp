@@ -2,8 +2,7 @@
 // Created by mlabouri on 6/8/22.
 //
 
-#include "includes/ft_irc.hpp"
-#include <algorithm>
+#include "includes/SockServer.hpp"
 
 struct pollfd generatePollFd(int fd, short events) {
 	struct pollfd ret = {};
@@ -24,3 +23,11 @@ std::vector<std::string> parseMessage(std::string msg) {
 	args.push_back(msg);
 	return args;
 }
+
+void SockServer::welcome(SockServer& srv, const std::vector<std::string>&, User& user) {
+	if (user.nick.empty() || user.user.empty())
+		return;
+	srv.sendMessage(user.fd, WELCOME(user.nick, user.user) + "localhost\n", std::cout);
+	std::cout.flush();
+}
+

@@ -4,9 +4,8 @@
 
 #include "../../includes/SockServer.hpp"
 
-void SockServer::user(SockServer& srv, std::vector<std::string> args, User& user) {
+void SockServer::user(SockServer &srv, std::vector<std::string> args, User& user) {
 	std::cout << "Commande USER" << std::endl; //debug
-	(void)srv;
 	if (args[0] != "USER" || args.size() < 5)
 		return ;
 	user.user = args[1];
@@ -17,5 +16,6 @@ void SockServer::user(SockServer& srv, std::vector<std::string> args, User& user
 	for (size_t i = 5; i < args.size(); i++) {
 		user.realName += " " + args[i];
 	}
-	srv.transmit(user, "Name is set\n", std::cout);
+	std::cout << "Name is set" << std::endl;
+	welcome(srv, args, user);
 }

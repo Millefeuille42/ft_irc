@@ -50,9 +50,12 @@ class SockServer {
 		fdIterator begin();
 		fdIterator end();
 
+		void sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp);
+
 		static void pass(SockServer &srv, std::vector<std::string>, User& user);
 		static void user(SockServer &srv, std::vector<std::string>, User& user);
 		static void nick(SockServer &srv, std::vector<std::string>, User& user);
+		static void welcome(SockServer &srv, const std::vector<std::string>&, User& user);
 		//static void quit(SockServer &srv, std::vector<std::string>, User& user);
 
 		std::string password;

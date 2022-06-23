@@ -83,6 +83,11 @@ int SockServer::acceptConnection(SockAddress &addr) const {
 	return connectionFd;
 }
 
+void SockServer::sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp) {
+	otp << message;
+	send(target, message.c_str(), message.size(), 0);
+}
+
 void SockServer::transmit(User& user, std::string message, std::basic_ostream<char> & otp) {
 	if (!user.nick.empty())
 		message = user.nick + ": " + message;
@@ -92,7 +97,7 @@ void SockServer::transmit(User& user, std::string message, std::basic_ostream<ch
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == user.fd || it->fd == _fds.begin()->fd)
 			continue;
-		send(it->fd, message.c_str(), message.size(), 0);
+		sendMessage(it->fd, message, otp);
 	}
 }
 

@@ -24,4 +24,4 @@ add_executable(ft_irc
 
 		srcs/Commandes/Users/NICK.cpp
 		srcs/Commandes/Users/USER.cpp
-		srcs/Commandes/Users/PASS.cpp)
+		srcs/Commandes/Users/PASS.cpp srcs/includes/responses.hpp)
