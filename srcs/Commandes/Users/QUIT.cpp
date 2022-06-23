@@ -8,11 +8,13 @@ void SockServer::quit(SockServer &srv, std::vector<std::string>& args, User& use
 		return ;
 	std::string mess = user.nick + " has quit";
 	for (size_t i = 1; i < args.size(); i++) {
-		if (i == 1)
-			mess += " : ";
+		if (i == 1) {
+			mess += " :";
+			args[i].erase(0,1);
+		}
 		mess += " " + args[i];
 	}
-	mess += ".\n";
+	mess += "\n";
 	fdVector::iterator it;
 	for (it = srv._fds.begin(); it != srv._fds.end(); it++) {
 		if (it->fd == user.fd)

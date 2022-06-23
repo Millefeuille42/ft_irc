@@ -17,7 +17,8 @@ void SockServer::nick(SockServer& srv, std::vector<std::string>& args, User& use
 	user.nick = args[1];
 	if (itu != srv.getNicks().end())
 		srv.getNicks().erase(itu);
+	else
+		welcome(srv, args, user);
 	srv.getNicks().push_back(args[1]);
 	std::cout << "Nick is set" << std::endl;
-	welcome(srv, args, user);
 }
