@@ -177,7 +177,7 @@ void SockServer::initCommands() {
 	_commands["USER"] = user;
 	_commands["QUIT"] = quit;
 	//_commands["MODE"] = mode;
-	//_commands["OPER"] = oper;
+	_commands["OPER"] = oper;
 
 	//_commands[INVITE] = invite;
 	//_commands[JOIN] = join;

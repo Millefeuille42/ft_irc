@@ -5,7 +5,7 @@
 
 void SockServer::pass(SockServer& srv, std::vector<std::string>& args, User& user) {
 	std::cout << "Commande PASS -> " << srv.password << std::endl; //debug
-	std::cout << "-" << args[1] << "-" << std::endl;
+	//std::cout << "-" << args[1] << "-" << std::endl; //debug
 	if (args.size() != 2 || args[0] != "PASS")
 		return ;
 	if (args[1] == srv.password)

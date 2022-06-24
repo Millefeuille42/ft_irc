@@ -6,6 +6,7 @@
 #define USER_HPP
 
 #include <string>
+#include <map>
 
 class User {
 public:
@@ -17,6 +18,8 @@ public:
 
 	User &operator=(const User &src);
 
+	void initModes();
+
 public:
 	std::string user;
 	std::string realName;
@@ -25,6 +28,7 @@ public:
 	std::string ip;
 	std::string buffer;
 	int fd;
+	std::map<std::string, bool> modes;
 };
 
 
