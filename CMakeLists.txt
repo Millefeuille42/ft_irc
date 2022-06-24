@@ -15,6 +15,7 @@ add_executable(ft_irc
 		srcs/SockServer.cpp
 		srcs/utils.cpp
 		srcs/User.cpp
+		srcs/Channels.cpp
 
 		srcs/includes/SockServer.hpp
 		srcs/includes/User.hpp
@@ -22,6 +23,7 @@ add_executable(ft_irc
 		srcs/includes/ft_irc.hpp
 		srcs/includes/SockAddress.hpp
 		srcs/includes/responses.hpp
+		srcs/includes/Channels.hpp
 
 		srcs/Commandes/Users/NICK.cpp
 		srcs/Commandes/Users/USER.cpp
