@@ -20,6 +20,7 @@
 #include <cstring>
 
 #include "User.hpp"
+#include "Channels.hpp"
 #include "responses.hpp"
 
 # define ANY_CLIENT INADDR_ANY // Correspond a 0.0.0.0
@@ -35,6 +36,7 @@ extern int g_servFd;
 typedef std::vector<struct pollfd> fdVector;
 typedef std::map<int, User> userMap;
 typedef std::vector<std::string> stringVector;
+typedef std::vector<Channels*> channelsVec;
 
 typedef fdVector::iterator fdIterator;
 typedef fdVector::const_iterator const_fdIterator;

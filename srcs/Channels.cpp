@@ -6,6 +6,7 @@ Channels::Channels() {
 
 Channels::Channels(int creator, std::string name) : _name(name), _creator(creator), _topic("") {
 	_members[creator] = true;
+	_nbop = 1;
 }
 
 Channels::Channels(const Channels& src) {
@@ -29,7 +30,21 @@ void Channels::joinChannel(int fd) {
 }
 
 void Channels::leaveChannel(int fd) {
+	if (_members[fd] == true) {
+		if (_nbop == 1 && _members.size() != 1) { //Si plus d'operateur, un op est definit de maniere random. Si plus personne, le channel est perdu.
+			if (_members.begin()->first == fd)
+				_members.begin()++->second  = true;
+			else
+				_members.begin()->second = true;
+			_nbop++;
+		}
+		_nbop--;
+	}
+	_members.erase(fd);
+}
 
+bool Channels::isEmpty() {
+	return (_members.empty());
 }
 
 Channels& Channels::operator=(const Channels& src) {

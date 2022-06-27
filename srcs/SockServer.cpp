@@ -5,12 +5,12 @@
 #include "includes/SockServer.hpp"
 
 SockServer::SockServer():
-_port(), _serverFd(), _fds(), _users(), _nicks() {}
+_port(), _serverFd(), _fds(), _users(), _nicks(), _chans() {}
 
 SockServer::SockServer(const std::string & port):
 _port(port),
 _serverFd(generatePollFd(socketConf(_port.c_str()), DATA_IN)),
-_fds(fdVector(0)), _users(userMap()), _nicks(stringVector(0)) {
+_fds(fdVector(0)), _users(userMap()), _nicks(stringVector(0)), _chans(channelsVec()) {
 	_fds.push_back(_serverFd);
 	initCommands();
 	printStart();
@@ -23,6 +23,10 @@ SockServer::SockServer(const SockServer &src) : _serverFd() {
 SockServer::~SockServer() {
 	for (fdIterator it = _fds.begin(); it != _fds.end(); it++)
 		close(it->fd);
+	_fds.clear();
+	_users.clear();
+	_nicks.clear();
+	_chans.clear();
 }
 
 SockServer &SockServer::operator=(const SockServer &src) {

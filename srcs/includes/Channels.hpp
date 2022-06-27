@@ -1,13 +1,15 @@
 #ifndef CHANNELS_HPP
 #define CHANNELS_HPP
 
-#include "includes/ft_irc.hpp"
+#include <iostream>
+#include <map>
 
 class Channels {
 	private:
 		std::string _name;
 		int _creator;
 		std::string _topic;
+		int	_nbop;
 		std::map<int, bool> _members; //Bool pour les opérateurs -> True = Opérator
 
 	public:
@@ -19,6 +21,8 @@ class Channels {
 
 		void setTopic(std::string& mess);
 		bool isOper(int fd);
+
+		bool isEmpty();
 
 		void joinChannel(int fd);
 		void leaveChannel(int fd);
