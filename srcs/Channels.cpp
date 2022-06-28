@@ -4,7 +4,7 @@ Channels::Channels() {
 
 }
 
-Channels::Channels(int creator, std::string name) : _name(name), _creator(creator), _topic("") {
+Channels::Channels(int creator, std::string name, std::string key) : _name(name), _creator(creator), _topic(""), _key(key) {
 	_members[creator] = true;
 	_nbop = 1;
 }
@@ -25,8 +25,11 @@ bool Channels::isOper(int fd) {
 	return (_members[fd]);
 }
 
-void Channels::joinChannel(int fd) {
+bool Channels::joinChannel(int fd, std::string key) {
+	if (key != _key)
+		return (false);
 	_members[fd] = false;
+	return (true);
 }
 
 void Channels::leaveChannel(int fd) {

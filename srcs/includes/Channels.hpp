@@ -9,12 +9,13 @@ class Channels {
 		std::string _name;
 		int _creator;
 		std::string _topic;
+		std::string _key;
 		int	_nbop;
 		std::map<int, bool> _members; //Bool pour les opérateurs -> True = Opérator
 
 	public:
 		Channels();
-		Channels(int creator, std::string name);
+		Channels(int creator, std::string name, std::string key);
 		Channels(const Channels& src);
 		~Channels();
 		Channels &operator=(const Channels& src);
@@ -24,7 +25,7 @@ class Channels {
 
 		bool isEmpty();
 
-		void joinChannel(int fd);
+		bool joinChannel(int fd, std::string key);
 		void leaveChannel(int fd);
 
 };

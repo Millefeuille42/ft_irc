@@ -18,7 +18,7 @@ class SockServer {
 		fdVector _fds;
 		userMap _users;
 		stringVector _nicks;
-		channelsVec _chans;
+		channelsMap _chans;
 		std::map<std::string, command> _commands;
 
 	public:
