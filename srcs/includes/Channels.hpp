@@ -12,6 +12,7 @@ class Channels {
 		std::string _key;
 		int	_nbop;
 		std::map<int, bool> _members; //Bool pour les opérateurs -> True = Opérator
+		std::map<char, bool> _modes;
 
 	public:
 		Channels();
@@ -19,6 +20,8 @@ class Channels {
 		Channels(const Channels& src);
 		~Channels();
 		Channels &operator=(const Channels& src);
+
+		void initModes();
 
 		void setTopic(std::string& mess);
 		bool isOper(int fd);

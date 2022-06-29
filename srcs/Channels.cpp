@@ -7,6 +7,7 @@ Channels::Channels() {
 Channels::Channels(int creator, std::string name, std::string key) : _name(name), _creator(creator), _topic(""), _key(key) {
 	_members[creator] = true;
 	_nbop = 1;
+	initModes();
 }
 
 Channels::Channels(const Channels& src) {
@@ -15,6 +16,17 @@ Channels::Channels(const Channels& src) {
 
 Channels::~Channels() {
 	_members.clear();
+}
+
+void Channels::initModes() {
+	_modes['p'] = false; //Channel Privé
+	_modes['s'] = false; //Channel Secret
+	_modes['i'] = false; //Channel sur Invitation
+	_modes['t'] = false; //Topic du Channel modifiable que par les operateurs
+	_modes['n'] = false; //Pas de message provenant de l'extérieur
+	_modes['l'] = false; //Nombre Maximal de personnes
+	_modes['k'] = false; //Clé du Canal
+
 }
 
 void Channels::setTopic(std::string &mess) {
