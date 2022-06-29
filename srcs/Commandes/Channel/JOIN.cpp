@@ -9,8 +9,12 @@
 void parseChan(std::map<std::string, std::string>& mChans, std::vector<std::string>& args) {
 	std::string::iterator it = args[1].begin();
 	std::string::iterator ite = it;
-	std::string::iterator itk = args[2].begin();
-	std::string::iterator itek = itk;
+	std::string::iterator itk;
+	std::string::iterator itek;
+	if (args.size() == 3) {
+		itk = args[2].begin();
+		itek = itk;
+	}
 	while (it != args[1].end()) {
 		std::string chan;
 		while (ite != args[1].end() || *ite != ',')
@@ -22,7 +26,7 @@ void parseChan(std::map<std::string, std::string>& mChans, std::vector<std::stri
 			while (itek != args[2].end() || *itek != ',')
 				itek++;
 			key.assign(itk, itek);
-			if (key != "x")
+			if (key != "x") //TODO IRSSI envoie x en mdp s'il n'y en a pas
 				mChans[chan] = key;
 			if (*itek == ',')
 				itek++;
