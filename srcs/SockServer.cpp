@@ -192,7 +192,7 @@ void SockServer::initCommands() {
 
 	//_commands[ERROR] = error;
 	//_commands[KILL] = kill;
-	//_commands[PING] = ping;
+	_commands["PING"] = ping;
 	//_commands[PONG] = pong;
 
 	//_commands[WHO] = who;
@@ -204,12 +204,16 @@ void SockServer::initCommands() {
 
 void SockServer::messageRouter(int fd, std::string &msg) {
 	User &usr = _users[fd];
-
+	
 	std::vector<std::string> args = parseMessage(msg);
 	if ((usr.nick.empty() || usr.user.empty()) && (args[0] != "USER" || args[0] != "NICK") ) {
 		if (usr.pass == 0 && args[0] != "PASS")
 			return;
 	}
+
+	std::cout << "[" << args[0] << "]" << std::endl;
+	if (args[0] == usr.nick + ':')
+		args.erase(args.begin());
 
 	if (_commands.count(args[0])) {
 		command tmp = _commands.find(args[0])->second;
