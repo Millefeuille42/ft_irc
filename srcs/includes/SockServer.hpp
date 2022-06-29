@@ -56,8 +56,10 @@ class SockServer {
 		static void welcome(SockServer &srv, const std::vector<std::string>&, User& user);
 		static void pass(SockServer &srv, std::vector<std::string>& args, User& user);
 		static void user(SockServer &srv, std::vector<std::string>& args, User& user);
+		static void ping(SockServer &srv, std::vector<std::string>& args, User& user);
 		static void nick(SockServer &srv, std::vector<std::string>& args, User& user);
 		static void quit(SockServer &srv, std::vector<std::string>& args, User& user);
+		static void oper(SockServer &srv, std::vector<std::string>& args, User& user);
 
 		std::string password;
 };

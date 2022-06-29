@@ -177,7 +177,7 @@ void SockServer::initCommands() {
 	_commands["USER"] = user;
 	_commands["QUIT"] = quit;
 	//_commands["MODE"] = mode;
-	//_commands["OPER"] = oper;
+	_commands["OPER"] = oper;
 
 	//_commands[INVITE] = invite;
 	//_commands[JOIN] = join;
@@ -192,7 +192,7 @@ void SockServer::initCommands() {
 
 	//_commands[ERROR] = error;
 	//_commands[KILL] = kill;
-	//_commands[PING] = ping;
+	_commands["PING"] = ping;
 	//_commands[PONG] = pong;
 
 	//_commands[WHO] = who;
