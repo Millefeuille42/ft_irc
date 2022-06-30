@@ -23,6 +23,12 @@
 #include "Channels.hpp"
 #include "responses.hpp"
 
+#ifdef __APPLE__
+# define OPTS SO_REUSEPORT
+#else
+# define OPTS SO_REUSEADDR | SO_REUSEPORT
+#endif
+
 # define ANY_CLIENT INADDR_ANY // Correspond a 0.0.0.0
 # define IPV4 AF_INET // Correspond a Ipv4 quand utilisé
 # define TCP SOCK_STREAM // Correspond au protocole TCP
