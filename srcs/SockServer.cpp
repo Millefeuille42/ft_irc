@@ -198,7 +198,7 @@ void SockServer::initCommands() {
 
 	//_commands[INFO] = info;
 	_commands["TIME"] = time;
-	//_commands[VERSION] = versions;
+	_commands["VERSION"] = version;
 }
 
 void SockServer::messageRouter(int fd, std::string &msg) {

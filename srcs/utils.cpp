@@ -44,3 +44,19 @@ std::string getCurrentTime() {
 			<< now->tm_sec;
 	return ss.str();
 }
+
+std::string getVersion() {
+	std::ifstream versionFile;
+	versionFile.open("version.txt", std::ios::out);
+	if (!versionFile.is_open()) {
+		std::cerr << std::strerror(errno) << std::endl;
+		return "N/A";
+	}
+
+	std::string ret;
+	getline(versionFile, ret);
+	versionFile.close();
+	if (ret.empty())
+		return "N/A";
+	return ret;
+}

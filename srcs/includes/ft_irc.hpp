@@ -19,7 +19,9 @@
 #include <csignal>
 #include <cstring>
 #include <ctime>
-# include <sstream>
+#include <cerrno>
+#include <sstream>
+#include <fstream>
 
 #include "User.hpp"
 #include "responses.hpp"
@@ -53,5 +55,6 @@ int socketConf(const char *port);
 struct pollfd generatePollFd(int fd, short events);
 std::vector<std::string> parseMessage(std::string msg);
 std::string getCurrentTime();
+std::string getVersion();
 
 #endif //FT_IRC_HPP
