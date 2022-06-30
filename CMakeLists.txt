@@ -29,4 +29,6 @@ add_executable(ft_irc
 		srcs/Commandes/Users/USER.cpp
 		srcs/Commandes/Users/PASS.cpp
 		srcs/Commandes/Users/QUIT.cpp
-		srcs/Commandes/Users/OPER.cpp)
+		srcs/Commandes/Users/OPER.cpp
+
+		srcs/Commandes/Channel/JOIN.cpp)

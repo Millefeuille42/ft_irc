@@ -48,6 +48,7 @@ int main(int argc, char **argv) {
 				acNum--;
 				bool err;
 				std::string msg = server.readMessage(it->fd, err);
+				std::cout << msg << std::endl;
 				if (!msg.empty()) {
 					server.messageRouter(it->fd, msg);
 				}
