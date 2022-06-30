@@ -7,12 +7,14 @@
 static int startSocket() {
 	int serverFd;
 	if ((serverFd = socket(IPV4, TCP, IP_PROTOCOL)) <= 0) {
+		std::cerr << std::strerror(errno) << std::endl;
 		throw std::runtime_error("socket creation failed");
 	}
 
 	int opt = 1;
-	if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
+	if (setsockopt(serverFd, SOL_SOCKET, OPTS,
 				   &opt, sizeof(opt))) {
+		std::cerr << std::strerror(errno) << std::endl;
 		throw std::runtime_error("socket was not properly created");
 	}
 
@@ -27,6 +29,7 @@ static void bindSocket(int serverFd, const char *port) {
 	address.sin_port = htons(std::strtol(port, NULL, 0));
 
 	if (bind(serverFd, (struct sockaddr *)&address,addrLen) < 0) {
+		std::cerr << std::strerror(errno) << std::endl;
 		throw std::runtime_error("socket bind failed");
 	}
 }
@@ -35,6 +38,7 @@ int socketConf(const char *port) {
 	int serverFd = startSocket();
 	bindSocket(serverFd, port);
 	if (listen(serverFd, MAX_CLIENTS)) {
+		std::cerr << std::strerror(errno) << std::endl;
 		throw std::runtime_error("socket listen failed");
 	}
 	std::cout << "Socket up" << std::endl;
