@@ -5,12 +5,12 @@
 #include "includes/SockServer.hpp"
 
 SockServer::SockServer():
-_port(), _serverFd(), _fds(), _users(), _nicks() {}
+_port(), _serverFd(), _fds(), _users(), _nicks(), _chans() {}
 
 SockServer::SockServer(const std::string & port):
 _port(port),
 _serverFd(generatePollFd(socketConf(_port.c_str()), DATA_IN)),
-_fds(fdVector(0)), _users(userMap()), _nicks(stringVector(0)) {
+_fds(fdVector(0)), _users(userMap()), _nicks(stringVector(0)), _chans(channelsMap()) {
 	_fds.push_back(_serverFd);
 	initCommands();
 	printStart();
@@ -23,6 +23,10 @@ SockServer::SockServer(const SockServer &src) : _serverFd() {
 SockServer::~SockServer() {
 	for (fdIterator it = _fds.begin(); it != _fds.end(); it++)
 		close(it->fd);
+	_fds.clear();
+	_users.clear();
+	_nicks.clear();
+	_chans.clear();
 }
 
 SockServer &SockServer::operator=(const SockServer &src) {
@@ -85,6 +89,7 @@ int SockServer::acceptConnection(SockAddress &addr) const {
 
 void SockServer::sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp) {
 	otp << message;
+	otp.flush();
 	send(target, message.c_str(), message.size(), 0);
 }
 
@@ -179,22 +184,22 @@ void SockServer::initCommands() {
 	//_commands["MODE"] = mode;
 	_commands["OPER"] = oper;
 
-	//_commands[INVITE] = invite;
-	//_commands[JOIN] = join;
-	//_commands[KICK] = kick;
-	//_commands[LIST] = list;
-	//_commands[MODE] = mode;
-	//_commands[NAMES] = names;
-	//_commands[PART] = part;
-	//_commands[TOPIC] = topic;
+	//_commands["INVITE"] = invite;
+	_commands["JOIN"] = join;
+	//_commands["KICK"] = kick;
+	//_commands["LIST"] = list;
+	//_commands["MODE"] = mode;
+	//_commands["NAMES"] = names;
+	//_commands["PART"] = part;
+	//_commands["TOPIC"] = topic;
 
-	//_commands[PRIVMSG] = privmsg;
+	//_commands["PRIVMSG"] = privmsg;
 
 	//_commands[ERROR] = error;
 	//_commands[KILL] = kill;
 	_commands["PING"] = ping;
 
-	//_commands[WHO] = who;
+	//_commands["WHO"] = who;
 
 	//_commands[INFO] = info;
 	_commands["TIME"] = time;

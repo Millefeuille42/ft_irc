@@ -18,6 +18,7 @@ class SockServer {
 		fdVector _fds;
 		userMap _users;
 		stringVector _nicks;
+		channelsMap _chans;
 		std::map<std::string, command> _commands;
 
 	public:
@@ -62,6 +63,8 @@ class SockServer {
 		static void oper(SockServer &srv, std::vector<std::string>& args, User& user);
 		static void time(SockServer &srv, std::vector<std::string> &, User& user);
 		static void version(SockServer &srv, std::vector<std::string> &, User& user);
+
+		static void join(SockServer &srv, std::vector<std::string>& args, User& user);
 
 		std::string password;
 };

@@ -24,6 +24,7 @@
 #include <fstream>
 
 #include "User.hpp"
+#include "Channels.hpp"
 #include "responses.hpp"
 
 #ifdef __APPLE__
@@ -45,6 +46,7 @@ extern int g_servFd;
 typedef std::vector<struct pollfd> fdVector;
 typedef std::map<int, User> userMap;
 typedef std::vector<std::string> stringVector;
+typedef std::map<std::string, Channels*> channelsMap;
 
 typedef fdVector::iterator fdIterator;
 typedef fdVector::const_iterator const_fdIterator;
