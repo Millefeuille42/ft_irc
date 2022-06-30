@@ -42,8 +42,10 @@ SockServer &SockServer::operator=(const SockServer &src) {
 }
 
 void SockServer::deleteClient(const fdIterator &client) {
-	transmit(_users[client->fd], "disconnected\n", std::cerr);
-	std::cerr.flush();
+	if (!_users[client->fd].nick.empty())
+		std::cerr << _users[client->fd].nick + ": disconnected" << std::endl;
+	else
+		std::cerr << _users[client->fd].ip + ": disconnected" << std::endl;
 	for (stringVector::iterator it = _nicks.begin(); it != _nicks.end(); it++) {
 		if (_users[client->fd].nick == *it) {
 			_nicks.erase(it);
@@ -69,7 +71,7 @@ int SockServer::check() {
 	SockAddress addr = SockAddress(IPV4, ANY_CLIENT, _port.c_str());
 	int newFd = acceptConnection(addr);
 	_fds.push_back(generatePollFd(newFd, POLLIN));
-	if (password == "")
+	if (password.empty())
 		_users[newFd] = User(newFd, addr.getIP(), 1);
 	else
 		_users[newFd] = User(newFd, addr.getIP());
@@ -88,8 +90,12 @@ int SockServer::acceptConnection(SockAddress &addr) const {
 }
 
 void SockServer::sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp) {
-	otp << message;
+	otp << "\tSENT -> " <<message;
 	otp.flush();
+	send(target, message.c_str(), message.size(), 0);
+}
+
+void SockServer::sendMessage(int target, const std::string & message) {
 	send(target, message.c_str(), message.size(), 0);
 }
 
@@ -98,22 +104,25 @@ void SockServer::transmit(User& user, std::string message, std::basic_ostream<ch
 		message = user.nick + ": " + message + "\n";
 	else
 		message = user.ip + ": " + message + "\n";
-	otp << message;
+	otp << "\tSENT -> "<< message;
+	otp.flush();
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == user.fd || it->fd == _fds.begin()->fd)
 			continue;
-		sendMessage(it->fd, message, otp); //TODO Ce serait pas mieux si c'etait hors de la boucle ? Pour recevoir une seule fois
+		sendMessage(it->fd, message);
 	}
 }
 
 void SockServer::transmitServ(std::string& message) {
+	std::cerr << "\tSENT -> " << message;
+	std::cerr.flush();
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == _fds.begin()->fd) {
-			if (it + 1 == _fds.end()) //S'il n'y a plus de clients, le serveur recevra tout de même le message.
-				std::cerr << message;
+//			if (it + 1 == _fds.end()) //S'il n'y a plus de clients, le serveur recevra tout de même le message.
+//				std::cerr << message; jsp pk c'est lq
 			continue;
 		}
-		sendMessage(it->fd, message, std::cerr); //TODO J'ai c/c ici, donc meme question (Si préférence dans la boucle, je laisse)
+		sendMessage(it->fd, message);
 	}
 }
 
@@ -226,10 +235,5 @@ void SockServer::messageRouter(int fd, std::string &msg) {
 		command tmp = _commands.find(args[0])->second;
 		tmp(*this, args, usr);
 		return;
-	}
-
-	if (!usr.realName.empty()) {
-		transmit(usr, msg, std::cout);
-		std::cout.flush();
 	}
 }

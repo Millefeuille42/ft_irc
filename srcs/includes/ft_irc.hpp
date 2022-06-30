@@ -22,6 +22,7 @@
 #include <cerrno>
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 
 #include "User.hpp"
 #include "Channels.hpp"
