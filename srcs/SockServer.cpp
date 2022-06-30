@@ -215,7 +215,10 @@ void SockServer::messageRouter(int fd, std::string &msg) {
 			return;
 	}
 
-	std::cout << "[" << args[0] << "]" << std::endl;
+	std::string disp = usr.ip;
+	if (!usr.nick.empty())
+		disp = usr.nick;
+	std::cout << "[" << args[0] << "] - " << disp << std::endl;
 	if (args[0] == usr.nick + ':')
 		args.erase(args.begin());
 
