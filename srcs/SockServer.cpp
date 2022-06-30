@@ -209,7 +209,7 @@ void SockServer::messageRouter(int fd, std::string &msg) {
 		if (usr.pass == 0 && args[0] != "PASS")
 			return;
 	}
-
+	std::transform(args[0].begin(), args[0].end(),args[0].begin(), ::toupper);
 	std::cout << "[" << args[0] << "]" << std::endl;
 	if (args[0] == usr.nick + ':')
 		args.erase(args.begin());
