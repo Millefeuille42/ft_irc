@@ -90,7 +90,7 @@ int SockServer::acceptConnection(SockAddress &addr) const {
 }
 
 void SockServer::sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp) {
-	otp << "\tSENT -> " <<message;
+	otp << "\tSENT -> " << message;
 	otp.flush();
 	send(target, message.c_str(), message.size(), 0);
 }
@@ -210,7 +210,7 @@ void SockServer::initCommands() {
 
 	//_commands["WHO"] = who;
 
-	//_commands[INFO] = info;
+	_commands["INFO"] = info;
 	_commands["TIME"] = time;
 	_commands["VERSION"] = version;
 }
@@ -223,7 +223,7 @@ void SockServer::messageRouter(int fd, std::string &msg) {
 		if (usr.pass == 0 && args[0] != "PASS")
 			return;
 	}
-
+	std::transform(args[0].begin(), args[0].end(),args[0].begin(), ::toupper);
 	std::string disp = usr.ip;
 	if (!usr.nick.empty())
 		disp = usr.nick;

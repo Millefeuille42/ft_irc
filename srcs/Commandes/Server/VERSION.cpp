@@ -4,6 +4,6 @@
 #include "../../includes/SockServer.hpp"
 
 void SockServer::version(SockServer &srv, std::vector<std::string> &, User& user) {
-	srv.sendMessage(user.fd, getVersion() + "\n", std::cout);
+	srv.sendMessage(user.fd, VERSION(getVersion()) + "\n", std::cout);
 	std::cout.flush();
 }
