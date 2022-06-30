@@ -198,13 +198,12 @@ void SockServer::initCommands() {
 	//_commands[ERROR] = error;
 	//_commands[KILL] = kill;
 	_commands["PING"] = ping;
-	//_commands[PONG] = pong;
 
 	//_commands["WHO"] = who;
 
-	//_commands["INFO"] = info;
-	//_commands["TIME"] = time;
-	//_commands["VERSION"] = versions;
+	//_commands[INFO] = info;
+	_commands["TIME"] = time;
+	_commands["VERSION"] = version;
 }
 
 void SockServer::messageRouter(int fd, std::string &msg) {

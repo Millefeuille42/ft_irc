@@ -41,7 +41,7 @@ OBJS	=	$(SRCS:.cpp=.o)
 
 $(NAME):	all
 
-all:	$(OBJS)
+all:	$(OBJS) version
 		$(CC) $(FLAGS) $(OBJS) -o $(NAME)
 
 sanitize:	$(OBJS)
@@ -55,7 +55,12 @@ fclean: clean
 
 re:	fclean all
 
+version:
+	@rm -f version.txt
+	@git log --format="%H" -n 1 > version.txt
+	@echo "version dumped"
+
 %.o:	%.cpp
 		$(CC) $(FLAGS) -o $@ -c $<
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re version
