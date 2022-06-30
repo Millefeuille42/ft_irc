@@ -31,3 +31,32 @@ void SockServer::welcome(SockServer& srv, const std::vector<std::string>&, User&
 	std::cout.flush();
 }
 
+std::string getCurrentTime() {
+	std::time_t t = std::time(NULL);
+	std::tm* now = std::localtime(&t);
+	std::ostringstream ss("");
+
+	ss << now->tm_mday << '-'
+			<< (now->tm_mon + 1) << '-'
+			<< (now->tm_year + 1900) << " - "
+			<< now->tm_hour << ':'
+			<< now->tm_min << ':'
+			<< now->tm_sec;
+	return ss.str();
+}
+
+std::string getVersion() {
+	std::ifstream versionFile;
+	versionFile.open("version.txt", std::ios::out);
+	if (!versionFile.is_open()) {
+		std::cerr << std::strerror(errno) << std::endl;
+		return "N/A";
+	}
+
+	std::string ret;
+	getline(versionFile, ret);
+	versionFile.close();
+	if (ret.empty())
+		return "N/A";
+	return ret;
+}
