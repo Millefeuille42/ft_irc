@@ -196,7 +196,7 @@ void SockServer::initCommands() {
 
 	//_commands[WHO] = who;
 
-	//_commands[INFO] = info;
+	_commands["INFO"] = info;
 	_commands["TIME"] = time;
 	_commands["VERSION"] = version;
 }
