@@ -8,6 +8,8 @@ Channels::Channels(int creator, std::string name, std::string key) : _name(name)
 	_members[creator] = true;
 	_nbop = 1;
 	initModes();
+	if (key != "")
+		_modes['k'] = true;
 }
 
 Channels::Channels(const Channels& src) {
