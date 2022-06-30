@@ -89,6 +89,7 @@ int SockServer::acceptConnection(SockAddress &addr) const {
 
 void SockServer::sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp) {
 	otp << message;
+	otp.flush();
 	send(target, message.c_str(), message.size(), 0);
 }
 
