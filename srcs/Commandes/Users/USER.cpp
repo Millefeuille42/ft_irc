@@ -5,7 +5,6 @@
 #include "../../includes/SockServer.hpp"
 
 void SockServer::user(SockServer &srv, std::vector<std::string>& args, User& user) {
-	std::cout << "Commande USER" << std::endl; //debug
 	if (args[0] != "USER" || args.size() < 5)
 		return ;
 	if (*args[4].begin() == ':') { //Le nom réel doit commencer par : et peut contenir des espaces
