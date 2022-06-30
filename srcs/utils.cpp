@@ -31,3 +31,16 @@ void SockServer::welcome(SockServer& srv, const std::vector<std::string>&, User&
 	std::cout.flush();
 }
 
+std::string getCurrentTime() {
+	std::time_t t = std::time(NULL);
+	std::tm* now = std::localtime(&t);
+	std::ostringstream ss("");
+
+	ss << now->tm_mday << '-'
+			<< (now->tm_mon + 1) << '-'
+			<< (now->tm_year + 1900) << " - "
+			<< now->tm_hour << ':'
+			<< now->tm_min << ':'
+			<< now->tm_sec;
+	return ss.str();
+}

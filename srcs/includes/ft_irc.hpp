@@ -18,6 +18,8 @@
 #include <cstdlib>
 #include <csignal>
 #include <cstring>
+#include <ctime>
+# include <sstream>
 
 #include "User.hpp"
 #include "responses.hpp"
@@ -50,5 +52,6 @@ typedef struct pollfd t_pollfd;
 int socketConf(const char *port);
 struct pollfd generatePollFd(int fd, short events);
 std::vector<std::string> parseMessage(std::string msg);
+std::string getCurrentTime();
 
 #endif //FT_IRC_HPP

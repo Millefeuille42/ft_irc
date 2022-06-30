@@ -16,11 +16,7 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	std::time_t t = std::time(NULL);
-	std::tm* now = std::localtime(&t);
-	std::cout << (now->tm_year + 1900) << '-'
-			  << (now->tm_mon + 1) << '-'
-			  <<  now->tm_mday << std::endl;
+	std::cout << getCurrentTime() << std::endl;
 
 	SockServer server = SockServer(argv[1]);
 	server.password = argv[2];
