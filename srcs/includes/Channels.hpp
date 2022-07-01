@@ -28,6 +28,7 @@ class Channels {
 
 		std::vector<int> getUsers();
 
+		std::string getName();
 		void setTopic(std::string& mess);
 		bool isOper(int fd);
 
@@ -36,6 +37,9 @@ class Channels {
 		bool joinChannel(int fd, std::string key);
 		void leaveChannel(int fd);
 
+		void ModeO() {
+
+		}
 };
 
 
