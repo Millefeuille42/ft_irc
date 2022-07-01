@@ -18,6 +18,7 @@ class SockServer {
 		fdVector _fds;
 		userMap _users;
 		stringVector _nicks;
+		channelsMap _chans;
 		std::map<std::string, command> _commands;
 
 	public:
@@ -51,7 +52,8 @@ class SockServer {
 		fdIterator begin();
 		fdIterator end();
 
-		void sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp);
+		static void sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp);
+		static void sendMessage(int target, const std::string & message);
 
 		static void welcome(SockServer &srv, const std::vector<std::string>&, User& user);
 		static void pass(SockServer &srv, std::vector<std::string>& args, User& user);
@@ -63,6 +65,8 @@ class SockServer {
 		static void time(SockServer &srv, std::vector<std::string> &, User& user);
 		static void version(SockServer &srv, std::vector<std::string> &, User& user);
 		static void info(SockServer &srv, std::vector<std::string> &, User& user);
+
+		static void join(SockServer &srv, std::vector<std::string>& args, User& user);
 
 		std::string password;
 };

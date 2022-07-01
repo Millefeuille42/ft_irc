@@ -12,6 +12,7 @@ SRCS	=	srcs/_SockServer_Commands.cpp \
 		srcs/User.cpp \
 		srcs/socketConf.cpp \
 		srcs/SockAddress.cpp \
+		srcs/Channels.cpp \
 		srcs/Commandes/Server/INFO.cpp \
 		srcs/Commandes/Server/TIME.cpp \
 		srcs/Commandes/Server/VERSION.cpp \
