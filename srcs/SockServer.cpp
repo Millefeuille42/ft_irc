@@ -127,11 +127,13 @@ void SockServer::transmitServ(std::string& message) {
 }
 
 void SockServer::transmitToChannel(Channels &chan, const User &user, const std::string& message) {
+	std::cout << message;
+	std::cout.flush();
 	std::vector<int> users = chan.getUsers();
 	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++) {
 		if (*it == user.fd)
 			continue;
-		sendMessage(*it, message, std::cout);
+		sendMessage(*it, message);
 	}
 }
 
