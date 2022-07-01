@@ -29,6 +29,13 @@ void Channels::initModes() {
 
 }
 
+std::vector<int> Channels::getUsers() {
+	std::vector<int> ret;
+	for (std::map<int, bool>::iterator it = _members.begin(); it != _members.end(); it++)
+		ret.push_back(it->first);
+	return (ret);
+}
+
 void Channels::setTopic(std::string &mess) {
 	_topic = mess;
 }
