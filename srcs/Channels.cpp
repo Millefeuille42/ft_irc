@@ -8,6 +8,8 @@ Channels::Channels(int creator, std::string name, std::string key) : _name(name)
 	_members[creator] = true;
 	_nbop = 1;
 	initModes();
+	if (key != "")
+		_modes['k'] = true;
 }
 
 Channels::Channels(const Channels& src) {
@@ -19,8 +21,6 @@ Channels::~Channels() {
 }
 
 void Channels::initModes() {
-	_modes['p'] = false; //Channel Privé
-	_modes['s'] = false; //Channel Secret
 	_modes['i'] = false; //Channel sur Invitation
 	_modes['t'] = false; //Topic du Channel modifiable que par les operateurs
 	_modes['n'] = false; //Pas de message provenant de l'extérieur
@@ -38,7 +38,9 @@ bool Channels::isOper(int fd) {
 }
 
 bool Channels::joinChannel(int fd, std::string key) {
-	if (key != _key)
+	if (_modes['k'] == true && key != _key)
+		return (false);
+	if (_modes['l'] == true && _members.size() == _maxMembers)
 		return (false);
 	_members[fd] = false;
 	return (true);

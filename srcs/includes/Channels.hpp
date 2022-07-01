@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <map>
+#include <vector>
 
 class Channels {
 	private:
@@ -11,8 +12,10 @@ class Channels {
 		std::string _topic;
 		std::string _key;
 		int	_nbop;
+		size_t _maxMembers;
 		std::map<int, bool> _members; //Bool pour les opérateurs -> True = Opérator
 		std::map<char, bool> _modes;
+		std::vector<int> _fdBans;
 
 	public:
 		Channels();
