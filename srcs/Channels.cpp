@@ -5,6 +5,8 @@ Channels::Channels() {
 }
 
 Channels::Channels(int creator, std::string name, std::string key) : _name(name), _creator(creator), _topic(""), _key(key) {
+	_members = std::map<int, bool>();
+	_modes = std::map<char, bool>();
 	_members[creator] = true;
 	std::cout << _members.begin()->first << std::endl;
 	_nbop = 1;
