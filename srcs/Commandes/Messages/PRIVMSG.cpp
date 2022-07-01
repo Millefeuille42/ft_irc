@@ -23,19 +23,19 @@ void SockServer::privmsg(SockServer &srv, std::vector<std::string> &args, User &
 	}
 
 	if (cInSet(args[1][0], "#&+!")) {
-		std::map<std::basic_string<char>, Channels *>::iterator chan = srv._chans.find(args[1]);
+		std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]);
 		std::cerr << chan->first << std::endl;
 		if (chan == srv._chans.end()) {
 			std::cerr << "No such channel {" + args[1] + "}" << std::endl;
 			return;
 		}
 		std::cout << "ZOB" << std::endl;
-		if (!user.channels.count(chan->second)) { // TODO check channel mode
+		if (!user.channels.count(&chan->second)) { // TODO check channel mode
 			std::cerr << "Not in channel" << std::endl;
 			return;
 		}
 		std::cout << "ZOBIZOB" << std::endl;
-		std::vector<int> users = chan->second->getUsers();
+		std::vector<int> users = chan->second.getUsers();
 		std::cout << "ZOBIZOBIZOB" << std::endl;
 		for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++) {
 			if (*it == user.fd)
