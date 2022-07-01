@@ -126,7 +126,7 @@ void SockServer::transmitServ(std::string& message) {
 	}
 }
 
-void SockServer::transmitToChannel(Channels &chan, User &user, const std::string& message) {
+void SockServer::transmitToChannel(Channels &chan, const User &user, const std::string& message) {
 	std::vector<int> users = chan.getUsers();
 	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++) {
 		if (*it == user.fd)

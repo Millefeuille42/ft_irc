@@ -1,14 +1,12 @@
 #include "includes/Channels.hpp"
 
 Channels::Channels() {
-	std::cout << "constructeur par default" << std::endl;
 }
 
 Channels::Channels(int creator, std::string name, std::string key) : _name(name), _creator(creator), _topic(""), _key(key) {
 	_members = std::map<int, bool>();
 	_modes = std::map<char, bool>();
 	_members[creator] = true;
-	std::cout << _members.begin()->first << std::endl;
 	_nbop = 1;
 	initModes();
 	if (key != "")
@@ -16,7 +14,6 @@ Channels::Channels(int creator, std::string name, std::string key) : _name(name)
 }
 
 Channels::Channels(const Channels& src) {
-	std::cout << "constructeur par copie" << std::endl;
 	*this = src;
 }
 
