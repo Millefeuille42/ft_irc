@@ -28,6 +28,7 @@ class Channels {
 
 		std::vector<int> getUsers();
 
+		std::string getName();
 		void setTopic(std::string& mess);
 		bool isOper(int fd);
 

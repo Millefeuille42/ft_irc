@@ -50,6 +50,10 @@ bool Channels::isOper(int fd) {
 	return (_members[fd]);
 }
 
+std::string Channels::getName() {
+	return (_name);
+}
+
 bool Channels::joinChannel(int fd, std::string key) {
 	if (_modes['k'] == true && key != _key)
 		return (false);
@@ -82,6 +86,12 @@ Channels& Channels::operator=(const Channels& src) {
 	_topic = src._topic;
 	_creator = src._creator;
 	_members = src._members;
+	_topic = src._topic;
+	_key = src._key;
+	_nbop = src._nbop;
+	_maxMembers = src._maxMembers;
+	_modes = src._modes;
+	_fdBans = src._fdBans;
 
 	return *this;
 }
