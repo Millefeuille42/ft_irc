@@ -60,5 +60,6 @@ struct pollfd generatePollFd(int fd, short events);
 std::vector<std::string> parseMessage(std::string msg);
 std::string getCurrentTime();
 std::string getVersion();
+bool cInSet(const char c, const std::string &set);
 
 #endif //FT_IRC_HPP

@@ -150,6 +150,14 @@ int SockServer::getFd() const {
 	return _serverFd.fd;
 }
 
+User *SockServer::getUserByNick(const std::string &nick) {
+	for (std::map<int, User>::iterator it = _users.begin(); it != _users.end(); it++) {
+		if (it->second.nick == nick)
+			return &it->second;
+	}
+	return NULL;
+}
+
 std::string SockServer::readMessage(int fd, bool &err) {
 	std::string message;
 	size_t ret = BUFFER_SIZE;

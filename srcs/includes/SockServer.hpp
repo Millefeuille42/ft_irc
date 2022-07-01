@@ -48,6 +48,7 @@ class SockServer {
 		size_t getSize();
 		int getFd() const;
 		stringVector& getNicks();
+		User *getUserByNick(const std::string &nick);
 
 		fdIterator begin();
 		fdIterator end();

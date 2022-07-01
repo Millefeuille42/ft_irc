@@ -30,9 +30,11 @@ void Channels::initModes() {
 }
 
 std::vector<int> Channels::getUsers() {
-	std::vector<int> ret(1);
-	for (std::map<int, bool>::iterator it = _members.begin(); it != _members.end(); it++)
+	std::vector<int> ret;
+	for (std::map<int, bool>::iterator it = _members.begin(); it != _members.end(); it++) {
+		std::cout << it->first << std::endl;
 		ret.push_back(it->first);
+	}
 	return (ret);
 }
 

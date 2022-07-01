@@ -51,9 +51,9 @@ void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& use
 		channelsMap::iterator itc = srv._chans.find(it->first);
 		std::string mess = "Welcome in the channel " + it->first + "!\n";
 		if (itc == srv._chans.end()) { //Nouveau Channel
-			std::cerr << itc->first << std::endl;
 			Channels newC = Channels(user.fd, it->first, it->second);
 			user.enterChannel(&newC, true);
+			srv._chans[it->first] = &newC;
 			srv.sendMessage(user.fd, mess, std::cout);
 		}
 		else {
