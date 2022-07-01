@@ -11,6 +11,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <algorithm>
 #include <map>
 #include <vector>
 #include <string>
@@ -18,9 +19,19 @@
 #include <cstdlib>
 #include <csignal>
 #include <cstring>
+#include <ctime>
+#include <cerrno>
+#include <sstream>
+#include <fstream>
 
 #include "User.hpp"
 #include "responses.hpp"
+
+#ifdef __APPLE__
+# define OPTS SO_REUSEPORT
+#else
+# define OPTS SO_REUSEADDR | SO_REUSEPORT
+#endif
 
 # define ANY_CLIENT INADDR_ANY // Correspond a 0.0.0.0
 # define IPV4 AF_INET // Correspond a Ipv4 quand utilisé
@@ -44,5 +55,7 @@ typedef struct pollfd t_pollfd;
 int socketConf(const char *port);
 struct pollfd generatePollFd(int fd, short events);
 std::vector<std::string> parseMessage(std::string msg);
+std::string getCurrentTime();
+std::string getVersion();
 
 #endif //FT_IRC_HPP

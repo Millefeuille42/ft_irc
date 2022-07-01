@@ -33,4 +33,6 @@
 
 cmake-build*
 .idea
-ircserv
+ircserv*
+
+version.txt
