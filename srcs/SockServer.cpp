@@ -202,7 +202,7 @@ void SockServer::initCommands() {
 	//_commands["PART"] = part;
 	//_commands["TOPIC"] = topic;
 
-	//_commands["PRIVMSG"] = privmsg;
+	_commands["PRIVMSG"] = privmsg;
 
 	//_commands[ERROR] = error;
 	//_commands[KILL] = kill;
@@ -214,6 +214,8 @@ void SockServer::initCommands() {
 	_commands["TIME"] = time;
 	_commands["VERSION"] = version;
 }
+
+// TODO	Error messages on commands
 
 void SockServer::messageRouter(int fd, std::string &msg) {
 	User &usr = _users[fd];
