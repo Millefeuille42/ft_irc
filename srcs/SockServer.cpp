@@ -126,6 +126,15 @@ void SockServer::transmitServ(std::string& message) {
 	}
 }
 
+void SockServer::transmitToChannel(Channels &chan, User &user, const std::string& message) {
+	std::vector<int> users = chan.getUsers();
+	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++) {
+		if (*it == user.fd)
+			continue;
+		sendMessage(*it, message, std::cout);
+	}
+}
+
 t_pollfd *SockServer::getFds() {
 	return _fds.begin().operator->();
 }
@@ -148,6 +157,14 @@ fdIterator SockServer::end() {
 
 int SockServer::getFd() const {
 	return _serverFd.fd;
+}
+
+User *SockServer::getUserByNick(const std::string &nick) {
+	for (std::map<int, User>::iterator it = _users.begin(); it != _users.end(); it++) {
+		if (it->second.nick == nick)
+			return &it->second;
+	}
+	return NULL;
 }
 
 std::string SockServer::readMessage(int fd, bool &err) {
@@ -202,10 +219,10 @@ void SockServer::initCommands() {
 	//_commands["PART"] = part;
 	//_commands["TOPIC"] = topic;
 
-	//_commands["PRIVMSG"] = privmsg;
+	_commands["PRIVMSG"] = privmsg;
 
 	//_commands[ERROR] = error;
-	//_commands[KILL] = kill;
+	_commands["KILL"] = kill;
 	_commands["PING"] = ping;
 
 	//_commands["WHO"] = who;
@@ -214,6 +231,8 @@ void SockServer::initCommands() {
 	_commands["TIME"] = time;
 	_commands["VERSION"] = version;
 }
+
+// TODO	Error messages on commands
 
 void SockServer::messageRouter(int fd, std::string &msg) {
 	User &usr = _users[fd];

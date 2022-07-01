@@ -51,14 +51,14 @@ void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& use
 		channelsMap::iterator itc = srv._chans.find(it->first);
 		std::string mess = "Welcome in the channel " + it->first + "!\n";
 		if (itc == srv._chans.end()) { //Nouveau Channel
-			std::cerr << itc->first << std::endl;
-			Channels newC = Channels(user.fd, it->first, it->second);
-			user.enterChannel(&newC, true);
+			Channels newC(user.fd, it->first, it->second);
+			srv._chans[it->first] = newC;
+			user.enterChannel(&srv._chans[it->first], true);
 			srv.sendMessage(user.fd, mess, std::cout);
 		}
 		else {
-			if (itc->second->joinChannel(user.fd, it->second)) {  //Channel rejoins
-				user.enterChannel(itc->second, false); //TODO Message de bienvenue dans le Channel
+			if (itc->second.joinChannel(user.fd, it->second)) {  //Channel rejoins
+				user.enterChannel(&itc->second, false); //TODO Message de bienvenue dans le Channel
 				srv.sendMessage(user.fd, mess, std::cout);
 			}
 			else { //Channel Non-Rejoins

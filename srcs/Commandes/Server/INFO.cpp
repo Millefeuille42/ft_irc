@@ -11,5 +11,4 @@ void SockServer::info(SockServer &srv, std::vector<std::string> &, User& user) {
 	ss.str(""); ss << "Port: " << srv._port;
 	srv.sendMessage(user.fd, INFO(ss.str()) + "\n", std::cout);
 	srv.sendMessage(user.fd, std::string(ENDOFINFO) + "\n", std::cout);
-	std::cout.flush();
 }

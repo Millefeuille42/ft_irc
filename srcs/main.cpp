@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
 				continue;
 
 			// If there is data to read
-			if (it->revents == POLLIN) {
+			if (it->revents == DATA_IN) {
 				acNum--;
 				bool err;
 				std::string msg = server.readMessage(it->fd, err);

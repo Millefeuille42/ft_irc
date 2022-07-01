@@ -33,7 +33,6 @@ SRCS	=	srcs/_SockServer_Commands.cpp \
 		srcs/Commandes/Channel/NAMES.cpp \
 		srcs/Commandes/Channel/PART.cpp \
 		srcs/Commandes/Other/KILL.cpp \
-		srcs/Commandes/Other/PONG.cpp \
 		srcs/Commandes/Other/PING.cpp \
 		srcs/Commandes/Other/ERROR.cpp
 

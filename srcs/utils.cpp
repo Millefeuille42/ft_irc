@@ -60,3 +60,11 @@ std::string getVersion() {
 		return "N/A";
 	return ret;
 }
+
+bool cInSet(const char c, const std::string &set) {
+	for (std::string::const_iterator it = set.begin(); it != set.end(); it++) {
+		if (*it == c)
+			return true;
+	}
+	return false;
+}

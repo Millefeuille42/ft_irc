@@ -38,6 +38,7 @@ class SockServer {
 		int acceptConnection(SockAddress & addr) const;
 		void transmit(User& user, std::string message, std::basic_ostream<char> & otp);
 		void transmitServ(std::string& message);
+		void transmitToChannel(Channels &chan, User &user, const std::string& message);
 		std::string readMessage(int fd, bool &err);
 
 		void messageRouter( int fd, std::string &msg);
@@ -48,6 +49,7 @@ class SockServer {
 		size_t getSize();
 		int getFd() const;
 		stringVector& getNicks();
+		User *getUserByNick(const std::string &nick);
 
 		fdIterator begin();
 		fdIterator end();
@@ -59,12 +61,14 @@ class SockServer {
 		static void pass(SockServer &srv, std::vector<std::string>& args, User& user);
 		static void user(SockServer &srv, std::vector<std::string>& args, User& user);
 		static void ping(SockServer &srv, std::vector<std::string>& args, User& user);
+		static void kill(SockServer &srv, std::vector<std::string>& args, User& user);
 		static void nick(SockServer &srv, std::vector<std::string>& args, User& user);
 		static void quit(SockServer &srv, std::vector<std::string>& args, User& user);
 		static void oper(SockServer &srv, std::vector<std::string>& args, User& user);
 		static void time(SockServer &srv, std::vector<std::string> &, User& user);
 		static void version(SockServer &srv, std::vector<std::string> &, User& user);
 		static void info(SockServer &srv, std::vector<std::string> &, User& user);
+		static void privmsg(SockServer &srv, std::vector<std::string> &, User& user);
 
 		static void join(SockServer &srv, std::vector<std::string>& args, User& user);
 
