@@ -205,7 +205,7 @@ void SockServer::initCommands() {
 	_commands["PRIVMSG"] = privmsg;
 
 	//_commands[ERROR] = error;
-	//_commands[KILL] = kill;
+	_commands["KILL"] = kill;
 	_commands["PING"] = ping;
 
 	//_commands["WHO"] = who;
