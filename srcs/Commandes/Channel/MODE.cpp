@@ -16,6 +16,10 @@
 #include "../../includes/SockServer.hpp"
 
 static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<std::string> args, Channels &chan) {
+	(void)srv;
+	(void)ar;
+	(void)args;
+	(void)chan;
 	if (mode == 'o') {
 		//Call Operator Function -> Envoyer args (Users)
 	}
@@ -40,6 +44,10 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 }
 
 static void callFunctionUser(SockServer &srv, char mode, char ar, User& user, bool op) {
+	(void)srv;
+	(void)ar;
+	(void)user;
+	(void)op;
 	if (mode == 'i') {
 		//Call Invisible Function
 	}
@@ -106,6 +114,5 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 		for (size_t i = 1; i < rem.size(); i++) {
 			callFunctionUser(srv, rem[i], '-', *target, user.modes['o']);
 		}
-	}
 	}
 }
