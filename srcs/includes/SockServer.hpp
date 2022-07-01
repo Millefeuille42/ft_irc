@@ -64,6 +64,7 @@ class SockServer {
 		static void time(SockServer &srv, std::vector<std::string> &, User& user);
 		static void version(SockServer &srv, std::vector<std::string> &, User& user);
 		static void info(SockServer &srv, std::vector<std::string> &, User& user);
+		static void who(SockServer &srv, std::vector<std::string>& args, User& user);
 
 		std::string password;
 };
