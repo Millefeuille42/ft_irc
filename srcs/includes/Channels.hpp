@@ -37,6 +37,9 @@ class Channels {
 		bool joinChannel(int fd, std::string key);
 		void leaveChannel(int fd);
 
+		void ModeO() {
+
+		}
 };
 
 
