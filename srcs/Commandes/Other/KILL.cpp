@@ -55,9 +55,9 @@
 
 void SockServer::kill(SockServer &srv, std::vector<std::string> &, User& user)
 {
+	srv.sendMessage(user.fd, "have been killed\n", std::cout);
 	user.nick.erase();
 	user.user.erase();
 	close(user.fd);
-	srv.sendMessage(user.fd, "have been killed\n", std::cout);
 	std::cout.flush();
 }

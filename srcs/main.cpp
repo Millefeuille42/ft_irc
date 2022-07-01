@@ -44,10 +44,11 @@ int main(int argc, char **argv) {
 				continue;
 
 			// If there is data to read
-			if (it->revents == POLLIN) {
+			if (it->revents == DATA_IN) {
 				acNum--;
 				bool err;
 				std::string msg = server.readMessage(it->fd, err);
+				std::cout << "\tRECV -> " << msg << std::endl;
 				if (!msg.empty()) {
 					server.messageRouter(it->fd, msg);
 				}

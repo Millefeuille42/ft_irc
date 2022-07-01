@@ -11,5 +11,6 @@
 
 #define INFO(x) ":ircserv 371 ircserv :" + x
 #define ENDOFINFO ":ircserv 374 ircserv :End of INFO list"
+#define PRIVMSG(from, to) ":" + from + " PRIVMSG" + " " + to + " :"
 
 #endif //RESPONSES_HPP

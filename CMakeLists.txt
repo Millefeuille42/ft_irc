@@ -16,6 +16,7 @@ add_executable(ft_irc
 		srcs/SockAddress.cpp
 		srcs/_SockServer_Commands.cpp
 		srcs/SockServer.cpp
+		srcs/Channels.cpp
 
 		srcs/Commandes/Server/INFO.cpp
 		srcs/Commandes/Server/TIME.cpp
@@ -44,5 +45,4 @@ add_executable(ft_irc
 		srcs/Commandes/Other/KILL.cpp
 		srcs/Commandes/Other/PING.cpp
 		srcs/Commandes/Other/ERROR.cpp
-
 		)

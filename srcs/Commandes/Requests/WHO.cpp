@@ -34,18 +34,38 @@
 
 // WHO jto* o          ; Command to list all users with a match against "jto*" if they are an operator.
 
-#include "../../includes/SockServer.hpp"
+// #include "../../includes/SockServer.hpp"
 
-void SockServer::who(SockServer &srv, std::vector<std::string> & args, User& user)
-{
-	if (args ==  )
-	if (args == 0)
-	else if (args == user.user || args == user.realName || args == user.nick)
-	else if (args == "o")
+// void SockServer::who(SockServer &srv, std::vector<std::string> & args, User& user)
+// {
+// 	if (args.size() < 1)
+// 	{
+// 		for (int i = 0; i < user.fd; i++)
+// 			srv.sendMessage(user.fd, "have been killed\n", std::cout);
+// 	}
 
-	std::cout << "Informations on the request user :" << std::endl;
-	std::cout << "IP Adress\t\t: " << user.ip << std::endl;
-	std::cout << "User\t\t: " << user.user << std::endl;
-	std::cout << "Real Name\t\t: " << user.realName << std::endl;
-	std::cout << "Nick\t\t: " << user.nick << std::endl;
-}
+// 	else if (!srv._chans.count(args[1]))
+// 	{
+
+// 	}
+
+// 	else if (args == user.user || args == user.realName || args == user.nick)
+// 	{
+// 		std::cout << "Informations on the request user :" << std::endl;
+// 		std::cout << "IP Adress\t\t: " << user.ip << std::endl;
+// 		std::cout << "User\t\t: " << user.user << std::endl;
+// 		std::cout << "Real Name\t\t: " << user.realName << std::endl;
+// 		std::cout << "Nick\t\t: " << user.nick << std::endl;
+// 	}
+
+// 	else if (args == "o")
+// 	{
+
+// 	}
+
+// 	else
+// 	{
+
+// 	}
+
+// }
