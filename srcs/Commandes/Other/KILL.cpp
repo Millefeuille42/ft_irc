@@ -53,11 +53,35 @@
 
 #include "../../includes/SockServer.hpp"
 
-void SockServer::kill(SockServer &srv, std::vector<std::string> &, User& user)
+void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& user)
 {
-	srv.sendMessage(user.fd, "have been killed\n", std::cout);
-	user.nick.erase();
-	user.user.erase();
-	close(user.fd);
-	std::cout.flush();
+	std::string tokilluser = args[1];
+
+	// if (user a pas les droits batard ( pas ircoperate))
+	// {
+	// 	sendMessage(2, "Error: Don't have this privilege"); IL FAUT CE CHECK MAIS JE SAIS PAS COMMENT ON SAIT QUI EST OPERATE
+	// }
+	// remplacer le if en dessous par un else if
+	if (args.size() < 2)
+	{
+		sendMessage(2, "Error: Need param");
+	}
+	else if (tokilluser == "ircserv")
+	{
+		sendMessage(2, "Error: Server couldn't be killed");
+	}
+	else if (!srv.getUserByNick(tokilluser) || !srv.getUserByRealName(tokilluser) || !srv.getUserByUsername(tokilluser))
+	{
+		sendMessage(2, "Error: Unknown user");
+	}
+	else
+	{
+		User *bastard = srv.getUserByUsername(tokilluser);
+		srv.sendMessage(bastard->fd, bastard->nick + " have been kicked\n", std::cout);
+		// srv.deleteClient(bastard->fd);
+		user.nick.erase();
+		user.user.erase();
+		close(user.fd);
+		std::cout.flush();
+	}
 }
