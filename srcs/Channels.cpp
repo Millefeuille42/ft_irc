@@ -1,14 +1,12 @@
 #include "includes/Channels.hpp"
 
 Channels::Channels() {
-	std::cout << "constructeur par default" << std::endl;
 }
 
 Channels::Channels(int creator, std::string name, std::string key) : _name(name), _creator(creator), _topic(""), _key(key) {
 	_members = std::map<int, bool>();
 	_modes = std::map<char, bool>();
 	_members[creator] = true;
-	std::cout << _members.begin()->first << std::endl;
 	_nbop = 1;
 	initModes();
 	if (key != "")
@@ -16,7 +14,6 @@ Channels::Channels(int creator, std::string name, std::string key) : _name(name)
 }
 
 Channels::Channels(const Channels& src) {
-	std::cout << "constructeur par copie" << std::endl;
 	*this = src;
 }
 
@@ -48,6 +45,10 @@ void Channels::setTopic(std::string &mess) {
 
 bool Channels::isOper(int fd) {
 	return (_members[fd]);
+}
+
+std::string Channels::getName() {
+	return (_name);
 }
 
 bool Channels::joinChannel(int fd, std::string key) {
@@ -82,6 +83,12 @@ Channels& Channels::operator=(const Channels& src) {
 	_topic = src._topic;
 	_creator = src._creator;
 	_members = src._members;
+	_topic = src._topic;
+	_key = src._key;
+	_nbop = src._nbop;
+	_maxMembers = src._maxMembers;
+	_modes = src._modes;
+	_fdBans = src._fdBans;
 
 	return *this;
 }

@@ -20,6 +20,8 @@ void SockServer::quit(SockServer &srv, std::vector<std::string>& args, User& use
 		if (it->fd == user.fd)
 			break ;
 	}
+	for (std::map<Channels*, bool>::iterator cit = user.channels.begin(); cit != user.channels.end(); cit++) {
+		srv.transmitToChannel(*cit->first, User(), PRIVMSG(std::string("ircserv"), cit->first->getName()) + mess);
+	}
 	srv.deleteClient(it);
-	srv.transmitServ(mess);
 }
