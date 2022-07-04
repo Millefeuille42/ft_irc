@@ -59,7 +59,7 @@ void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& use
 
 	// if (user a pas les droits batard ( pas ircoperate))
 	// {
-	//	std::cerr << "Error: Don't have this privilege" << std::endl; IL FAUT CE CHECK MAIS JE SAIS PAS COMMENT ON SAIT QUI EST OPERATE
+	//	std::cerr << "Error: Don't have this privilege" << std::endl; IL FAUT CE CHECK MAIS JE SAIS PAS COMMENT ON SAIT QUI EST OPERATE //TODO
 	// }
 	// remplacer le if en dessous par un else if
 	if (args.size() < 2)
@@ -82,6 +82,6 @@ void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& use
 		user.nick.erase();
 		user.user.erase();
 		close(user.fd);
-		std::cout.flush();
+		std::cout.flush(); //TODO
 	}
 }

@@ -49,7 +49,7 @@ void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& use
 	}
 	else 
 	{
-		// on kick le batard
+		// on kick le batard //TODO
 
 	}
-}
+} //TODO
