@@ -1,32 +1,55 @@
-//Retirer un utilisateur d'un channel
-//KICK <canal> <utilisateur> [<commentaire>]
+// Commande: KICK
+// Paramètres: <canal> <utilisateur> [<commentaire>]
 
-// Command: KICK
-// Parameters: <channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]
+// La commande KICK est utilisée pour retirer par la force un utilisateur d'un canal (PART forcé).
 
-// The KICK command can be used to request the forced removal of a user
-// from a channel.  It causes the <user> to PART from the <channel> by
-// force.  For the message to be syntactically correct, there MUST be
-// either one channel parameter and multiple user parameter, or as many
-// channel parameters as there are user parameters.  If a "comment" is
-// given, this will be sent instead of the default message, the nickname
-// of the user issuing the KICK.
+// Seul un opérateur de canal peut kicker un autre utilisateur hors d'un canal. 
+// Tout serveur qui reçoit un message KICK vérifie si le message est valide 
+// (c'est-à-dire si l'expéditeur est bien un opérateur du canal) avant d'ôter la victime du canal.
 
-// The server MUST NOT send KICK messages with multiple channels or
-// users to clients.  This is necessarily to maintain backward
-// compatibility with old client software.
+// Réponses numériques :
 
-// Numeric Replies:
+//            ERR_NEEDMOREPARAMS              ERR_NOSUCHCHANNEL
+//            ERR_BADCHANMASK                 ERR_CHANOPRIVSNEEDED
+//            ERR_NOTONCHANNEL
+// Exemples:
 
-// ERR_NEEDMOREPARAMS   ERR_NOSUCHCHANNEL
-// ERR_BADCHANMASK      ERR_CHANOPRIVSNEEDED
-// ERR_USERNOTINCHANNEL ERR_NOTONCHANNEL
+// KICK &Melbourne Matthew ; Kick Matthew de &Melbourne
+// KICK #Finnish John :Speaking English ; Kick John de #Finnish en spécifiant "Speaking English" comme raison (commentaire).
+// :WiZ KICK #Finnish John ; Message KICK de WiZ pour retirer John du canal #Finnish
 
-// Examples:
+#include "../../includes/SockServer.hpp"
 
-// KICK &Melbourne Matthew						; Command to kick Matthew from &Melbourne
+void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& user)
+{
+	std::string tokickuser = args[2];
+	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]);
 
-// KICK #Finnish John :Speaking English			; Command to kick John from #Finnish using "Speaking English" as the reason (comment).
+	if (args.size() < 2)
+	{
+		std::cerr << "Error: Need param" << std::endl;
+ 		return ;
+	}
+	if (chan == srv._chans.end()) {
+ 		std::cerr << "No such channel {" + args[1] + "}" << std::endl;
+		return;
+	}
+	else if (!srv.getUserByNick(tokickuser) || !srv.getUserByRealName(tokickuser) || !srv.getUserByUsername(tokickuser))
+	{
+		std::cerr << "Error: Unknown user" << std::endl;
+		return ;
+	}
+	// else if (chan existe mais pas le mec dedans)
+	// {
+	// 	std::cerr << "Error: User isn't in this Channel" << std::endl;
+	// }
+	else if (chan->second.isOper(user.fd) == false)
+	{
+		std::cerr << "Error: Don't have this privilege" << std::endl;
+	}
+	else 
+	{
+		// on kick le batard
 
-// :WiZ!jto@tolsun.oulu.fi KICK #Finnish John	; KICK message on channel #Finnish from WiZ to remove John from channel
-
+	}
+}
