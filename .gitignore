@@ -36,3 +36,6 @@ cmake-build*
 ircserv*
 
 version.txt
+
+#teo casse les couilles avec son mac et son vscode
+.vscode/configurationCache.log
