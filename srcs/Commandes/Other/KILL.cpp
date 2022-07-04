@@ -59,20 +59,20 @@ void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& use
 
 	// if (user a pas les droits batard ( pas ircoperate))
 	// {
-	// 	sendMessage(2, "Error: Don't have this privilege"); IL FAUT CE CHECK MAIS JE SAIS PAS COMMENT ON SAIT QUI EST OPERATE
+	//	std::cerr << "Error: Don't have this privilege" << std::endl; IL FAUT CE CHECK MAIS JE SAIS PAS COMMENT ON SAIT QUI EST OPERATE
 	// }
 	// remplacer le if en dessous par un else if
 	if (args.size() < 2)
 	{
-		sendMessage(2, "Error: Need param");
+		std::cerr << "Error: Need param" << std::endl;
 	}
 	else if (tokilluser == "ircserv")
 	{
-		sendMessage(2, "Error: Server couldn't be killed");
+		std::cerr << "Error: Server couldn't be killed" << std::endl;
 	}
 	else if (!srv.getUserByNick(tokilluser) || !srv.getUserByRealName(tokilluser) || !srv.getUserByUsername(tokilluser))
 	{
-		sendMessage(2, "Error: Unknown user");
+		std::cerr << "Error: Unknown user" << std::endl;
 	}
 	else
 	{

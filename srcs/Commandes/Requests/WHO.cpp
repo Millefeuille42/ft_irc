@@ -1,92 +1,92 @@
-//Envoyer les liste d'informations des utilisateurs.
-//WHO [<nom> [<o>]]
+// Commande: WHO
+// Paramètres: [<nom> [<o>]]
 
+// Le message WHO est utilisé par un client pour générer une requête qui renvoie une liste d'informations
+// qui correspondent au paramètre <nom> donné par le client. Si le paramètre nom est absent, 
+// tous les utilisateurs visibles (ceux qui ne sont pas invisibles (mode utilisateur +i) et qui n'ont 
+// pas de canal en commun avec le client émettant la requête) sont listés. 
+// Le même résultat peut être obtenu en utilisant le <nom> "0" ou tout joker correspondant à toutes les entrées possibles.
 
-// La commande /who te permet d'afficher des informations sur les utilisateurs. 
-// Sans argument, cela retourne la liste des personnes connectées sur le réseau. 
-// Tu peux néanmoins spécifier un channel ou un mask pour nickname, usernamer ou hostname. 
-// Enfin, tu peux lister les IRCOperators en spécifiant o en deuxième argument.
+// Le <nom> passé en paramètre est mis en correspondance avec les hôtes des utilisateurs, 
+// leurs véritables noms, et leurs pseudonymes si le canal <nom> n'est pas trouvé.
 
-// /who [channel | mask] [o]
+// Si le paramètre "o" est passé, seuls les opérateurs sont listés, et ce, en fonction du masque fourni.
 
-// The WHO command is used by a client to generate a query which returns
-// a list of information which 'matches' the <mask> parameter given by
-// the client.  In the absence of the <mask> parameter, all visible
-// (users who aren't invisible (user mode +i) and who don't have a
-// common channel with the requesting client) are listed.  The same
-// result can be achieved by using a <mask> of "0" or any wildcard which
-// will end up matching every visible user.
+// Réponses numériques :
 
-// The <mask> passed to WHO is matched against users' host, server, real
-// name and nickname if the channel <mask> cannot be found.
+//            ERR_NOSUCHSERVER
+//            RPL_WHOREPLY                    RPL_ENDOFWHO
+// Exemples:
 
-// If the "o" parameter is passed only operators are returned according
-// to the <mask> supplied.
-
-// Numeric Replies:
-
-// ERR_NOSUCHSERVER
-// RPL_WHOREPLY			RPL_ENDOFWHO
-
-// Examples:
-
-// WHO *.fi            ; Command to list all users who match against "*.fi".
-
-// WHO jto* o          ; Command to list all users with a match against "jto*" if they are an operator.
+// WHO *.fi ; Liste tous les utilisateurs qui correspondent à "*.fi".
+// WHO jto* o ; Liste tous les utilisateurs qui correspondent à "jto*", s'ils sont opérateurs.
 
 #include "../../includes/SockServer.hpp"
 #include <cstddef>
 
 void SockServer::who(SockServer &srv, std::vector<std::string> & args, User& user)
 {
-	if (args.size() < 2)
+	if (args.size() < 3 || (args.size() < 4 && args[3] == "0"))
 	{
-		// std::cout << "Informations on all connected users :" << std::endl;
-		srv.sendMessage(1, "Informations on all connected users :\n");
+		std::cout << "List of all connected users :" << std::endl;
 		for (size_t i = 1; i < srv._fds.size(); i++)
-		{
-			// std::cout << "IP Adress\t\t: " << user.ip << "\nUser Name\t\t: " << user.user << "\nReal Name\t\t: " << user.realName << "\nNick Name\t\t: " << user.nick << std::endl;
-			// srv.sendMessage(1, "IP Adress :" + srv._users + "\n");
-			// srv.sendMessage(1, "User Name :" + user[i].user + "\n");
-			// srv.sendMessage(1, "Real Name :" + user[i].realName + "\n");
-			srv.sendMessage(1, "Nick Name :" + srv._users[srv._fds[i], NULL].nick + "\n");
-		}
+			std::cout << "\t- Utilisateur " << i << " : " << srv._users[srv._fds[i].fd].realName << " -" << std::endl;
+		std::cout << "End of the list." << std::endl;
 	}
-	else if (args[1] == "o")
-	{
-		// en theorie ici faut mettre les user qui sont dans le serveur et operateur
-	}
-	else if (!srv._chans.count(args[1]))
-	{
-		// en theorie ici faut mettre les user qui sont dans le channels precise en args
-	}
+	// else if (args.size() == 3 && args[2] == "o")
+	// {
+	// 	// en theorie ici faut mettre les user qui sont dans le serveur et operateur
+	// }
 	// else if (!srv.getUserByNick(args[1]) || !srv.getUserByRealName(args[1]) || !srv.getUserByUsername(args[1]))
 	// {
 	// 	sendMessage(2, "Error: Unknown user");
 	// }
-	else if (args[1] == user.user || args[1] == user.realName || args[1] == user.nick)
+	else if (args.size() < 4 && args[3] != "0")
 	{
-		// if (args[2] == "o")
+		// int size_args = args[2].size();
+		// if (args[2][0] == '*')
 		// {
-			// afficher que les irc operators qui contiennent des infos de larg 1
+		// 	args[2].find_last_of(args[2], 1);
 		// }
-		// else 
+		// // if (args.size() == 5 && args[5] == "o")
+		// // {
+		// 	// afficher que les irc operators qui contiennent des infos de larg 1
+		// // }
+		// if (args[2][size_args] == '*')
 		// {
-		srv.sendMessage(1, "Informations on the request user :\n", std::cout);
-		srv.sendMessage(1, "IP Adress :" + user.ip + "\n", std::cout);
-		srv.sendMessage(1, "User Name :" + user.user + "\n", std::cout);
-		srv.sendMessage(1, "Real Name :" + user.realName + "\n", std::cout);
-		srv.sendMessage(1, "Nick Name :" + user.nick + "\n\n", std::cout);
-		// std::cout << "Informations on the request user :" << std::endl;
-		// std::cout << "IP Adress\t\t: " << user.ip << std::endl;
-		// std::cout << "User\t\t: " << user.user << std::endl;
-		// std::cout << "Real Name\t\t: " << user.realName << std::endl;
-		// std::cout << "Nick\t\t: " << user.nick << std::endl;
+		// 	for (size_t i = 1; i < srv._fds.size(); i++)
+		// 	{
+		// 		for (int j = 0; j < args[i][size_args - 1]; j++)
+		// 		{
+		// 			if (args[i][j] != srv._users[srv._fds[i].fd][j])
+		// 		}
+		// 	}
+		// }
+		// else
+		// {
+			for (size_t i = 1; i < srv._fds.size(); i++)
+			{
+				std::cout << "Informations on the request user :" << std::endl;
+				std::cout << "\t- Utilisateur " << srv._users[srv._fds[i].fd].user << " -" << std::endl;
+				std::cout << "\t\t- " << srv._users[srv._fds[i].fd].ip << "" << std::endl;
+				std::cout << "\t\t- " << srv._users[srv._fds[i].fd].user << "" << std::endl;
+				std::cout << "\t\t- " << srv._users[srv._fds[i].fd].realName << "" << std::endl;
+				std::cout << "\t\t- " << srv._users[srv._fds[i].fd].nick << "" << std::endl;
+			}
 		// }
 	}
-	// else
-	// {
-
-	// }
+	else 
+	{
+		std::cout << "Informations on all connected users :" << std::endl;
+		for (size_t i = 1; i < srv._fds.size(); i++)
+		{
+			std::cout << "\t- Utilisateur " << srv._users[srv._fds[i].fd].user << " -" << std::endl;
+			std::cout << "\t\t- " << srv._users[srv._fds[i].fd].ip << "" << std::endl;
+			std::cout << "\t\t- " << srv._users[srv._fds[i].fd].user << "" << std::endl;
+			std::cout << "\t\t- " << srv._users[srv._fds[i].fd].realName << "" << std::endl;
+			std::cout << "\t\t- " << srv._users[srv._fds[i].fd].nick << "" << std::endl;
+		}
+		std::cout << "End of the list." << std::endl;
+	}
 
 }
