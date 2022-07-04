@@ -221,7 +221,7 @@ void SockServer::initCommands() {
 	//_commands["LIST"] = list;
 	_commands["MODE"] = mode;
 	//_commands["NAMES"] = names;
-	//_commands["PART"] = part;
+	_commands["PART"] = part;
 	//_commands["TOPIC"] = topic;
 
 	_commands["PRIVMSG"] = privmsg;
