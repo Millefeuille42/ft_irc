@@ -76,10 +76,6 @@ void Channels::leaveChannel(int fd) {
 	_members.erase(fd);
 }
 
-bool Channels::isEmpty() {
-	return (_members.empty());
-}
-
 Channels& Channels::operator=(const Channels& src) {
 	_name = src._name;
 	_topic = src._topic;
@@ -157,4 +153,8 @@ void Channels::allModes(char ar, char mode) {
 		_modes[mode] = true;
 	else if (ar == '-')
 		_modes[mode] = false;
+}
+
+bool Channels::isMode(char mode) {
+	return (_modes[mode]);
 }
