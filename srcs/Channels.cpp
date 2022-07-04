@@ -11,8 +11,9 @@ Channels::Channels(int creator, std::string name, std::string key) : _name(name)
 	std::cout << _members.begin()->first << std::endl;
 	_nbop = 1;
 	initModes();
-	if (key != "")
-		_modes['k'] = true;
+	if (key != "") {
+		kMode('+', key);
+	}
 }
 
 Channels::Channels(const Channels& src) {
@@ -91,7 +92,62 @@ Channels& Channels::operator=(const Channels& src) {
 	_nbop = src._nbop;
 	_maxMembers = src._maxMembers;
 	_modes = src._modes;
-	_fdBans = src._fdBans;
+	//_fdBans = src._fdBans;
 
 	return *this;
+}
+
+void Channels::oMode(char ar, User *user) {
+	if (user == NULL || _members.find(user->fd) == _members.end())
+		return ; //Membre Introuvable dans le Channel
+	if (ar == '+') {
+		_members[user->fd] = true;
+		user->channels[this] = true;
+	}
+	else if (ar == '-') {
+		_members[user->fd] = false;
+		user->channels[this] = false;
+	}
+}
+
+//TODO un peu la flemme de faire le ban, comme lors de la déco il faudrait deban comme je pensais le faire avec les fd
+//Chiant et long pour rien.
+//void Channels::bMode(char ar, User *user) {
+//	if (user == NULL)
+//		return ; //Membre Introuvable
+//	if (ar == '+' && _members.find(user->fd) != _members.end()) {
+//		_fdBans.push_back(user->fd);
+//		leaveChannel(user->fd); //Rajouter un message de ban ?
+//	}
+//	else if (ar == '-') {
+//		std::find(_fdBans.begin(), user->fd);
+//	}
+//}
+
+void Channels::lMode(char ar, int nb) {
+	if (ar == '+') {
+		_modes['l'] = true;
+		_maxMembers = nb;
+	}
+	else if (ar == '-') {
+		_modes['l'] = false;
+	}
+}
+
+void Channels::kMode(char ar, std::string key) {
+	if (ar == '+') {
+		_modes['k'] = true;
+		_key = key;
+	}
+	else if (ar == '-') {
+		_modes['k'] = false;
+	}
+}
+
+
+void Channels::allModes(char ar, char mode) {
+	if (ar == '+')
+		_modes[mode] = true;
+	else if (ar == '-')
+		_modes[mode] = false;
 }
