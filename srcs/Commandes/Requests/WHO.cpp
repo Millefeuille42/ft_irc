@@ -34,38 +34,59 @@
 
 // WHO jto* o          ; Command to list all users with a match against "jto*" if they are an operator.
 
-// #include "../../includes/SockServer.hpp"
+#include "../../includes/SockServer.hpp"
+#include <cstddef>
 
-// void SockServer::who(SockServer &srv, std::vector<std::string> & args, User& user)
-// {
-// 	if (args.size() < 1)
-// 	{
-// 		for (int i = 0; i < user.fd; i++)
-// 			srv.sendMessage(user.fd, "have been killed\n", std::cout);
-// 	}
+void SockServer::who(SockServer &srv, std::vector<std::string> & args, User& user)
+{
+	if (args.size() < 2)
+	{
+		// std::cout << "Informations on all connected users :" << std::endl;
+		srv.sendMessage(1, "Informations on all connected users :\n");
+		for (size_t i = 1; i < srv._fds.size(); i++)
+		{
+			// std::cout << "IP Adress\t\t: " << user.ip << "\nUser Name\t\t: " << user.user << "\nReal Name\t\t: " << user.realName << "\nNick Name\t\t: " << user.nick << std::endl;
+			// srv.sendMessage(1, "IP Adress :" + srv._users + "\n");
+			// srv.sendMessage(1, "User Name :" + user[i].user + "\n");
+			// srv.sendMessage(1, "Real Name :" + user[i].realName + "\n");
+			srv.sendMessage(1, "Nick Name :" + srv._users[srv._fds[i], NULL].nick + "\n");
+		}
+	}
+	else if (args[1] == "o")
+	{
+		// en theorie ici faut mettre les user qui sont dans le serveur et operateur
+	}
+	else if (!srv._chans.count(args[1]))
+	{
+		// en theorie ici faut mettre les user qui sont dans le channels precise en args
+	}
+	// else if (!srv.getUserByNick(args[1]) || !srv.getUserByRealName(args[1]) || !srv.getUserByUsername(args[1]))
+	// {
+	// 	sendMessage(2, "Error: Unknown user");
+	// }
+	else if (args[1] == user.user || args[1] == user.realName || args[1] == user.nick)
+	{
+		// if (args[2] == "o")
+		// {
+			// afficher que les irc operators qui contiennent des infos de larg 1
+		// }
+		// else 
+		// {
+		srv.sendMessage(1, "Informations on the request user :\n", std::cout);
+		srv.sendMessage(1, "IP Adress :" + user.ip + "\n", std::cout);
+		srv.sendMessage(1, "User Name :" + user.user + "\n", std::cout);
+		srv.sendMessage(1, "Real Name :" + user.realName + "\n", std::cout);
+		srv.sendMessage(1, "Nick Name :" + user.nick + "\n\n", std::cout);
+		// std::cout << "Informations on the request user :" << std::endl;
+		// std::cout << "IP Adress\t\t: " << user.ip << std::endl;
+		// std::cout << "User\t\t: " << user.user << std::endl;
+		// std::cout << "Real Name\t\t: " << user.realName << std::endl;
+		// std::cout << "Nick\t\t: " << user.nick << std::endl;
+		// }
+	}
+	// else
+	// {
 
-// 	else if (!srv._chans.count(args[1]))
-// 	{
+	// }
 
-// 	}
-
-// 	else if (args == user.user || args == user.realName || args == user.nick)
-// 	{
-// 		std::cout << "Informations on the request user :" << std::endl;
-// 		std::cout << "IP Adress\t\t: " << user.ip << std::endl;
-// 		std::cout << "User\t\t: " << user.user << std::endl;
-// 		std::cout << "Real Name\t\t: " << user.realName << std::endl;
-// 		std::cout << "Nick\t\t: " << user.nick << std::endl;
-// 	}
-
-// 	else if (args == "o")
-// 	{
-
-// 	}
-
-// 	else
-// 	{
-
-// 	}
-
-// }
+}
