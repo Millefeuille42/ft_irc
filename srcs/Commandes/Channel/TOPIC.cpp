@@ -19,6 +19,14 @@ void SockServer::topic(SockServer &srv, std::vector<std::string> &args, User &us
 		std::cerr << "Not an operator and mode \'t\' is on" << std::endl;
 		return;
 	}
+	if (args.size() == 2) {
+		if (chan->second.getTopic().empty()) {
+			sendMessage(user.fd, NOTOPIC(user.nick, chan->second.getName()) + "\n", std::cout);
+		} else {
+			sendMessage(user.fd, TOPIC(user.nick, chan->second.getName()) + chan->second.getTopic() + "\n", std::cout);
+		}
+		return;
+	}
 	std::string mess;
 	for (size_t i = 2; i < args.size(); i++) {
 		if (i == 2) {
@@ -30,5 +38,7 @@ void SockServer::topic(SockServer &srv, std::vector<std::string> &args, User &us
 	}
 	chan->second.setTopic(mess);
 
-	//TODO Je suppose qu'il faut envoyer le topic à IRSSI mais jsp comment :)
+	std::vector<int> users = chan->second.getUsers();
+	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++)
+		sendMessage(srv._users[*it].fd, TOPIC(srv._users[*it].nick, chan->second.getName()) + chan->second.getTopic() + "\n", std::cout);
 }

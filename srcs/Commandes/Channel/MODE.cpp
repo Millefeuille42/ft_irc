@@ -135,7 +135,7 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 			std::cerr << "No such channel {" + args[1] + "}" << std::endl;
 			return;
 		}
-		if (!user.channels.count(&chan->second)) { // TODO check channel mode
+		if (!user.channels.count(&chan->second)) {
 			std::cerr << "Not in channel" << std::endl;
 			return;
 		}

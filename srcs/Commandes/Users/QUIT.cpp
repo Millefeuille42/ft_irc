@@ -4,7 +4,7 @@
 #include "../../includes/SockServer.hpp"
 
 void SockServer::quit(SockServer &srv, std::vector<std::string>& args, User& user) {
-	if (args.size() < 1 && args[0] != "QUIT")
+	if (args.empty() && args[0] != "QUIT")
 		return ;
 	std::string mess = user.nick + " has quit";
 	for (size_t i = 1; i < args.size(); i++) {
@@ -21,7 +21,8 @@ void SockServer::quit(SockServer &srv, std::vector<std::string>& args, User& use
 			break ;
 	}
 	for (std::map<Channels*, bool>::iterator cit = user.channels.begin(); cit != user.channels.end(); cit++) {
-		srv.transmitToChannel(*cit->first, User(), PRIVMSG(std::string("ircserv"), cit->first->getName()) + mess);
+		transmitToChannel(*cit->first, User(), PART(user.nick, user.user, cit->first->getName()) + "disconnected\n");
 	}
+	srv.transmit(User(), QUIT(user.nick, user.user) + mess, std::cout);
 	srv.deleteClient(it);
 }

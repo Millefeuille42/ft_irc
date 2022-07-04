@@ -11,5 +11,3 @@ void SockServer::pass(SockServer& srv, std::vector<std::string>& args, User& use
 	else
 		user.pass = 0;
 }
-
-//TODO -> ERRORS

@@ -9,7 +9,7 @@ Channels::Channels(int creator, std::string name, std::string key) : _name(name)
 	_members[creator] = true;
 	_nbop = 1;
 	initModes();
-	if (key != "") {
+	if (!key.empty()) {
 		kMode('+', key);
 	}
 }
@@ -34,7 +34,6 @@ void Channels::initModes() {
 std::vector<int> Channels::getUsers() {
 	std::vector<int> ret;
 	for (std::map<int, bool>::iterator it = _members.begin(); it != _members.end(); it++) {
-		std::cout << it->first << std::endl;
 		ret.push_back(it->first);
 	}
 	return (ret);
@@ -42,6 +41,10 @@ std::vector<int> Channels::getUsers() {
 
 void Channels::setTopic(std::string &mess) {
 	_topic = mess;
+}
+
+std::string Channels::getTopic() {
+	return _topic;
 }
 
 bool Channels::isOper(int fd) {

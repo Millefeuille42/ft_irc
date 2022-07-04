@@ -24,7 +24,7 @@
 #include "../../includes/SockServer.hpp"
 #include <cstddef>
 
-void SockServer::who(SockServer &srv, std::vector<std::string> & args, User& user)
+void SockServer::who(SockServer &srv, std::vector<std::string> & args, User&)
 {
 	if (args.size() < 3 || (args.size() < 4 && args[3] == "0"))
 	{
