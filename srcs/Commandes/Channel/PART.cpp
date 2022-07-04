@@ -15,15 +15,21 @@ void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& use
 		std::cerr << "No such channel {" + args[1] + "}" << std::endl;
 		return;
 	}
-	std::string mess = user.nick + " has leave the channel";
+	if (chan->second.isMode('n') && !user.channels.count(&chan->second)) {
+		std::cerr << "Not in channel" << std::endl;
+		return;
+	}
+	std::string mess = "Reason";
 	for (size_t i = 2; i < args.size(); i++) {
 		if (i == 2) {
-			mess += " :";
+			mess += ": ";
 			args[i].erase(0,1);
 		}
 		mess += " " + args[i];
 	}
+	if (mess == "Reason")
+		mess += " not provided";
 	mess += "\n";
-	srv.transmitToChannelFromServ(chan->second, mess);
-	user.leaveChannel(&chan->second); //TODO vérfier si irssi attend une réponse
+	transmitToChannelFromServ(chan->second, PART(user.nick, user.user, chan->second.getName()) + mess);
+	user.leaveChannel(&chan->second);
 }

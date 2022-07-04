@@ -5,12 +5,27 @@
 #ifndef RESPONSES_HPP
 #define RESPONSES_HPP
 
-#define WELCOME(x,y) ":ircserv 001 " + x + " Welcome to ft_irc " + x + "! " + y + "@"
-#define TIME(x) ":ircserv 391 ircserv :" + x
-#define VERSION(x) ":ircserv 351 ircserv " + x + " :latest commit"
+//002    RPL_YOURHOST
+//              "Your host is <servername>, running version <ver>"
+//       003    RPL_CREATED
+//              "This server was created <date>"
+//       004    RPL_MYINFO
+//              "<servername> <version> <available user modes>
+//               <available channel modes>"
 
-#define INFO(x) ":ircserv 371 ircserv :" + x
-#define ENDOFINFO ":ircserv 374 ircserv :End of INFO list"
-#define PRIVMSG(from, to) ":" + from + " PRIVMSG" + " " + to + " :"
+#define RPL_WELCOME(nick, username) ":ircserv 001 " + nick + " :Welcome to ft_irc " + nick + "!" + username + "@localhost"
+
+#define TOPIC(nick, channel) ":ircserv 332 " + nick + " " + channel + " :"
+#define NOTOPIC(nick, channel) ":ircserv 331 " + nick + " "  + channel + " :No topic is set"
+
+#define TIME(nick, time) ":ircserv 391 " + nick + " ircserv :" + time
+#define VERSION(nick, version) ":ircserv 351 " + nick + " ircserv " + version + " :latest commit"
+#define INFO(nick, info) ":ircserv 371 " + nick + " ircserv :" + info
+#define ENDOFINFO(nick) ":ircserv 374 " + nick + " ircserv :End of INFO list"
+
+#define QUIT(nick, username) ":" + nick + "!" + username + "@localhost" + " QUIT :"
+#define JOIN(nick, username, channel) ":" + nick + "!" + username + "@localhost" + " JOIN " + channel
+#define PART(nick, username, channel) ":" + nick + "!" + username + "@localhost" + " PART " + channel + " :"
+#define PRIVMSG(nick, username, to) ":" + nick + "!" + username + " PRIVMSG " + to + " :"
 
 #endif //RESPONSES_HPP

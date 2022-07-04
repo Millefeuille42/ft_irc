@@ -24,9 +24,9 @@
 #include "../../includes/SockServer.hpp"
 #include <cstddef>
 
-void SockServer::who(SockServer &srv, std::vector<std::string> & args, User& user)
+void SockServer::who(SockServer &srv, std::vector<std::string> & args, User&)
 {
-	if (args.size() < 3 || (args.size() < 4 && args[3] == "0"))
+	if (cInSet(args[1][0], "#&+!") && (args.size() < 3 || (args.size() < 4 && args[3] == "0")))
 	{
 		std::cout << "List of all connected users :" << std::endl;
 		for (size_t i = 1; i < srv._fds.size(); i++)
@@ -41,7 +41,7 @@ void SockServer::who(SockServer &srv, std::vector<std::string> & args, User& use
 	// {
 	// 	sendMessage(2, "Error: Unknown user");
 	// }
-	else if (args.size() < 4 && args[3] != "0")
+	else if (args.size() < 3 && args[2] != "0")
 	{
 		// int size_args = args[2].size();
 		// if (args[2][0] == '*')
@@ -72,7 +72,7 @@ void SockServer::who(SockServer &srv, std::vector<std::string> & args, User& use
 				std::cout << "\t\t- " << srv._users[srv._fds[i].fd].user << "" << std::endl;
 				std::cout << "\t\t- " << srv._users[srv._fds[i].fd].realName << "" << std::endl;
 				std::cout << "\t\t- " << srv._users[srv._fds[i].fd].nick << "" << std::endl;
-			}
+			} // TODO SEGFAULT
 		// }
 	}
 	else 

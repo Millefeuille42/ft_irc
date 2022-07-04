@@ -28,17 +28,17 @@ void SockServer::privmsg(SockServer &srv, std::vector<std::string> &args, User &
 			std::cerr << "No such channel {" + args[1] + "}" << std::endl;
 			return;
 		}
-		if (!user.channels.count(&chan->second)) { // TODO check channel mode
+		if (chan->second.isMode('n') && !user.channels.count(&chan->second)) {
 			std::cerr << "Not in channel" << std::endl;
 			return;
 		}
-		srv.transmitToChannel(chan->second, user, PRIVMSG(user.nick, args[1]) + message + "\n");
+		transmitToChannel(chan->second, user, PRIVMSG(user.nick, user.user, args[1]) + message + "\n");
 	} else {
 		User *target = srv.getUserByNick(args[1]);
 		if (!target) {
 			std::cerr << "No such user" << std::endl;
 			return;
 		}
-		srv.sendMessage(target->fd, PRIVMSG(user.nick, target->nick) + message + "\n", std::cout);
+		sendMessage(target->fd, PRIVMSG(user.nick, user.user, target->nick) + message + "\n", std::cout);
 	}
 }

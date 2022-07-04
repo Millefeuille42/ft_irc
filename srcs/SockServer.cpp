@@ -99,11 +99,7 @@ void SockServer::sendMessage(int target, const std::string & message) {
 	send(target, message.c_str(), message.size(), 0);
 }
 
-void SockServer::transmit(User& user, std::string message, std::basic_ostream<char> & otp) {
-	if (!user.nick.empty())
-		message = user.nick + ": " + message + "\n";
-	else
-		message = user.ip + ": " + message + "\n";
+void SockServer::transmit(const User& user, std::string message, std::basic_ostream<char> & otp) {
 	otp << "\tSENT -> "<< message;
 	otp.flush();
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
@@ -127,7 +123,7 @@ void SockServer::transmitServ(std::string& message) {
 }
 
 void SockServer::transmitToChannel(Channels &chan, const User &user, const std::string& message) {
-	std::cout << message;
+	std::cout << "\tBRDC -> " << message;
 	std::cout.flush();
 	std::vector<int> users = chan.getUsers();
 	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++) {
@@ -138,9 +134,11 @@ void SockServer::transmitToChannel(Channels &chan, const User &user, const std::
 }
 
 void SockServer::transmitToChannelFromServ(Channels &chan, const std::string& message) {
+	std::cout << "\tBRDC -> " << message;
+	std::cout.flush();
 	std::vector<int> users = chan.getUsers();
 	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++)
-		sendMessage(*it, message, std::cout);
+		sendMessage(*it, message);
 }
 
 t_pollfd *SockServer::getFds() {

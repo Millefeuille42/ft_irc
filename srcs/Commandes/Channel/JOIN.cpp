@@ -54,16 +54,21 @@ void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& use
 			Channels newC(user.fd, it->first, it->second);
 			srv._chans[it->first] = newC;
 			user.enterChannel(&srv._chans[it->first], true);
-			srv.transmitToChannel(srv._chans[it->first], User(), PRIVMSG(std::string("ircserv"), it->first) + mess);
+			transmitToChannelFromServ(srv._chans[it->first], JOIN(user.nick, user.user, it->first) + "\n");
+			if (!srv._chans[it->first].getTopic().empty()) {
+				sendMessage(user.fd, TOPIC(user.nick, srv._chans[it->first].getName()) + srv._chans[it->first].getTopic() + "\n", std::cout);
+			}
 		}
 		else {
 			if (itc->second.joinChannel(user.fd, it->second)) {  //Channel rejoins
 				user.enterChannel(&itc->second, false);
-				srv.transmitToChannel(itc->second, User(), PRIVMSG(std::string("ircserv"), itc->first) + mess);
-				srv.transmitToChannel(itc->second, user, mess);
+				transmitToChannelFromServ(itc->second, JOIN(user.nick, user.user, itc->first) + "\n");
+				if (!itc->second.getTopic().empty()) {
+					sendMessage(user.fd, TOPIC(user.nick, itc->second.getName()) + itc->second.getTopic() + "\n", std::cout);
+				}
 			}
 			else { //Channel Non-Rejoins
-				srv.sendMessage(user.fd, "You can't join this channel", std::cerr);
+				sendMessage(user.fd, "You can't join this channel", std::cerr);
 			}
 		}
 	}

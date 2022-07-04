@@ -33,6 +33,7 @@ class Channels {
 
 		std::string getName();
 		void setTopic(std::string& mess);
+		std::string getTopic();
 		bool isOper(int fd);
 
 		bool isMode(char mode);
