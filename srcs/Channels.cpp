@@ -97,18 +97,18 @@ Channels& Channels::operator=(const Channels& src) {
 
 std::string Channels::oMode(char ar, User *user) {
 	if (user == NULL || _members.find(user->fd) == _members.end())
-		return ("Member not find"); //Membre Introuvable dans le Channel
+		return ("Member not found\n"); //Membre Introuvable dans le Channel
 	if (ar == '+') {
 		_members[user->fd] = true;
 		user->channels[this] = true;
-		return (user->nick + " is now operator in the channel " + _name);
+		return (user->nick + " is now operator in the channel " + _name + "\n");
 	}
 	else if (ar == '-') {
 		_members[user->fd] = false;
 		user->channels[this] = false;
-		return (user->nick + " is not an operator in the channel " + _name);
+		return (user->nick + " is not an operator in the channel " + _name + "\n");
 	}
-	return ("");
+	return ("\n");
 }
 
 //TODO un peu la flemme de faire le ban, comme lors de la déco il faudrait deban comme je pensais le faire avec les fd
@@ -129,26 +129,26 @@ std::string Channels::lMode(char ar, int nb, std::string snb) {
 	if (ar == '+') {
 		_modes['l'] = true;
 		_maxMembers = nb;
-		return ("Limit member on the channel " + _name + " is now " + snb);
+		return ("Limit member on the channel " + _name + " is now " + snb + "\n");
 	}
 	else if (ar == '-') {
 		_modes['l'] = false;
-		return ("There is no limit member on the channel " + _name);
+		return ("There is no limit member on the channel " + _name + "\n");
 	}
-	return ("");
+	return ("\n");
 }
 
 std::string Channels::kMode(char ar, std::string key) {
 	if (ar == '+') {
 		_modes['k'] = true;
 		_key = key;
-		return ("Channel " + _name + " is protected by a key");
+		return ("Channel " + _name + " is protected by a key\n");
 	}
 	else if (ar == '-') {
 		_modes['k'] = false;
-		return ("Channel " + _name + " is not protected by a key");
+		return ("Channel " + _name + " is not protected by a key\n");
 	}
-	return ("");
+	return ("\n");
 }
 
 

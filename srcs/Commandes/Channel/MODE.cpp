@@ -16,32 +16,41 @@
 #include "../../includes/SockServer.hpp"
 
 static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<std::string> args, Channels &chan, size_t &i) {
-	(void)srv;
-	(void)ar;
-	(void)args;
-	(void)chan;
+	std::string mess = "";
 	//MODE <canal> +/-o <user>
 	if (mode == 'o') {
 		//Call Operator Function -> Envoyer args (Users)
 		if (i >= args.size()) //Plus d'argument à envoyer
 			return ;
-		chan.oMode(ar, srv.getUserByNick(args[i]));
+		mess = chan.oMode(ar, srv.getUserByNick(args[i]));
 		i++;
 	}
 	//MODE <canal> +/-i
 	else if (mode == 'i') {
 		//Call Invitation Function
 		chan.allModes(ar, mode);
+		if (ar == '+')
+			mess = chan.getName() + " is now on invitation only\n";
+		else
+			mess = chan.getName() + " is not on invitation only\n";
 	}
 	//MODE <canal> +/-t
 	else if (mode == 't') {
 		//Call TopicMode Function
 		chan.allModes(ar, mode);
+		if (ar == '+')
+			mess = "Topic of " + chan.getName() + "can be changed by everyone\n";
+		else
+			mess = "Topic of " + chan.getName() + "can't be changed by everyone\n";
 	}
 	//MODE <canal> +/-n
 	else if (mode == 'n') {
 		//Call LimitedChan Function
 		chan.allModes(ar, mode);
+		if (ar == '+')
+			mess = "Only member of the channel " + chan.getName() + "can send messages\n";
+		else
+			mess = "Everbody can send messages in the channel " + chan.getName() + "\n";
 	}
 	//MODE <canal> +/- b <user>
 	//else if (mode == 'b') {
@@ -60,7 +69,7 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 		}
 		if (i >= args.size()) //Plus d'argument à envoyer
 			return ;
-		chan.lMode(ar, atoi(args[i].c_str()), args[i]);
+		mess = chan.lMode(ar, atoi(args[i].c_str()), args[i]);
 		i++;
 	}
 	//MODE <canal> +/-k <Key>
@@ -72,9 +81,11 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 		}
 		if (i >= args.size()) //Plus d'argument à envoyer
 			return ;
-		chan.kMode(ar, args[i]);
+		mess = chan.kMode(ar, args[i]);
 		i++;
 	}
+	if (mess != "")
+		srv.transmitToChannelFromServ(chan, mess);
 }
 
 static void callFunctionUser(SockServer &srv, char mode, char ar, User& user, bool op) {
@@ -129,7 +140,8 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 			return;
 		}
 		if (user.channels[&chan->second] == false) {
-			std::cerr << "Not an operator" << std::endl;
+			std::cerr << "Not an operator" << std::endl; //TODO transmettre au user seulement dans le channel
+			return ;
 		}
 		size_t j = 0;
 		for (size_t i = 1; i < add.size(); i++) {

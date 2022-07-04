@@ -135,6 +135,12 @@ void SockServer::transmitToChannel(Channels &chan, User &user, const std::string
 	}
 }
 
+void SockServer::transmitToChannelFromServ(Channels &chan, const std::string& message) {
+	std::vector<int> users = chan.getUsers();
+	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++)
+		sendMessage(*it, message, std::cout);
+}
+
 t_pollfd *SockServer::getFds() {
 	return _fds.begin().operator->();
 }
