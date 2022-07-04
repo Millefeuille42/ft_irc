@@ -7,7 +7,7 @@ void SockServer::oper(SockServer &srv, std::vector<std::string>& args, User& use
 	if (args.size() != 3 || args[0] != "OPER")
 		return ;
 	if (args[1] == "admin" && args[2] == "safepass42") {
-		user.modes["o"] = true;
+		user.modes['o'] = true;
 		srv.sendMessage(user.fd, user.nick + ", You are now an Operator !\n", std::cout);
 	}
 	else

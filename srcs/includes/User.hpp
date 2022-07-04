@@ -33,7 +33,7 @@ public:
 	std::string buffer;
 	int fd;
 	std::map<Channels*, bool> channels;
-	std::map<std::string, bool> modes;
+	std::map<char, bool> modes;
 };
 
 

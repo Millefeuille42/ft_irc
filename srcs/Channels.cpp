@@ -9,8 +9,9 @@ Channels::Channels(int creator, std::string name, std::string key) : _name(name)
 	_members[creator] = true;
 	_nbop = 1;
 	initModes();
-	if (key != "")
-		_modes['k'] = true;
+	if (key != "") {
+		kMode('+', key);
+	}
 }
 
 Channels::Channels(const Channels& src) {
@@ -74,10 +75,6 @@ void Channels::leaveChannel(int fd) {
 	_members.erase(fd);
 }
 
-bool Channels::isEmpty() {
-	return (_members.empty());
-}
-
 Channels& Channels::operator=(const Channels& src) {
 	_name = src._name;
 	_topic = src._topic;
@@ -88,7 +85,75 @@ Channels& Channels::operator=(const Channels& src) {
 	_nbop = src._nbop;
 	_maxMembers = src._maxMembers;
 	_modes = src._modes;
-	_fdBans = src._fdBans;
+	//_fdBans = src._fdBans;
 
 	return *this;
+}
+
+std::string Channels::oMode(char ar, User *user) {
+	if (user == NULL || _members.find(user->fd) == _members.end())
+		return ("Member not found\n"); //Membre Introuvable dans le Channel
+	if (ar == '+') {
+		_members[user->fd] = true;
+		user->channels[this] = true;
+		return (user->nick + " is now operator in the channel " + _name + "\n");
+	}
+	else if (ar == '-') {
+		_members[user->fd] = false;
+		user->channels[this] = false;
+		return (user->nick + " is not an operator in the channel " + _name + "\n");
+	}
+	return ("\n");
+}
+
+//TODO un peu la flemme de faire le ban, comme lors de la déco il faudrait deban comme je pensais le faire avec les fd
+//Chiant et long pour rien.
+//void Channels::bMode(char ar, User *user) {
+//	if (user == NULL)
+//		return ; //Membre Introuvable
+//	if (ar == '+' && _members.find(user->fd) != _members.end()) {
+//		_fdBans.push_back(user->fd);
+//		leaveChannel(user->fd); //Rajouter un message de ban ?
+//	}
+//	else if (ar == '-') {
+//		std::find(_fdBans.begin(), user->fd);
+//	}
+//}
+
+std::string Channels::lMode(char ar, int nb, std::string snb) {
+	if (ar == '+') {
+		_modes['l'] = true;
+		_maxMembers = nb;
+		return ("Limit member on the channel " + _name + " is now " + snb + "\n");
+	}
+	else if (ar == '-') {
+		_modes['l'] = false;
+		return ("There is no limit member on the channel " + _name + "\n");
+	}
+	return ("\n");
+}
+
+std::string Channels::kMode(char ar, std::string key) {
+	if (ar == '+') {
+		_modes['k'] = true;
+		_key = key;
+		return ("Channel " + _name + " is protected by a key\n");
+	}
+	else if (ar == '-') {
+		_modes['k'] = false;
+		return ("Channel " + _name + " is not protected by a key\n");
+	}
+	return ("\n");
+}
+
+
+void Channels::allModes(char ar, char mode) {
+	if (ar == '+')
+		_modes[mode] = true;
+	else if (ar == '-')
+		_modes[mode] = false;
+}
+
+bool Channels::isMode(char mode) {
+	return (_modes[mode]);
 }
