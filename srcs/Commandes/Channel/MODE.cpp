@@ -131,12 +131,12 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 		if (user.channels[&chan->second] == false) {
 			std::cerr << "Not an operator" << std::endl;
 		}
-		size_t i = 0;
+		size_t j = 0;
 		for (size_t i = 1; i < add.size(); i++) {
-			callFunctionChan(srv, add[i], '+', argsV, chan->second, i);
+			callFunctionChan(srv, add[i], '+', argsV, chan->second, j);
 		}
 		for (size_t i = 1; i < rem.size(); i++) {
-			callFunctionChan(srv, rem[i], '-', argsV,chan->second, i);
+			callFunctionChan(srv, rem[i], '-', argsV,chan->second, j);
 		}
 	}
 
