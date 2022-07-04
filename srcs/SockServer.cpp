@@ -126,12 +126,14 @@ void SockServer::transmitServ(std::string& message) {
 	}
 }
 
-void SockServer::transmitToChannel(Channels &chan, User &user, const std::string& message) {
+void SockServer::transmitToChannel(Channels &chan, const User &user, const std::string& message) {
+	std::cout << message;
+	std::cout.flush();
 	std::vector<int> users = chan.getUsers();
 	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++) {
 		if (*it == user.fd)
 			continue;
-		sendMessage(*it, message, std::cout);
+		sendMessage(*it, message);
 	}
 }
 
@@ -168,6 +170,22 @@ int SockServer::getFd() const {
 User *SockServer::getUserByNick(const std::string &nick) {
 	for (std::map<int, User>::iterator it = _users.begin(); it != _users.end(); it++) {
 		if (it->second.nick == nick)
+			return &it->second;
+	}
+	return NULL;
+}
+
+User *SockServer::getUserByRealName(const std::string &realname) {
+	for (std::map<int, User>::iterator it = _users.begin(); it != _users.end(); it++) {
+		if (it->second.realName == realname)
+			return &it->second;
+	}
+	return NULL;
+}
+
+User *SockServer::getUserByUsername(const std::string &username) {
+	for (std::map<int, User>::iterator it = _users.begin(); it != _users.end(); it++) {
+		if (it->second.user == username)
 			return &it->second;
 	}
 	return NULL;
@@ -230,7 +248,8 @@ void SockServer::initCommands() {
 	_commands["KILL"] = kill;
 	_commands["PING"] = ping;
 
-	//_commands["WHO"] = who;
+	_commands["WHO"] = who;
+	// _commands["WHOIS"] = who;
 
 	_commands["INFO"] = info;
 	_commands["TIME"] = time;

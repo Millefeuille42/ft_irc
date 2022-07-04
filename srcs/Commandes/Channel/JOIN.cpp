@@ -49,17 +49,18 @@ void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& use
 
 	for (std::map<std::string, std::string>::iterator it = mChans.begin(); it != mChans.end() ; it++) {
 		channelsMap::iterator itc = srv._chans.find(it->first);
-		std::string mess = "Welcome in the channel " + it->first + "!\n";
+		std::string mess = "Hello " + user.nick + "! Welcome in the channel " + it->first + "!\n";
 		if (itc == srv._chans.end()) { //Nouveau Channel
 			Channels newC(user.fd, it->first, it->second);
 			srv._chans[it->first] = newC;
 			user.enterChannel(&srv._chans[it->first], true);
-			srv.sendMessage(user.fd, mess, std::cout);
+			srv.transmitToChannel(srv._chans[it->first], User(), PRIVMSG(std::string("ircserv"), it->first) + mess);
 		}
 		else {
 			if (itc->second.joinChannel(user.fd, it->second)) {  //Channel rejoins
-				user.enterChannel(&itc->second, false); //TODO Message de bienvenue dans le Channel
-				srv.sendMessage(user.fd, mess, std::cout);
+				user.enterChannel(&itc->second, false);
+				srv.transmitToChannel(itc->second, User(), PRIVMSG(std::string("ircserv"), itc->first) + mess);
+				srv.transmitToChannel(itc->second, user, mess);
 			}
 			else { //Channel Non-Rejoins
 				srv.sendMessage(user.fd, "You can't join this channel", std::cerr);
