@@ -207,14 +207,13 @@ void SockServer::initCommands() {
 	_commands["NICK"] = nick;
 	_commands["USER"] = user;
 	_commands["QUIT"] = quit;
-	//_commands["MODE"] = mode;
 	_commands["OPER"] = oper;
 
 	//_commands["INVITE"] = invite;
 	_commands["JOIN"] = join;
 	//_commands["KICK"] = kick;
 	//_commands["LIST"] = list;
-	//_commands["MODE"] = mode;
+	_commands["MODE"] = mode;
 	//_commands["NAMES"] = names;
 	//_commands["PART"] = part;
 	//_commands["TOPIC"] = topic;

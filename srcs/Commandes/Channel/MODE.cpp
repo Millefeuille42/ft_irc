@@ -60,7 +60,7 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 		}
 		if (i >= args.size()) //Plus d'argument à envoyer
 			return ;
-		chan.lMode(ar, atoi(args[i].c_str()));
+		chan.lMode(ar, atoi(args[i].c_str()), args[i]);
 		i++;
 	}
 	//MODE <canal> +/-k <Key>
