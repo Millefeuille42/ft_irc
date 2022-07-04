@@ -35,7 +35,7 @@ class Channels {
 		void setTopic(std::string& mess);
 		bool isOper(int fd);
 
-		bool isEmpty();
+		bool isMode(char mode);
 
 		bool joinChannel(int fd, std::string key);
 		void leaveChannel(int fd);

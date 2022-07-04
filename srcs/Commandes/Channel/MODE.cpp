@@ -39,9 +39,9 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 		//Call TopicMode Function
 		chan.allModes(ar, mode);
 		if (ar == '+')
-			mess = "Topic of " + chan.getName() + "can be changed by everyone\n";
-		else
 			mess = "Topic of " + chan.getName() + "can't be changed by everyone\n";
+		else
+			mess = "Topic of " + chan.getName() + "can be changed by everyone\n";
 	}
 	//MODE <canal> +/-n
 	else if (mode == 'n') {
@@ -139,7 +139,7 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 			std::cerr << "Not in channel" << std::endl;
 			return;
 		}
-		if (user.channels[&chan->second] == false) {
+		if (chan->second.isOper(user.fd) == false) {
 			std::cerr << "Not an operator" << std::endl; //TODO transmettre au user seulement dans le channel
 			return ;
 		}
