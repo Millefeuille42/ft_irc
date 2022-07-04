@@ -38,9 +38,8 @@ User &User::operator=(const User &src) {
 }
 
 void User::initModes() {
-	modes["a"] = false; //Flagged as Away
-	modes["i"] = false; //Invisible
-	modes["o"] = false; //Operator Flag
+	modes['i'] = false; //Invisible
+	modes['o'] = false; //Operator Flag
 }
 
 void User::enterChannel(Channels *chan, bool op) {
@@ -49,4 +48,5 @@ void User::enterChannel(Channels *chan, bool op) {
 
 void User::leaveChannel(Channels *chan) {
 	channels.erase(chan);
+	chan->leaveChannel(fd);
 }

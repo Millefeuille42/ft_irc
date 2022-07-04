@@ -137,6 +137,12 @@ void SockServer::transmitToChannel(Channels &chan, const User &user, const std::
 	}
 }
 
+void SockServer::transmitToChannelFromServ(Channels &chan, const std::string& message) {
+	std::vector<int> users = chan.getUsers();
+	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++)
+		sendMessage(*it, message, std::cout);
+}
+
 t_pollfd *SockServer::getFds() {
 	return _fds.begin().operator->();
 }
@@ -225,17 +231,16 @@ void SockServer::initCommands() {
 	_commands["NICK"] = nick;
 	_commands["USER"] = user;
 	_commands["QUIT"] = quit;
-	//_commands["MODE"] = mode;
 	_commands["OPER"] = oper;
 
 	//_commands["INVITE"] = invite;
 	_commands["JOIN"] = join;
 	//_commands["KICK"] = kick;
 	//_commands["LIST"] = list;
-	//_commands["MODE"] = mode;
+	_commands["MODE"] = mode;
 	//_commands["NAMES"] = names;
-	//_commands["PART"] = part;
-	//_commands["TOPIC"] = topic;
+	_commands["PART"] = part;
+	_commands["TOPIC"] = topic;
 
 	_commands["PRIVMSG"] = privmsg;
 
