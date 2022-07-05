@@ -16,13 +16,8 @@
 
 //            ERR_NOSUCHSERVER
 //            RPL_WHOREPLY                    RPL_ENDOFWHO
-// Exemples:
-
-// WHO *.fi ; Liste tous les utilisateurs qui correspondent à "*.fi".
-// WHO jto* o ; Liste tous les utilisateurs qui correspondent à "jto*", s'ils sont opérateurs.
 
 #include "../../includes/SockServer.hpp"
-#include <cstddef>
 
 void SockServer::who(SockServer &srv, std::vector<std::string> & args, User&)
 {
@@ -33,47 +28,21 @@ void SockServer::who(SockServer &srv, std::vector<std::string> & args, User&)
 			std::cout << "\t- Utilisateur " << i << " : " << srv._users[srv._fds[i].fd].realName << " -" << std::endl;
 		std::cout << "End of the list." << std::endl;
 	}
-	// else if (args.size() == 3 && args[2] == "o")
-	// {
-	// 	// en theorie ici faut mettre les user qui sont dans le serveur et operateur
-	// }
-	// else if (!srv.getUserByNick(args[1]) || !srv.getUserByRealName(args[1]) || !srv.getUserByUsername(args[1]))
-	// {
-	// 	sendMessage(2, "Error: Unknown user");
-	// }
-	else if (args.size() < 3 && args[2] != "0")
+	else if (!srv.getUserByNick(args[1]) || !srv.getUserByRealName(args[1]) || !srv.getUserByUsername(args[1]))
 	{
-		// int size_args = args[2].size();
-		// if (args[2][0] == '*')
-		// {
-		// 	args[2].find_last_of(args[2], 1);
-		// }
-		// // if (args.size() == 5 && args[5] == "o")
-		// // {
-		// 	// afficher que les irc operators qui contiennent des infos de larg 1
-		// // }
-		// if (args[2][size_args] == '*')
-		// {
-		// 	for (size_t i = 1; i < srv._fds.size(); i++)
-		// 	{
-		// 		for (int j = 0; j < args[i][size_args - 1]; j++)
-		// 		{
-		// 			if (args[i][j] != srv._users[srv._fds[i].fd][j])
-		// 		}
-		// 	}
-		// }
-		// else
-		// {
-			for (size_t i = 1; i < srv._fds.size(); i++)
-			{
-				std::cout << "Informations on the request user :" << std::endl;
-				std::cout << "\t- Utilisateur " << srv._users[srv._fds[i].fd].user << " -" << std::endl;
-				std::cout << "\t\t- " << srv._users[srv._fds[i].fd].ip << "" << std::endl;
-				std::cout << "\t\t- " << srv._users[srv._fds[i].fd].user << "" << std::endl;
-				std::cout << "\t\t- " << srv._users[srv._fds[i].fd].realName << "" << std::endl;
-				std::cout << "\t\t- " << srv._users[srv._fds[i].fd].nick << "" << std::endl;
-			} // TODO SEGFAULT
-		// }
+		std::cerr << "Error: Unknown user" << std::endl;
+	}
+	else if ((args.size() < 3 && args[1] != "0") || (args.size() < 4 && args[2] == "o" && args[1] != "0"))
+	{
+		for (size_t i = 1; i < srv._fds.size(); i++)
+		{
+			std::cout << "Informations on the request user :" << std::endl;
+			std::cout << "\t- Utilisateur " << srv._users[srv._fds[i].fd].user << " -" << std::endl;
+			std::cout << "\t   - " << srv._users[srv._fds[i].fd].ip << std::endl;
+			std::cout << "\t   - " << srv._users[srv._fds[i].fd].user << std::endl;
+			std::cout << "\t   - " << srv._users[srv._fds[i].fd].realName << std::endl;
+			std::cout << "\t   - " << srv._users[srv._fds[i].fd].nick << std::endl;
+		}
 	}
 	else 
 	{
@@ -81,12 +50,12 @@ void SockServer::who(SockServer &srv, std::vector<std::string> & args, User&)
 		for (size_t i = 1; i < srv._fds.size(); i++)
 		{
 			std::cout << "\t- Utilisateur " << srv._users[srv._fds[i].fd].user << " -" << std::endl;
-			std::cout << "\t\t- " << srv._users[srv._fds[i].fd].ip << "" << std::endl;
-			std::cout << "\t\t- " << srv._users[srv._fds[i].fd].user << "" << std::endl;
-			std::cout << "\t\t- " << srv._users[srv._fds[i].fd].realName << "" << std::endl;
-			std::cout << "\t\t- " << srv._users[srv._fds[i].fd].nick << "" << std::endl;
+			std::cout << "\t   - " << srv._users[srv._fds[i].fd].ip << "" << std::endl;
+			std::cout << "\t   - " << srv._users[srv._fds[i].fd].user << "" << std::endl;
+			std::cout << "\t   - " << srv._users[srv._fds[i].fd].realName << "" << std::endl;
+			std::cout << "\t   - " << srv._users[srv._fds[i].fd].nick << "" << std::endl;
 		}
 		std::cout << "End of the list." << std::endl;
 	}
-
+	return ;
 }

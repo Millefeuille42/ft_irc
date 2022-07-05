@@ -15,7 +15,7 @@ void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& use
 		std::cerr << "No such channel {" + args[1] + "}" << std::endl;
 		return;
 	}
-	if (chan->second.isMode('n') && !user.channels.count(&chan->second)) {
+	if (!user.channels.count(&chan->second)) {
 		std::cerr << "Not in channel" << std::endl;
 		return;
 	}
@@ -31,5 +31,11 @@ void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& use
 		mess += " not provided";
 	mess += "\n";
 	transmitToChannelFromServ(chan->second, PART(user.nick, user.user, chan->second.getName()) + mess);
-	user.leaveChannel(&chan->second);
+	int fd_op = user.leaveChannel(&chan->second);
+	if (fd_op != -1) {
+		srv._users[fd_op].channels[&chan->second] = true;
+		std::cout << srv._users[fd_op].nick + " is now op on the channel " + chan->second.getName() << std::endl;
+	}
+	if (chan->second.isEmpty())
+		srv._chans.erase(chan->second.getName());
 }

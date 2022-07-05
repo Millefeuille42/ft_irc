@@ -46,7 +46,7 @@ void User::enterChannel(Channels *chan, bool op) {
 	channels[chan] = op;
 }
 
-void User::leaveChannel(Channels *chan) {
+int User::leaveChannel(Channels *chan) {
 	channels.erase(chan);
-	chan->leaveChannel(fd);
+	return(chan->leaveChannel(fd));
 }

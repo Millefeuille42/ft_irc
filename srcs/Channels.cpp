@@ -4,6 +4,7 @@ Channels::Channels() {
 }
 
 Channels::Channels(int creator, std::string name, std::string key) : _name(name), _creator(creator), _topic(""), _key(key) {
+	std::cout << "new Channel : " + _name << std::endl;
 	_members = std::map<int, bool>();
 	_modes = std::map<char, bool>();
 	_members[creator] = true;
@@ -64,18 +65,24 @@ bool Channels::joinChannel(int fd, std::string key) {
 	return (true);
 }
 
-void Channels::leaveChannel(int fd) {
+int Channels::leaveChannel(int fd) {
 	if (_members[fd] == true) {
-		if (_nbop == 1 && _members.size() != 1) { //Si plus d'operateur, un op est definit de maniere random. Si plus personne, le channel est perdu.
-			if (_members.begin()->first == fd)
-				_members.begin()++->second  = true;
+		if (_nbop == 1 && _members.size() > 1) { //Si plus d'operateur, un op est definit de maniere random. Si plus personne, le channel est perdu.
+			std::map<int, bool>::iterator it = _members.begin();
+			if (it->first == fd) {
+				std::cout << it->first << " && " << fd << std::endl;
+				it++;
+				it->second = true;
+			}
 			else
-				_members.begin()->second = true;
-			_nbop++;
+				it->second = true;
+			_members.erase(fd);
+			return (it->first);
 		}
 		_nbop--;
 	}
-	_members.erase(fd);
+	_members.erase(fd); //
+	return (-1);
 }
 
 Channels& Channels::operator=(const Channels& src) {
@@ -99,11 +106,16 @@ std::string Channels::oMode(char ar, User *user) {
 	if (ar == '+') {
 		_members[user->fd] = true;
 		user->channels[this] = true;
+		_nbop++;
 		return (user->nick + " is now operator in the channel " + _name + "\n");
 	}
 	else if (ar == '-') {
+		if (_nbop == 1 && isOper(user->fd)) {
+			return (user->nick + " is the last operator.\n");
+		}
 		_members[user->fd] = false;
 		user->channels[this] = false;
+		_nbop--;
 		return (user->nick + " is not an operator in the channel " + _name + "\n");
 	}
 	return ("\n");
@@ -159,4 +171,10 @@ void Channels::allModes(char ar, char mode) {
 
 bool Channels::isMode(char mode) {
 	return (_modes[mode]);
+}
+
+bool Channels::isEmpty() {
+	if (_members.size() == 0)
+		return (true);
+	return (false);
 }

@@ -6,7 +6,6 @@
 #include <vector>
 
 class User;
-class SockServer;
 
 class Channels {
 	private:
@@ -36,10 +35,11 @@ class Channels {
 		std::string getTopic();
 		bool isOper(int fd);
 
+		bool isEmpty();
 		bool isMode(char mode);
 
 		bool joinChannel(int fd, std::string key);
-		void leaveChannel(int fd);
+		int leaveChannel(int fd);
 
 		std::string oMode(char ar, User *user); //Rendre Operateur le user; (Vérifier si User est NULL)
 		//void bMode(char ar, User *user); //Ban le user;
