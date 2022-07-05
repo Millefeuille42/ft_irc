@@ -28,9 +28,9 @@ std::vector<std::string> parseMessage(std::string msg)
 	std::vector<std::string> args;
 	size_t pos;
 	std::string token;
-	while ((pos = msg.find(' ')) != std::string::npos)
+	while ((pos = msg.find(',')) != std::string::npos)
     {
-		token = msg.substr(0, pos);
+		token = msg.substr(1, pos);
 		args.push_back(token);
 		msg.erase(0, pos + 1);
 	}
@@ -52,14 +52,18 @@ void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&)
             }
         }
     }
-    else
+    else // et la j'essaie de recuperer les channels qui ont ete envoye, separe par juste une virgule si il y en a + d'1, et ecrit avec un # devant
     {
-        int i = 0;
-        while (args[1][i])
+        std::vector<std::string> chan_list = parseMessage(args[1]);
+        for (std::vector<std::string>::iterator i = chan_list.begin(); i != chan_list.end(); i++)
         {
-            while (args[1][i] != ',')
+            std::cout << i << std::endl;
+            std::vector<int> user_list = it->second.getUsers();
+            // std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]);
+            for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++)
             {
-                
+                std::cout << "\t- Utilisateur " << *it2 << " : " << srv._users[srv._fds[*it2].fd].realName << " -" << std::endl;
             }
         }
+    }
 }
