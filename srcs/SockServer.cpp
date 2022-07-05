@@ -224,6 +224,7 @@ void SockServer::printStart() {
 	std::cout << "Started server on port: " << _port << std::endl;
 }
 
+// TODO Regarder la validité des arguments de macro, j'ai pas forcément regardé avec le c/c
 void SockServer::initCommands() {
 	_commands["PASS"] = pass; // Complete
 	_commands["NICK"] = nick; // A discuter
@@ -231,12 +232,12 @@ void SockServer::initCommands() {
 	_commands["QUIT"] = quit; // Complete
 	_commands["OPER"] = oper; // A discuter
 
-	_commands["INVITE"] = invite; // Complete
-	_commands["JOIN"] = join; // Erreurs a gerer
-	_commands["KICK"] = kick;
+	_commands["INVITE"] = invite; // TODO Faire les messages quand on rejoint
+	_commands["JOIN"] = join; // TODO Erreurs a gerer + les messages quand on rejoint
+	_commands["KICK"] = kick; // TODO Ajouter diffusion message KICK
 	//_commands["LIST"] = list;
 	_commands["MODE"] = mode;
-	_commands["NAMES"] = names;
+	_commands["NAMES"] = names; // Complete
 	_commands["PART"] = part; // A discuter
 	_commands["TOPIC"] = topic; // Complete
 
@@ -246,14 +247,12 @@ void SockServer::initCommands() {
 	_commands["KILL"] = kill; // A discuter
 	_commands["PING"] = ping; // Complete
 
-	_commands["WHO"] = who; // ALED
+	_commands["WHO"] = who;
 
 	_commands["INFO"] = info; // Complete
 	_commands["TIME"] = time; // Complete
 	_commands["VERSION"] = version; // Complete
 }
-
-// TODO	Error messages on commands
 
 void SockServer::messageRouter(int fd, std::string &msg) {
 	User &usr = _users[fd];

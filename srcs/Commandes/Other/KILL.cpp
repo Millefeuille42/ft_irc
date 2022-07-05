@@ -94,7 +94,7 @@ void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& use
 		int fd_op = cit->first->leaveChannel(u_kill->fd);
 		if (fd_op != -1) {
 			srv._users[fd_op].channels[cit->first] = true;
-			sendMessage(user.fd, YOUREOPER(user.nick) + "\n", std::cout);
+			sendMessage(user.fd, YOUREOPER(srv._users[fd_op].nick) + "\n", std::cout);
 			// TODO peut etre transmettre ?
 		}
 		if (cit->first->isEmpty())

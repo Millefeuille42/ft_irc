@@ -42,4 +42,8 @@ void SockServer::invite(SockServer &srv, std::vector<std::string> &args, User& u
 	if (!chan->second.getTopic().empty()) {
 		sendMessage(u_invit->fd, TOPIC(u_invit->nick, chan->second.getName()) + chan->second.getTopic() + "\n", std::cout);
 	}
+	//std::vector<std::string> a;
+	//a.push_back("NAMES"); a.push_back(chan->second.getName());
+	//names(srv, a, *u_invit);
+	// TODO a rajouter une fois mode #channel fait
 }

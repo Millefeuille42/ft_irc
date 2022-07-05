@@ -24,10 +24,13 @@ std::vector<std::string> parseMessage(std::string msg) {
 	return args;
 }
 
-void SockServer::welcome(SockServer&, const std::vector<std::string>&, User& user) {
+void SockServer::welcome(SockServer& srv, const std::vector<std::string>&, User& user) {
 	if (user.nick.empty() || user.user.empty())
 		return;
 	sendMessage(user.fd, RPL_WELCOME(user.nick, user.user) + "\n", std::cout);
+	std::vector<std::string> args;
+	args.push_back("NAMES");
+	names(srv, args, user);
 }
 
 std::string getCurrentTime() {
