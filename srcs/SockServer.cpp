@@ -238,9 +238,9 @@ void SockServer::initCommands() {
 	_commands["MODE"] = mode;
 	//_commands["NAMES"] = names;
 	_commands["PART"] = part; // Erreurs a gerer
-	_commands["TOPIC"] = topic; // Erreurs a gerer
+	_commands["TOPIC"] = topic; // Complete
 
-	_commands["PRIVMSG"] = privmsg; // Erreurs a gerer
+	_commands["PRIVMSG"] = privmsg; // Doit manquer des erreurs peut etre
 
 	//_commands[ERROR] = error;
 	_commands["KILL"] = kill;
