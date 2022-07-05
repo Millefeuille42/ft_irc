@@ -56,6 +56,10 @@ std::string Channels::getName() {
 	return (_name);
 }
 
+void Channels::joinChannel(int fd) {
+	_members[fd] = false;
+}
+
 bool Channels::joinChannel(int fd, std::string key) {
 	if (_modes['k'] == true && key != _key)
 		return (false);
@@ -70,7 +74,6 @@ int Channels::leaveChannel(int fd) {
 		if (_nbop == 1 && _members.size() > 1) { //Si plus d'operateur, un op est definit de maniere random. Si plus personne, le channel est perdu.
 			std::map<int, bool>::iterator it = _members.begin();
 			if (it->first == fd) {
-				std::cout << it->first << " && " << fd << std::endl;
 				it++;
 				it->second = true;
 			}
