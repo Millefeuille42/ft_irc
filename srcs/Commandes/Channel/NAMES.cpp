@@ -50,7 +50,7 @@ void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&)
             {
                 std::cout << "\t- Utilisateur " << *it2 << " : " << srv._users[srv._fds[*it2].fd].nick << " -" << std::endl;
             }
-        }
+        } // manque le chan * avec les recalcitrants
     }
     else // et la j'essaie de recuperer les channels qui ont ete envoye, separe par juste une virgule si il y en a + d'1, et ecrit avec un # devant
     {
@@ -59,10 +59,7 @@ void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&)
         {
             std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(*i);
             if (chan == srv._chans.end())
-            {
-                std::cerr << "No such channel {" + *i + "}" << std::endl;
 		        return ;
-            }
             std::cout << *i << std::endl;
             std::vector<int> user_list = chan->second.getUsers();
             for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++)
