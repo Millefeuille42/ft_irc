@@ -13,8 +13,8 @@ void SockServer::invite(SockServer &srv, std::vector<std::string> &args, User& u
 	}
 	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[2]); //Le channel n'existe pas
 	if (chan == srv._chans.end()) {
-		std::cerr << "No such channel {" + args[2] + "}" << std::endl;
-		return ;
+		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cout);
+		return;
 	}
 	if (!user.channels.count(&chan->second)) { //L'envoyeur n'est pas dans le channel
 		std::cerr << "Not in channel" << std::endl;

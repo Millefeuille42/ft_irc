@@ -5,19 +5,21 @@
 
 void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& user) {
 	// TODO On peut quitter plusieurs channels d'un coup, meme syntaxe que join
-	if (args.size() < 2 && args[0] != "PART")
-		return ;
+	if (args.size() < 2 && args[0] != "PART") {
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		return;
+	}
 	if (!cInSet(args[1][0], "#&+!")) {
 		std::cerr << "Not a channel";
 		return ;
 	}
 	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]);
 	if (chan == srv._chans.end()) {
-		std::cerr << "No such channel {" + args[1] + "}" << std::endl;
+		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cout);
 		return;
 	}
 	if (!user.channels.count(&chan->second)) {
-		std::cerr << "Not in channel" << std::endl;
+		sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cout);
 		return;
 	}
 	std::string mess = "Reason";
@@ -35,7 +37,9 @@ void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& use
 	int fd_op = user.leaveChannel(&chan->second);
 	if (fd_op != -1) {
 		srv._users[fd_op].channels[&chan->second] = true;
-		std::cout << srv._users[fd_op].nick + " is now op on the channel " + chan->second.getName() << std::endl;
+		sendMessage(user.fd, YOUREOPER(user.nick) + "\n", std::cout);
+		// TODO peut etre transmettre ?
+		//std::cout << srv._users[fd_op].nick + " is now op on the channel " + chan->second.getName() << std::endl;
 	}
 	if (chan->second.isEmpty())
 		srv._chans.erase(chan->second.getName());

@@ -226,10 +226,10 @@ void SockServer::printStart() {
 
 void SockServer::initCommands() {
 	_commands["PASS"] = pass; // Complete
-	_commands["NICK"] = nick; // Doit manquer des erreurs peut etre
+	_commands["NICK"] = nick; // A discuter
 	_commands["USER"] = user; // Complete
 	_commands["QUIT"] = quit; // Complete
-	_commands["OPER"] = oper; // Doit manquer une erreur peut etre
+	_commands["OPER"] = oper; // A discuter
 
 	_commands["INVITE"] = invite; // Erreurs a gerer + parsing si plusieurs utilisateurs invités
 	_commands["JOIN"] = join; // Erreurs a gerer
@@ -240,13 +240,13 @@ void SockServer::initCommands() {
 	_commands["PART"] = part; // Erreurs a gerer
 	_commands["TOPIC"] = topic; // Erreurs a gerer
 
-	_commands["PRIVMSG"] = privmsg; // Erreurs a gerer
+	_commands["PRIVMSG"] = privmsg; // A discuter
 
 	//_commands[ERROR] = error;
 	_commands["KILL"] = kill;
 	_commands["PING"] = ping; // Complete
 
-	_commands["WHO"] = who; // Si quelqu'un peut passer dessus voir si j'ai pas merdé
+	_commands["WHO"] = who; // ALED
 
 	_commands["INFO"] = info; // Complete
 	_commands["TIME"] = time; // Complete

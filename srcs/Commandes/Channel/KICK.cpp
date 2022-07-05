@@ -22,6 +22,7 @@
 
 void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& user)
 {
+	//TODO Verifier les arguments. Si plusieurs channels : obligatoirement le meme nombre de users. Si Un channel, possiblite d'avoir plusieurs users pour le meme channel
 	if (args.size() < 3 && args[0] != "KICK")
 		return ;
 	if (!cInSet(args[1][0], "#&+!")) { //Le deuxième argument n'est pas un channel
@@ -30,8 +31,8 @@ void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& use
 	}
 	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]); //Le channel n'existe pas
 	if (chan == srv._chans.end()) {
-		std::cerr << "No such channel {" + args[1] + "}" << std::endl;
-		return ;
+		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cout);
+		return;
 	}
 	if (!user.channels.count(&chan->second)) { //L'envoyeur n'est pas dans le channel
 		std::cerr << "Not in channel" << std::endl;
