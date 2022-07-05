@@ -247,7 +247,7 @@ void SockServer::initCommands() {
 	_commands["KILL"] = kill; // A discuter
 	_commands["PING"] = ping; // Complete
 
-	_commands["WHO"] = who;
+	_commands["WHO"] = who; // ALED
 
 	_commands["INFO"] = info; // Complete
 	_commands["TIME"] = time; // Complete
