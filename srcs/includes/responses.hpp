@@ -23,6 +23,8 @@
 #define INFO(nick, info) ":ircserv 371 " + nick + " ircserv :" + info
 #define ENDOFINFO(nick) ":ircserv 374 " + nick + " ircserv :End of INFO list"
 
+#define YOUREOPER(nick) ":ircserv 381 " + nick + " :You are now an IRC operator"
+
 #define QUIT(nick, username) ":" + nick + "!" + username + "@localhost" + " QUIT :"
 #define JOIN(nick, username, channel) ":" + nick + "!" + username + "@localhost" + " JOIN " + channel
 #define PART(nick, username, channel) ":" + nick + "!" + username + "@localhost" + " PART " + channel + " :"

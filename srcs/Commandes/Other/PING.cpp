@@ -3,7 +3,10 @@
 
 #include "../../includes/SockServer.hpp"
 
-void SockServer::ping(SockServer &srv, std::vector<std::string> &, User& user) {
-	srv.sendMessage(user.fd, "PONG ircserv\n", std::cout);
-	std::cout.flush();
+void SockServer::ping(SockServer &, std::vector<std::string> &args, User& user) {
+	if (args.size() < 2) {
+		sendMessage(user.fd, ERR_NOORIGIN(user.nick), std::cout);
+		return;
+	}
+	sendMessage(user.fd, "PONG ircserv\n", std::cout);
 }
