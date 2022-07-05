@@ -19,3 +19,21 @@
 
 //     NAMES #twilight_zone,#42 ; liste les utilisateurs visibles sur #twilight_zone et #42, si ces canaux vous sont visibles.
 //     NAMES ; liste tous les canaux, et tous les utilisateurs visibles. 
+
+#include "../../includes/SockServer.hpp"
+
+void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&)
+{
+    if (cInSet(args[1][0], "#&+!") && args.size() < 3)
+    {
+        for (channelsMap::iterator it = srv._chans.begin(); it != srv._chans.end(); it++)
+        {
+            std::cout << it->first << std::endl;
+            std::vector<int> user_list = it->second.getUsers();
+            for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++)
+            {
+                std::cout << "\t- Utilisateur " << *it2 << " : " << srv._users[srv._fds[*it2].fd].realName << " -" << std::endl;
+            }
+        }
+    }
+}

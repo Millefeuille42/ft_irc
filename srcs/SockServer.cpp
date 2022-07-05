@@ -236,7 +236,7 @@ void SockServer::initCommands() {
 	_commands["KICK"] = kick;
 	//_commands["LIST"] = list;
 	_commands["MODE"] = mode;
-	//_commands["NAMES"] = names;
+	_commands["NAMES"] = names; //milf veut faire
 	_commands["PART"] = part; // Erreurs a gerer
 	_commands["TOPIC"] = topic; // Erreurs a gerer
 
@@ -246,7 +246,7 @@ void SockServer::initCommands() {
 	_commands["KILL"] = kill;
 	_commands["PING"] = ping; // Complete
 
-	_commands["WHO"] = who;
+	_commands["WHO"] = who; // Si quelqu'un peut passer dessus voir si j'ai pas merdé
 
 	_commands["INFO"] = info; // Complete
 	_commands["TIME"] = time; // Complete
