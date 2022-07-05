@@ -20,7 +20,8 @@ public:
 	User &operator=(const User &src);
 
 	void enterChannel(Channels* chan, bool op);
-	void leaveChannel(Channels* chan);
+	int leaveChannel(Channels* chan);
+	void leaveAllChannels();
 
 	void initModes();
 

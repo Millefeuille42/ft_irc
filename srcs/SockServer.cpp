@@ -233,7 +233,7 @@ void SockServer::initCommands() {
 
 	//_commands["INVITE"] = invite;
 	_commands["JOIN"] = join; // Erreurs a gerer
-	//_commands["KICK"] = kick;
+	_commands["KICK"] = kick;
 	//_commands["LIST"] = list;
 	_commands["MODE"] = mode;
 	//_commands["NAMES"] = names;
