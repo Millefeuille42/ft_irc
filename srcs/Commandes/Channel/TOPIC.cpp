@@ -14,7 +14,7 @@ void SockServer::topic(SockServer &srv, std::vector<std::string> &args, User &us
 	}
 	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]);
 	if (chan == srv._chans.end()) {
-		std::cerr << "No such channel {" + args[1] + "}" << std::endl;
+		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cout);
 		return;
 	}
 	if (!user.channels.count(&chan->second)) {
