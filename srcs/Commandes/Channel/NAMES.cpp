@@ -23,14 +23,14 @@
 #include "../../includes/SockServer.hpp"
 
 
-std::vector<std::string> parseMessageComma(std::string msg)
+std::vector<std::string> parseMess(std::string msg)
 {
 	std::vector<std::string> args;
 	size_t pos;
 	std::string token;
-	while ((pos = msg.find(' ')) != std::string::npos)
+	while ((pos = msg.find(',')) != std::string::npos)
     {
-		token = msg.substr(0, pos);
+		token = msg.substr(1, pos);
 		args.push_back(token);
 		msg.erase(0, pos + 1);
 	}
@@ -38,27 +38,34 @@ std::vector<std::string> parseMessageComma(std::string msg)
 	return args;
 }
 
-void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&) {
-	if (!cInSet(args[1][0], "#&+!") && args.size() <
-									   3) // en gros la c'est y a rien qui est dit donc on liste tous les chan et les gens dedans 1 par 1, et le dernier chan c'est la liste des gens qui sont nulpart et le chan s'apellerio (pas quezac) '*'
-	{
-		for (channelsMap::iterator it = srv._chans.begin();
-			 it != srv._chans.end(); it++) {
-			std::cout << it->first << std::endl;
-			std::vector<int> user_list = it->second.getUsers();
-			for (std::vector<int>::iterator it2 = user_list.begin();
-				 it2 != user_list.end(); it2++) {
-				std::cout << "\t- Utilisateur " << *it2 << " : "
-						  << srv._users[srv._fds[*it2].fd].realName << " -"
-						  << std::endl;
-			}
-		}
-	} else {
-		int i = 0;
-		while (args[1][i]) {
-			while (args[1][i] != ',') {
-
-			}
-		}
-	}
-}
+void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&)
+{
+    if (!cInSet(args[1][0], "#&+!") && args.size() < 3) // en gros la c'est y a rien qui est dit donc on liste tous les chan et les gens dedans 1 par 1, et le dernier chan c'est la liste des gens qui sont nulpart et le chan s'apellerio (pas quezac) '*'
+    {
+        for (channelsMap::iterator it = srv._chans.begin(); it != srv._chans.end(); it++)
+        {
+            std::cout << it->first << std::endl;
+            std::vector<int> user_list = it->second.getUsers();
+            for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++)
+            {
+                std::cout << "\t- Utilisateur " << *it2 << " : " << srv._users[srv._fds[*it2].fd].nick << " -" << std::endl;
+            }
+        } // manque le chan * avec les recalcitrants
+    }
+    else // et la j'essaie de recuperer les channels qui ont ete envoye, separe par juste une virgule si il y en a + d'1, et ecrit avec un # devant
+    {
+        std::vector<std::string> chan_list = parseMess(args[1]);
+        for (std::vector<std::string>::iterator i = chan_list.begin(); i != chan_list.end(); i++)
+        {
+            std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(*i);
+            if (chan == srv._chans.end())
+		        return ;
+            std::cout << *i << std::endl;
+            std::vector<int> user_list = chan->second.getUsers();
+            for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++)
+            {
+                std::cout << "\t- Utilisateur " << *it2 << " : " << srv._users[srv._fds[*it2].fd].nick << " -" << std::endl;
+            }
+        }
+    }
+} // TODO -> faire le truc comme topic, parce que irssi il fait chier la
