@@ -55,33 +55,47 @@
 
 void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& user)
 {
-	std::string tokilluser = args[1];
+	if (args.empty() && args[0] != "KILL")
+		return ;
 
-	// if (user a pas les droits batard ( pas ircoperate))
-	// {
-	//	std::cerr << "Error: Don't have this privilege" << std::endl; IL FAUT CE CHECK MAIS JE SAIS PAS COMMENT ON SAIT QUI EST OPERATE //TODO
-	// }
-	// remplacer le if en dessous par un else if
-	if (args.size() < 2)
-	{
-		std::cerr << "Error: Need param" << std::endl;
+	//TODO Possiblment plusieurs cibles peuvent etre possible encore, donc faut parser args[1]
+
+	if (user.modes['o'] == false) {
+		std::cerr << "Not an server operator" << std::endl;
+		return ;
 	}
-	else if (tokilluser == "ircserv")
-	{
-		std::cerr << "Error: Server couldn't be killed" << std::endl;
+
+	std::string mess = "Reason";
+	if (args[2] != ":")
+		for (size_t i = 2; i < args.size(); i++) {
+			if (i == 2) {
+				mess += ":";
+				args[i].erase(0,1);
+			}
+			mess += " " + args[i];
+		}
+	if (mess == "Reason")
+		mess += " not provided";
+	mess += "\n";
+
+	User *u_kill = srv.getUserByNick(args[1]);
+	fdVector::iterator it;
+	for (it = srv._fds.begin(); it != srv._fds.end(); it++) {
+		if (it->fd == u_kill->fd)
+			break ;
 	}
-	else if (!srv.getUserByNick(tokilluser) && !srv.getUserByRealName(tokilluser) && !srv.getUserByUsername(tokilluser))
-	{
-		std::cerr << "Error: Unknown user" << std::endl;
+	for (std::map<Channels*, bool>::iterator cit = u_kill->channels.begin(); cit != u_kill->channels.end(); cit++) {
+		//TODO Appeller le bon truc et non part / quit?
+		transmitToChannel(*cit->first, User(), PART(u_kill->nick, u_kill->user, cit->first->getName()) + "disconnected\n");
+		int fd_op = cit->first->leaveChannel(u_kill->fd);
+		if (fd_op != -1) {
+			srv._users[fd_op].channels[cit->first] = true;
+			std::cout << srv._users[fd_op].nick + " is now op on the channel " + cit->first->getName() << std::endl;
+		}
+		if (cit->first->isEmpty())
+			srv._chans.erase(cit->first->getName());
 	}
-	else
-	{
-		User *bastard = srv.getUserByUsername(tokilluser);
-		srv.sendMessage(bastard->fd, bastard->nick + " have been kicked\n", std::cout);
-		// srv.deleteClient(bastard->fd);
-		user.nick.erase();
-		user.user.erase();
-		close(user.fd);
-		std::cout.flush(); //TODO
-	}
+	u_kill->leaveAllChannels();
+	srv.transmit(User(), QUIT(u_kill->nick, u_kill->user) + mess, std::cout);
+	srv.deleteClient(it);
 }

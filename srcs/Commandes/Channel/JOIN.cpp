@@ -60,6 +60,10 @@ void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& use
 			}
 		}
 		else {
+			if (itc->second.isMode('i') == true) {
+				std::cerr << itc->second.getName() << " is on invitation only" << std::endl;
+				return ;
+			}
 			if (itc->second.joinChannel(user.fd, it->second)) {  //Channel rejoins
 				user.enterChannel(&itc->second, false);
 				transmitToChannelFromServ(itc->second, JOIN(user.nick, user.user, itc->first) + "\n");

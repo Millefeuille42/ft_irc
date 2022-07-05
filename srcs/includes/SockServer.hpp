@@ -78,6 +78,7 @@ class SockServer {
 		static void mode(SockServer &srv, std::vector<std::string> &, User& user);
 		static void part(SockServer &srv, std::vector<std::string> &, User& user);
 		static void topic(SockServer &srv, std::vector<std::string> &, User& user);
+		static void invite(SockServer &srv, std::vector<std::string> &, User& user);
 
 
 		std::string password;
