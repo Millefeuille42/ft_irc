@@ -21,7 +21,7 @@
 
 void SockServer::who(SockServer &srv, std::vector<std::string> & args, User&)
 {
-	if (cInSet(args[1][0], "#&+!") && (args.size() < 3 || (args.size() < 4 && args[3] == "0")))
+	if ((cInSet(args[1][0], "#&+!") && args.size() < 3) || (args.size() < 3 && args[1] == "0"))
 	{
 		std::cout << "List of all connected users :" << std::endl;
 		for (size_t i = 1; i < srv._fds.size(); i++)
@@ -34,14 +34,21 @@ void SockServer::who(SockServer &srv, std::vector<std::string> & args, User&)
 	}
 	else if ((args.size() < 3 && args[1] != "0") || (args.size() < 4 && args[2] == "o" && args[1] != "0"))
 	{
-		for (size_t i = 1; i < srv._fds.size(); i++)
+		if (args[2] == "o")
 		{
-			std::cout << "Informations on the request user :" << std::endl;
-			std::cout << "\t- Utilisateur " << srv._users[srv._fds[i].fd].user << " -" << std::endl;
-			std::cout << "\t   - " << srv._users[srv._fds[i].fd].ip << std::endl;
-			std::cout << "\t   - " << srv._users[srv._fds[i].fd].user << std::endl;
-			std::cout << "\t   - " << srv._users[srv._fds[i].fd].realName << std::endl;
-			std::cout << "\t   - " << srv._users[srv._fds[i].fd].nick << std::endl;
+
+		}
+		else
+		{
+			for (size_t i = 1; i < srv._fds.size(); i++)
+			{
+				std::cout << "Informations on the request user :" << std::endl;
+				std::cout << "\t- Utilisateur " << srv._users[srv._fds[i].fd].user << " -" << std::endl;
+				std::cout << "\t   - " << srv._users[srv._fds[i].fd].ip << std::endl;
+				std::cout << "\t   - " << srv._users[srv._fds[i].fd].user << std::endl;
+				std::cout << "\t   - " << srv._users[srv._fds[i].fd].realName << std::endl;
+				std::cout << "\t   - " << srv._users[srv._fds[i].fd].nick << std::endl;
+			}
 		}
 	}
 	else 
