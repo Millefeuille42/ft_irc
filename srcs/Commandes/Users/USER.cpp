@@ -5,8 +5,17 @@
 #include "../../includes/SockServer.hpp"
 
 void SockServer::user(SockServer &srv, std::vector<std::string>& args, User& user) {
-	if (args[0] != "USER" || args.size() < 5)
-		return ;
+	if (args[0] != "USER" || args.size() < 5) {
+		if (user.nick.empty())
+			sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS_NONICK) + "\n", std::cout);
+		else
+			sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		return;
+	}
+	if (!user.nick.empty() && !user.realName.empty()){
+		sendMessage(user.fd, ERR_ALREADYREGISTERED(user.nick) + "\n", std::cout);
+		return;
+	}
 	if (*args[4].begin() == ':') { //Le nom réel doit commencer par : et peut contenir des espaces
 		user.user = args[1];
 		args[4].erase(0,1);

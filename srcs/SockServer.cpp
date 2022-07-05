@@ -225,33 +225,32 @@ void SockServer::printStart() {
 }
 
 void SockServer::initCommands() {
-	_commands["PASS"] = pass;
-	_commands["NICK"] = nick;
-	_commands["USER"] = user;
-	_commands["QUIT"] = quit;
-	_commands["OPER"] = oper;
+	_commands["PASS"] = pass; // Complete
+	_commands["NICK"] = nick; // Doit manquer des erreurs peut etre
+	_commands["USER"] = user; // Complete
+	_commands["QUIT"] = quit; // Complete
+	_commands["OPER"] = oper; // Doit manquer une erreur peut etre
 
 	//_commands["INVITE"] = invite;
-	_commands["JOIN"] = join;
+	_commands["JOIN"] = join; // Erreurs a gerer
 	//_commands["KICK"] = kick;
 	//_commands["LIST"] = list;
 	_commands["MODE"] = mode;
 	//_commands["NAMES"] = names;
-	_commands["PART"] = part;
-	_commands["TOPIC"] = topic;
+	_commands["PART"] = part; // Erreurs a gerer
+	_commands["TOPIC"] = topic; // Erreurs a gerer
 
-	_commands["PRIVMSG"] = privmsg;
+	_commands["PRIVMSG"] = privmsg; // Erreurs a gerer
 
 	//_commands[ERROR] = error;
 	_commands["KILL"] = kill;
-	_commands["PING"] = ping;
+	_commands["PING"] = ping; // Complete
 
 	_commands["WHO"] = who;
-	// _commands["WHOIS"] = who;
 
-	_commands["INFO"] = info;
-	_commands["TIME"] = time;
-	_commands["VERSION"] = version;
+	_commands["INFO"] = info; // Complete
+	_commands["TIME"] = time; // Complete
+	_commands["VERSION"] = version; // Complete
 }
 
 // TODO	Error messages on commands

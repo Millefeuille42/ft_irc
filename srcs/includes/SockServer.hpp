@@ -7,7 +7,7 @@
 
 #include "ft_irc.hpp"
 #include "SockAddress.hpp"
-#include "_SockServer_Errors.hpp"
+#include "errors.hpp"
 
 
 class SockServer {

@@ -6,14 +6,16 @@
 void SockServer::quit(SockServer &srv, std::vector<std::string>& args, User& user) {
 	if (args.empty() && args[0] != "QUIT")
 		return ;
-	std::string mess = user.nick + " has quit";
+	std::string mess = "Reason";
 	for (size_t i = 1; i < args.size(); i++) {
 		if (i == 1) {
-			mess += " :";
+			mess += ":";
 			args[i].erase(0,1);
 		}
 		mess += " " + args[i];
 	}
+	if (mess == "Reason")
+		mess += " not provided";
 	mess += "\n";
 	fdVector::iterator it;
 	for (it = srv._fds.begin(); it != srv._fds.end(); it++) {
