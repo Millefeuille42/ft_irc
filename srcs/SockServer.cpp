@@ -231,7 +231,7 @@ void SockServer::initCommands() {
 	_commands["QUIT"] = quit; // Complete
 	_commands["OPER"] = oper; // Doit manquer une erreur peut etre
 
-	//_commands["INVITE"] = invite;
+	_commands["INVITE"] = invite; // Erreurs a gerer + parsing si plusieurs utilisateurs invités
 	_commands["JOIN"] = join; // Erreurs a gerer
 	_commands["KICK"] = kick;
 	//_commands["LIST"] = list;
