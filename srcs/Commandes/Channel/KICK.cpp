@@ -22,34 +22,55 @@
 
 void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& user)
 {
-	std::string tokickuser = args[2];
-	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]);
-
-	if (args.size() < 2)
-	{
-		std::cerr << "Error: Need param" << std::endl;
- 		return ;
-	}
-	if (chan == srv._chans.end()) {
- 		std::cerr << "No such channel {" + args[1] + "}" << std::endl;
-		return;
-	}
-	else if (!srv.getUserByNick(tokickuser) || !srv.getUserByRealName(tokickuser) || !srv.getUserByUsername(tokickuser))
-	{
-		std::cerr << "Error: Unknown user" << std::endl;
+	if (args.size() < 3 && args[0] != "KICK")
+		return ;
+	if (!cInSet(args[1][0], "#&+!")) { //Le deuxième argument n'est pas un channel
+		std::cerr << "Not a channel";
 		return ;
 	}
-	// else if (chan existe mais pas le mec dedans)
-	// {
-	// 	std::cerr << "Error: User isn't in this Channel" << std::endl;
-	// }
-	else if (chan->second.isOper(user.fd) == false)
-	{
+	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]); //Le channel n'existe pas
+	if (chan == srv._chans.end()) {
+		std::cerr << "No such channel {" + args[1] + "}" << std::endl;
+		return ;
+	}
+	if (!user.channels.count(&chan->second)) { //L'envoyeur n'est pas dans le channel
+		std::cerr << "Not in channel" << std::endl;
+		return ;
+	}
+	if (chan->second.isOper(user.fd) == false) { //L'envoyeur n'est pas opérateur
 		std::cerr << "Error: Don't have this privilege" << std::endl;
+		return ;
 	}
-	else 
-	{
-		// on kick le batard //TODO
+	User *u_kick = srv.getUserByNick(args[2]);
+	if (u_kick == NULL) { //La cible n'existe pas
+		std::cerr << "Target doesn't exist" << std::endl;
+		return ;
+	}
+	if (!u_kick->channels.count(&chan->second)) { //La cible n'est pas dans le channel
+		std::cerr << "Target is not in the channel" << std::endl;
+		return ;
+	}
 
+	std::string mess = "Was kicked. Reason";
+	if (args[3] != ":")
+		for (size_t i = 3; i < args.size(); i++) {
+			if (i == 3) {
+				mess += ": ";
+				args[i].erase(0,1);
+			}
+			mess += " " + args[i];
+		}
+	if (mess == "Was kicked. Reason")
+		mess += " not provided";
+	mess += "\n";
+
+	transmitToChannelFromServ(chan->second, PART(u_kick->nick, u_kick->user, chan->second.getName()) + mess);
+
+	int fd_op = u_kick->leaveChannel(&chan->second);
+	if (fd_op != -1) {
+		srv._users[fd_op].channels[&chan->second] = true;
+		std::cout << srv._users[fd_op].nick + " is now op on the channel " + chan->second.getName() << std::endl;
 	}
-} //TODO
+	if (chan->second.isEmpty())
+		srv._chans.erase(chan->second.getName());
+}

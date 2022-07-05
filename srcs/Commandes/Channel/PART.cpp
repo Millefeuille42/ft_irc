@@ -15,7 +15,7 @@ void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& use
 		std::cerr << "No such channel {" + args[1] + "}" << std::endl;
 		return;
 	}
-	if (chan->second.isMode('n') && !user.channels.count(&chan->second)) {
+	if (!user.channels.count(&chan->second)) {
 		std::cerr << "Not in channel" << std::endl;
 		return;
 	}
