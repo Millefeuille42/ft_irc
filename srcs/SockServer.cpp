@@ -100,7 +100,7 @@ void SockServer::sendMessage(int target, const std::string & message) {
 }
 
 void SockServer::transmit(const User& user, std::string message, std::basic_ostream<char> & otp) {
-	otp << "\tSENT -> "<< message;
+	otp << "\tBRDC -> "<< message;
 	otp.flush();
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == user.fd || it->fd == _fds.begin()->fd)
@@ -110,7 +110,7 @@ void SockServer::transmit(const User& user, std::string message, std::basic_ostr
 }
 
 void SockServer::transmitServ(std::string& message) {
-	std::cerr << "\tSENT -> " << message;
+	std::cerr << "\tBRDC -> " << message;
 	std::cerr.flush();
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == _fds.begin()->fd) {
