@@ -38,7 +38,7 @@ void SockServer::invite(SockServer &srv, std::vector<std::string> &args, User& u
 			return ;
 		}
 		chan->second.joinChannel(u_invit->fd); //Channel rejoins
-		user.enterChannel(&chan->second, false);
+		u_invit->enterChannel(&chan->second, false);
 		transmitToChannelFromServ(chan->second, JOIN(u_invit->nick, u_invit->user, chan->first) + "\n");
 		if (!chan->second.getTopic().empty()) {
 			sendMessage(u_invit->fd, TOPIC(u_invit->nick, chan->second.getName()) + chan->second.getTopic() + "\n", std::cout);
