@@ -58,8 +58,6 @@ void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& use
 	if (args.empty() && args[0] != "KILL")
 		return ;
 
-	//TODO Possiblment plusieurs cibles peuvent etre possible encore, donc faut parser args[1]
-
 	if (user.modes['o'] == false) {
 		std::cerr << "Not an server operator" << std::endl;
 		return ;
