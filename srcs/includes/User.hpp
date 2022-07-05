@@ -21,6 +21,7 @@ public:
 
 	void enterChannel(Channels* chan, bool op);
 	int leaveChannel(Channels* chan);
+	void leaveAllChannels();
 
 	void initModes();
 
