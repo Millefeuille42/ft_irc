@@ -39,6 +39,7 @@ class Channels {
 		bool isMode(char mode);
 
 		bool joinChannel(int fd, std::string key);
+		void joinChannel(int fd);
 		int leaveChannel(int fd);
 
 		std::string oMode(char ar, User *user); //Rendre Operateur le user; (Vérifier si User est NULL)
