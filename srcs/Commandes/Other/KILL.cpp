@@ -70,7 +70,7 @@ void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& use
 	{
 		std::cerr << "Error: Server couldn't be killed" << std::endl;
 	}
-	else if (!srv.getUserByNick(tokilluser) || !srv.getUserByRealName(tokilluser) || !srv.getUserByUsername(tokilluser))
+	else if (!srv.getUserByNick(tokilluser) && !srv.getUserByRealName(tokilluser) && !srv.getUserByUsername(tokilluser))
 	{
 		std::cerr << "Error: Unknown user" << std::endl;
 	}
