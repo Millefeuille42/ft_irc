@@ -22,6 +22,8 @@
 #define VERSION(nick, version) ":ircserv 351 " + nick + " ircserv " + version + " :latest commit"
 #define INFO(nick, info) ":ircserv 371 " + nick + " ircserv :" + info
 #define ENDOFINFO(nick) ":ircserv 374 " + nick + " ircserv :End of INFO list"
+#define NAMES(nick, channel) ":ircserv 353 " + nick + " = " + channel + " :"
+#define ENDOFNAMES(nick, channel) ":ircserv 366 " + nick + " " + channel + " :End of NAMES list"
 
 #define YOUREOPER(nick) ":ircserv 381 " + nick + " :You are now an IRC operator"
 
@@ -29,5 +31,6 @@
 #define JOIN(nick, username, channel) ":" + nick + "!" + username + "@localhost" + " JOIN " + channel
 #define PART(nick, username, channel) ":" + nick + "!" + username + "@localhost" + " PART " + channel + " :"
 #define PRIVMSG(nick, username, to) ":" + nick + "!" + username + " PRIVMSG " + to + " :"
+
 
 #endif //RESPONSES_HPP

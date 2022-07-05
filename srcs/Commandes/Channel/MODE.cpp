@@ -140,7 +140,7 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 			return;
 		}
 		if (chan->second.isOper(user.fd) == false) {
-			std::cerr << "Not an operator" << std::endl; //TODO transmettre au user seulement dans le channel
+			std::cerr << "Not an operator" << std::endl;
 			return ;
 		}
 		size_t j = 0;

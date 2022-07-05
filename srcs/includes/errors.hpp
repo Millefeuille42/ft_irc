@@ -13,7 +13,10 @@
 # define ERR_NICKNAMEINUSE(nick) ":ircserv 433 " + nick + " :Nickname is already in use"
 
 # define ERR_NOTONCHANNEL(nick, channel) ":ircserv 442 " + nick + " " + channel + " :You're not on that channel"
+# define ERR_USERONCHANNEL(nick, target, channel) ":ircserv 443 " + nick + " " + target + " " + channel + " :is already on channel"
+# define ERR_USERNOTINCHANNEL(nick, target, channel) ":ircserv 441 " + nick + " " + target + " " + channel + " :They aren't on that channel"
 # define ERR_CHANOPRIVSNEEDED(nick, channel) ":ircserv 482 " + nick + " " + channel + " :You're not channel operator"
+# define ERR_NOPRIVILEGES(nick) ":ircserv 481 " + nick + " :Permission Denied- You're not an IRC operator"
 
 # define ERR_NEEDMOREPARAMS(nick) ":ircserv 461 " + nick + " :Not enough parameters"
 # define ERR_NEEDMOREPARAMS_NONICK ":ircserv 461 * :Not enough parameters"

@@ -23,8 +23,10 @@
 void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& user)
 {
 	//TODO Verifier les arguments. Si plusieurs channels : obligatoirement le meme nombre de users. Si Un channel, possiblite d'avoir plusieurs users pour le meme channel
-	if (args.size() < 3 && args[0] != "KICK")
-		return ;
+	if (args.size() < 3 && args[0] != "KICK") {
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		return;
+	}
 	if (!cInSet(args[1][0], "#&+!")) { //Le deuxième argument n'est pas un channel
 		std::cerr << "Not a channel";
 		return ;
@@ -35,20 +37,20 @@ void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& use
 		return;
 	}
 	if (!user.channels.count(&chan->second)) { //L'envoyeur n'est pas dans le channel
-		std::cerr << "Not in channel" << std::endl;
+		sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cout);
 		return ;
 	}
 	if (chan->second.isOper(user.fd) == false) { //L'envoyeur n'est pas opérateur
-		std::cerr << "Error: Don't have this privilege" << std::endl;
+		sendMessage(user.fd, std::string(ERR_CHANOPRIVSNEEDED(user.nick, chan->first)) + "\n", std::cout);
 		return ;
 	}
 	User *u_kick = srv.getUserByNick(args[2]);
 	if (u_kick == NULL) { //La cible n'existe pas
-		std::cerr << "Target doesn't exist" << std::endl;
-		return ;
+		sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[2])) + "\n", std::cout);
+		return;
 	}
 	if (!u_kick->channels.count(&chan->second)) { //La cible n'est pas dans le channel
-		std::cerr << "Target is not in the channel" << std::endl;
+		sendMessage(user.fd, std::string(ERR_USERNOTINCHANNEL(user.nick, u_kick->nick , chan->first)) + "\n", std::cout);
 		return ;
 	}
 
@@ -70,7 +72,8 @@ void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& use
 	int fd_op = u_kick->leaveChannel(&chan->second);
 	if (fd_op != -1) {
 		srv._users[fd_op].channels[&chan->second] = true;
-		std::cout << srv._users[fd_op].nick + " is now op on the channel " + chan->second.getName() << std::endl;
+		sendMessage(user.fd, YOUREOPER(srv._users[fd_op].nick) + "\n", std::cout);
+		// TODO peut etre transmettre ?
 	}
 	if (chan->second.isEmpty())
 		srv._chans.erase(chan->second.getName());

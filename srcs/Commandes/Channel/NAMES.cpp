@@ -19,3 +19,61 @@
 
 //     NAMES #twilight_zone,#42 ; liste les utilisateurs visibles sur #twilight_zone et #42, si ces canaux vous sont visibles.
 //     NAMES ; liste tous les canaux, et tous les utilisateurs visibles. 
+
+#include "../../includes/SockServer.hpp"
+
+
+std::vector<std::string> parseMess(std::string msg)
+{
+	std::vector<std::string> args;
+	size_t pos;
+	std::string token;
+	while ((pos = msg.find(',')) != std::string::npos)
+    {
+		token = msg.substr(0, pos);
+		args.push_back(token);
+		msg.erase(0, pos + 1);
+	}
+	args.push_back(msg);
+	return args;
+}
+
+void SockServer::names(SockServer &srv, std::vector<std::string> & args, User& user)
+{
+    if (args.size() < 2) // en gros la c'est y a rien qui est dit donc on liste tous les chan et les gens dedans 1 par 1, et le dernier chan c'est la liste des gens qui sont nulpart et le chan s'apellerio (pas quezac) '*'
+    {
+        for (channelsMap::iterator it = srv._chans.begin(); it != srv._chans.end(); it++)
+        {
+            std::cout << it->first << std::endl;
+            std::vector<int> user_list = it->second.getUsers();
+			std::string list;
+            for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++) {
+				list += srv._users[*it2].nick + " ";
+			}
+			sendMessage(user.fd, NAMES(user.nick, it->first) + list + "\n", std::cout);
+			sendMessage(user.fd, ENDOFNAMES(user.nick, it->first) + "\n", std::cout);
+        } // manque le chan * avec les recalcitrants
+		std::string list;
+		for (userMap::iterator it = srv._users.begin(); it != srv._users.end(); it++)
+			if (it->second.channels.empty())
+				list += it->second.nick + " ";
+		sendMessage(user.fd, NAMES(user.nick, "*") + list + "\n", std::cout);
+		sendMessage(user.fd, ENDOFNAMES(user.nick, "*") + "\n", std::cout);
+    }
+    else // et la j'essaie de recuperer les channels qui ont ete envoye, separe par juste une virgule si il y en a + d'1, et ecrit avec un # devant
+    {
+        std::vector<std::string> chan_list = parseMess(args[1]);
+        for (std::vector<std::string>::iterator i = chan_list.begin(); i != chan_list.end(); i++)
+        {
+            std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(*i);
+            if (chan == srv._chans.end())
+		        return ;
+            std::vector<int> user_list = chan->second.getUsers();
+			std::string list;
+            for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++)
+				list += srv._users[*it2].nick + " ";
+			sendMessage(user.fd, NAMES(user.nick, *i) + list + "\n", std::cout);
+			sendMessage(user.fd, ENDOFNAMES(user.nick, *i) + "\n", std::cout);
+        }
+    }
+}

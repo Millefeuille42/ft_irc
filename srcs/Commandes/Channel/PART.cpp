@@ -4,6 +4,7 @@
 #include "../../includes/SockServer.hpp"
 
 void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& user) {
+	// TODO On peut quitter plusieurs channels d'un coup, meme syntaxe que join
 	if (args.size() < 2 && args[0] != "PART") {
 		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
 		return;
@@ -36,7 +37,7 @@ void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& use
 	int fd_op = user.leaveChannel(&chan->second);
 	if (fd_op != -1) {
 		srv._users[fd_op].channels[&chan->second] = true;
-		sendMessage(user.fd, YOUREOPER(user.nick) + "\n", std::cout);
+		sendMessage(user.fd, YOUREOPER(srv._users[fd_op].nick) + "\n", std::cout);
 		// TODO peut etre transmettre ?
 		//std::cout << srv._users[fd_op].nick + " is now op on the channel " + chan->second.getName() << std::endl;
 	}

@@ -41,8 +41,10 @@ void parseChan(std::map<std::string, std::string>& mChans, std::vector<std::stri
 }
 
 void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& user) {
-	if (args[0] != "JOIN" || args.size() <= 1)
-		return ;
+	if (args[0] != "JOIN" || args.size() <= 1) {
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		return;
+	}
 	std::map<std::string, std::string> mChans;
 
 	parseChan(mChans, args);
@@ -58,6 +60,10 @@ void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& use
 			if (!srv._chans[it->first].getTopic().empty()) {
 				sendMessage(user.fd, TOPIC(user.nick, srv._chans[it->first].getName()) + srv._chans[it->first].getTopic() + "\n", std::cout);
 			}
+			//std::vector<std::string> a;
+			//a.push_back("NAMES"); a.push_back(srv._chans[it->first].getName());
+			//names(srv, a, user);
+			// TODO a rajouter une fois mode #channel fait
 		}
 		else {
 			if (itc->second.isMode('i') == true) {
@@ -70,6 +76,10 @@ void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& use
 				if (!itc->second.getTopic().empty()) {
 					sendMessage(user.fd, TOPIC(user.nick, itc->second.getName()) + itc->second.getTopic() + "\n", std::cout);
 				}
+				//std::vector<std::string> a;
+				//a.push_back("NAMES"); a.push_back(itc->second.getName());
+				//names(srv, a, user);
+				// TODO a rajouter une fois mode #channel fait
 			}
 			else { //Channel Non-Rejoins
 				sendMessage(user.fd, "You can't join this channel", std::cerr);
