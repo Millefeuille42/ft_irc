@@ -36,7 +36,18 @@ void SockServer::who(SockServer &srv, std::vector<std::string> & args, User&)
 	{
 		if (args[2] == "o")
 		{
-
+			for (size_t i = 1; i < srv._fds.size(); i++)
+			{
+				if (srv._users[srv._fds[i].fd].modes['o'] == true)
+				{
+					std::cout << "Informations on the request user :" << std::endl;
+					std::cout << "\t- Operateur " << srv._users[srv._fds[i].fd].user << " -" << std::endl;
+					std::cout << "\t   - " << srv._users[srv._fds[i].fd].ip << std::endl;
+					std::cout << "\t   - " << srv._users[srv._fds[i].fd].user << std::endl;
+					std::cout << "\t   - " << srv._users[srv._fds[i].fd].realName << std::endl;
+					std::cout << "\t   - " << srv._users[srv._fds[i].fd].nick << std::endl;
+				}
+			}
 		}
 		else
 		{
