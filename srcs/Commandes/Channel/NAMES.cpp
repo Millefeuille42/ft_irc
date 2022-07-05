@@ -22,9 +22,25 @@
 
 #include "../../includes/SockServer.hpp"
 
+
+std::vector<std::string> parseMessage(std::string msg)
+{
+	std::vector<std::string> args;
+	size_t pos;
+	std::string token;
+	while ((pos = msg.find(' ')) != std::string::npos)
+    {
+		token = msg.substr(0, pos);
+		args.push_back(token);
+		msg.erase(0, pos + 1);
+	}
+	args.push_back(msg);
+	return args;
+}
+
 void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&)
 {
-    if (cInSet(args[1][0], "#&+!") && args.size() < 3)
+    if (!cInSet(args[1][0], "#&+!") && args.size() < 3) // en gros la c'est y a rien qui est dit donc on liste tous les chan et les gens dedans 1 par 1, et le dernier chan c'est la liste des gens qui sont nulpart et le chan s'apellerio (pas quezac) '*'
     {
         for (channelsMap::iterator it = srv._chans.begin(); it != srv._chans.end(); it++)
         {
@@ -36,4 +52,14 @@ void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&)
             }
         }
     }
+    else
+    {
+        int i = 0;
+        while (args[1][i])
+        {
+            while (args[1][i] != ',')
+            {
+                
+            }
+        }
 }
