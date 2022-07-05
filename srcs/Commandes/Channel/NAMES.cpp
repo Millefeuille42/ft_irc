@@ -71,4 +71,4 @@ void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&)
             }
         }
     }
-}
+} // TODO -> faire le truc comme topic, parce que irssi il fait chier la
