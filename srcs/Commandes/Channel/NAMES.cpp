@@ -23,7 +23,7 @@
 #include "../../includes/SockServer.hpp"
 
 
-std::vector<std::string> parseMessage(std::string msg)
+std::vector<std::string> parseMessageComma(std::string msg)
 {
 	std::vector<std::string> args;
 	size_t pos;
@@ -38,28 +38,27 @@ std::vector<std::string> parseMessage(std::string msg)
 	return args;
 }
 
-void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&)
-{
-    if (!cInSet(args[1][0], "#&+!") && args.size() < 3) // en gros la c'est y a rien qui est dit donc on liste tous les chan et les gens dedans 1 par 1, et le dernier chan c'est la liste des gens qui sont nulpart et le chan s'apellerio (pas quezac) '*'
-    {
-        for (channelsMap::iterator it = srv._chans.begin(); it != srv._chans.end(); it++)
-        {
-            std::cout << it->first << std::endl;
-            std::vector<int> user_list = it->second.getUsers();
-            for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++)
-            {
-                std::cout << "\t- Utilisateur " << *it2 << " : " << srv._users[srv._fds[*it2].fd].realName << " -" << std::endl;
-            }
-        }
-    }
-    else
-    {
-        int i = 0;
-        while (args[1][i])
-        {
-            while (args[1][i] != ',')
-            {
-                
-            }
-        }
+void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&) {
+	if (!cInSet(args[1][0], "#&+!") && args.size() <
+									   3) // en gros la c'est y a rien qui est dit donc on liste tous les chan et les gens dedans 1 par 1, et le dernier chan c'est la liste des gens qui sont nulpart et le chan s'apellerio (pas quezac) '*'
+	{
+		for (channelsMap::iterator it = srv._chans.begin();
+			 it != srv._chans.end(); it++) {
+			std::cout << it->first << std::endl;
+			std::vector<int> user_list = it->second.getUsers();
+			for (std::vector<int>::iterator it2 = user_list.begin();
+				 it2 != user_list.end(); it2++) {
+				std::cout << "\t- Utilisateur " << *it2 << " : "
+						  << srv._users[srv._fds[*it2].fd].realName << " -"
+						  << std::endl;
+			}
+		}
+	} else {
+		int i = 0;
+		while (args[1][i]) {
+			while (args[1][i] != ',') {
+
+			}
+		}
+	}
 }

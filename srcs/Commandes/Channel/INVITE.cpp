@@ -4,8 +4,10 @@
 #include "../../includes/SockServer.hpp"
 
 void SockServer::invite(SockServer &srv, std::vector<std::string> &args, User& user) {
-	if (args[0] != "INVITE" || args.size() <= 2)
-		return ;
+	if (args[0] != "INVITE" || args.size() <= 2) {
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		return;
+	}
 
 	if (!cInSet(args[2][0], "#&+!")) { //Le deuxième argument n'est pas un channel
 		std::cerr << "Not a channel";
@@ -17,22 +19,22 @@ void SockServer::invite(SockServer &srv, std::vector<std::string> &args, User& u
 		return;
 	}
 	if (!user.channels.count(&chan->second)) { //L'envoyeur n'est pas dans le channel
-		std::cerr << "Not in channel" << std::endl;
-		return ;
+		sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cout);
+		return;
 	}
 	if (chan->second.isOper(user.fd) == false && chan->second.isMode('i') == true) { //L'envoyeur n'est pas opérateur et le mode 'i' est actif
-		std::cerr << "Error: Don't have this privilege" << std::endl;
-		return ;
+		sendMessage(user.fd, std::string(ERR_CHANOPRIVSNEEDED(user.nick, chan->first)) + "\n", std::cout);
+		return;
 	}
 
 	User *u_invit = srv.getUserByNick(args[1]);
 	if (u_invit == NULL) { //La cible n'existe pas
-		std::cerr << "Target doesn't exist" << std::endl;
-		return ;
+		sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[1])) + "\n", std::cout);
+		return;
 	}
 	if (u_invit->channels.count(&chan->second)) { //La cible est deja dans le channel
-		std::cerr << "Target is already in the channel" << std::endl;
-		return ;
+		sendMessage(user.fd, std::string(ERR_USERONCHANNEL(user.nick, u_invit->nick , chan->first)) + "\n", std::cout);
+		return;
 	}
 	chan->second.joinChannel(u_invit->fd); //Channel rejoins
 	u_invit->enterChannel(&chan->second, false);

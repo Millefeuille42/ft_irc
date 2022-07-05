@@ -231,19 +231,19 @@ void SockServer::initCommands() {
 	_commands["QUIT"] = quit; // Complete
 	_commands["OPER"] = oper; // A discuter
 
-	_commands["INVITE"] = invite; // Erreurs a gerer + parsing si plusieurs utilisateurs invités
+	_commands["INVITE"] = invite; // Complete
 	_commands["JOIN"] = join; // Erreurs a gerer
 	_commands["KICK"] = kick;
 	//_commands["LIST"] = list;
 	_commands["MODE"] = mode;
-	_commands["NAMES"] = names; //milf veut faire
-	_commands["PART"] = part; // Erreurs a gerer
-	_commands["TOPIC"] = topic; // Erreurs a gerer
+	_commands["NAMES"] = names;
+	_commands["PART"] = part; // A discuter
+	_commands["TOPIC"] = topic; // Complete
 
 	_commands["PRIVMSG"] = privmsg; // A discuter
 
 	//_commands[ERROR] = error;
-	_commands["KILL"] = kill;
+	_commands["KILL"] = kill; // A discuter
 	_commands["PING"] = ping; // Complete
 
 	_commands["WHO"] = who; // ALED

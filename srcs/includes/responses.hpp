@@ -30,4 +30,5 @@
 #define PART(nick, username, channel) ":" + nick + "!" + username + "@localhost" + " PART " + channel + " :"
 #define PRIVMSG(nick, username, to) ":" + nick + "!" + username + " PRIVMSG " + to + " :"
 
+
 #endif //RESPONSES_HPP

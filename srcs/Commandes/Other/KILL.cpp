@@ -55,11 +55,13 @@
 
 void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& user)
 {
-	if (args.empty() && args[0] != "KILL")
-		return ;
+	if (args.empty() && args[0] != "KILL") {
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		return;
+	}
 
 	if (user.modes['o'] == false) {
-		std::cerr << "Not an server operator" << std::endl;
+		sendMessage(user.fd, std::string(ERR_NOPRIVILEGES(user.nick)) + "\n", std::cout);
 		return ;
 	}
 
@@ -77,6 +79,10 @@ void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& use
 	mess += "\n";
 
 	User *u_kill = srv.getUserByNick(args[1]);
+	if (!u_kill) {
+		sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[1])) + "\n", std::cout);
+		return;
+	}
 	fdVector::iterator it;
 	for (it = srv._fds.begin(); it != srv._fds.end(); it++) {
 		if (it->fd == u_kill->fd)
@@ -88,7 +94,8 @@ void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& use
 		int fd_op = cit->first->leaveChannel(u_kill->fd);
 		if (fd_op != -1) {
 			srv._users[fd_op].channels[cit->first] = true;
-			std::cout << srv._users[fd_op].nick + " is now op on the channel " + cit->first->getName() << std::endl;
+			sendMessage(user.fd, YOUREOPER(user.nick) + "\n", std::cout);
+			// TODO peut etre transmettre ?
 		}
 		if (cit->first->isEmpty())
 			srv._chans.erase(cit->first->getName());
