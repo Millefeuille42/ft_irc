@@ -23,7 +23,7 @@
 #include "../../includes/SockServer.hpp"
 
 
-std::vector<std::string> parseMessage(std::string msg)
+std::vector<std::string> parseMess(std::string msg)
 {
 	std::vector<std::string> args;
 	size_t pos;
@@ -48,21 +48,26 @@ void SockServer::names(SockServer &srv, std::vector<std::string> & args, User&)
             std::vector<int> user_list = it->second.getUsers();
             for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++)
             {
-                std::cout << "\t- Utilisateur " << *it2 << " : " << srv._users[srv._fds[*it2].fd].realName << " -" << std::endl;
+                std::cout << "\t- Utilisateur " << *it2 << " : " << srv._users[srv._fds[*it2].fd].nick << " -" << std::endl;
             }
         }
     }
     else // et la j'essaie de recuperer les channels qui ont ete envoye, separe par juste une virgule si il y en a + d'1, et ecrit avec un # devant
     {
-        std::vector<std::string> chan_list = parseMessage(args[1]);
+        std::vector<std::string> chan_list = parseMess(args[1]);
         for (std::vector<std::string>::iterator i = chan_list.begin(); i != chan_list.end(); i++)
         {
-            std::cout << i << std::endl;
-            std::vector<int> user_list = it->second.getUsers();
-            // std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]);
+            std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(*i);
+            if (chan == srv._chans.end())
+            {
+                std::cerr << "No such channel {" + *i + "}" << std::endl;
+		        return ;
+            }
+            std::cout << *i << std::endl;
+            std::vector<int> user_list = chan->second.getUsers();
             for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++)
             {
-                std::cout << "\t- Utilisateur " << *it2 << " : " << srv._users[srv._fds[*it2].fd].realName << " -" << std::endl;
+                std::cout << "\t- Utilisateur " << *it2 << " : " << srv._users[srv._fds[*it2].fd].nick << " -" << std::endl;
             }
         }
     }
