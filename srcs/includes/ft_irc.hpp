@@ -20,6 +20,7 @@
 #include <csignal>
 #include <cstring>
 #include <ctime>
+#include <cstddef>
 #include <cerrno>
 #include <sstream>
 #include <fstream>
