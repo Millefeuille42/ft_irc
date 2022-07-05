@@ -28,7 +28,7 @@ void SockServer::who(SockServer &srv, std::vector<std::string> & args, User&)
 			std::cout << "\t- Utilisateur " << i << " : " << srv._users[srv._fds[i].fd].realName << " -" << std::endl;
 		std::cout << "End of the list." << std::endl;
 	}
-	else if (!srv.getUserByNick(args[1]) || !srv.getUserByRealName(args[1]) || !srv.getUserByUsername(args[1]))
+	else if (!srv.getUserByNick(args[1]) && !srv.getUserByRealName(args[1]) && !srv.getUserByUsername(args[1]))
 	{
 		std::cerr << "Error: Unknown user" << std::endl;
 	}
