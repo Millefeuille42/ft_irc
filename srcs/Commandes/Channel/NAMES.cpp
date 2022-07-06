@@ -47,11 +47,13 @@ void SockServer::names(SockServer &srv, std::vector<std::string> & args, User& u
             std::vector<int> user_list = it->second.getUsers();
 			std::string list;
             for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++) {
+				if (srv._users[*it2].channels[&it->second])
+					list += "@";
 				list += srv._users[*it2].nick + " ";
 			}
 			sendMessage(user.fd, NAMES(user.nick, it->first) + list + "\n", std::cout);
 			sendMessage(user.fd, ENDOFNAMES(user.nick, it->first) + "\n", std::cout);
-        } // manque le chan * avec les recalcitrants
+        }
 		std::string list;
 		for (userMap::iterator it = srv._users.begin(); it != srv._users.end(); it++)
 			if (it->second.channels.empty())
