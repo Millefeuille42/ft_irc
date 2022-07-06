@@ -5,15 +5,7 @@
 #ifndef RESPONSES_HPP
 #define RESPONSES_HPP
 
-//002    RPL_YOURHOST
-//              "Your host is <servername>, running version <ver>"
-//       003    RPL_CREATED
-//              "This server was created <date>"
-//       004    RPL_MYINFO
-//              "<servername> <version> <available user modes>
-//               <available channel modes>"
-
-#define RPL_WELCOME(nick, username) ":ircserv 001 " + nick + " :Welcome to ft_irc " + nick + "!" + username + "@localhost"
+#define RPL_WELCOME(nick, username) ":ircserv 001 " + nick + " :Welcome to ft_irc " + nick + "!" + username + "@ircserv.42"
 
 #define TOPIC(nick, channel) ":ircserv 332 " + nick + " " + channel + " :"
 #define NOTOPIC(nick, channel) ":ircserv 331 " + nick + " "  + channel + " :No topic is set"
@@ -28,19 +20,22 @@
 #define LISTEND(nick) ":ircserv 323 " + nick + " :End of LIST"
 #define ERROR_QUIT(nick, ip, reason) "ERROR :Closing Link " + nick + "[" + ip + "] (" + reason + ":: " + nick + ")"
 
+#define WHOREPLY(userNick, channel, user, nick, operStatus, realName) ":ircserv 352 " + userNick + " " + channel + " " + user + " ircserv.42 ircserv " + nick + " H" + operStatus + " :0 " + realName
+#define ENDOFWHO(nick, arg, match) ":ircserv 315 " + nick + " " + arg + " :End of WHO list by " + match
+
 #define CHANNELMODEIS(nick, channel) ":ircserv 324 " + nick + " " + channel + " "
 #define UMODEIS(nick, target) ":ircserv 221 " + nick + " " + target + " "
 
 #define YOUREOPER(nick) ":ircserv 381 " + nick + " :You are now an IRC operator"
 #define CHANOPER(channel, to) ":ircserv PRIVMSG " + channel + " :" + to + " is now a channel operator\n"
 
-#define NICK(nick, username) ":" + nick + "!" + username + "@localhost" + " NICK :"
-#define QUIT(nick, username) ":" + nick + "!" + username + "@localhost" + " QUIT :"
-#define JOIN(nick, username, channel) ":" + nick + "!" + username + "@localhost" + " JOIN " + channel
-#define PART(nick, username, channel) ":" + nick + "!" + username + "@localhost" + " PART " + channel + " :"
-#define PRIVMSG(nick, username, to) ":" + nick + "!" + username + "@localhost PRIVMSG " + to + " :"
-#define MODE(nick, username) ":" + nick + "!" + username + "@localhost MODE "
-#define KILL(nick, username) ":" + nick + "!" + username + "@localhost KILL "
-#define KICK(nick, username) ":" + nick + "!" + username + "@localhost KICK "
+#define NICK(nick, username) ":" + nick + "!" + username + "@ircserv.42" + " NICK :"
+#define QUIT(nick, username) ":" + nick + "!" + username + "@ircserv.42" + " QUIT :"
+#define JOIN(nick, username, channel) ":" + nick + "!" + username + "@ircserv.42" + " JOIN " + channel
+#define PART(nick, username, channel) ":" + nick + "!" + username + "@ircserv.42" + " PART " + channel + " :"
+#define PRIVMSG(nick, username, to) ":" + nick + "!" + username + "@ircserv.42 PRIVMSG " + to + " :"
+#define MODE(nick, username) ":" + nick + "!" + username + "@ircserv.42 MODE "
+#define KILL(nick, username) ":" + nick + "!" + username + "@ircserv.42 KILL "
+#define KICK(nick, username) ":" + nick + "!" + username + "@ircserv.42 KICK "
 
 #endif //RESPONSES_HPP

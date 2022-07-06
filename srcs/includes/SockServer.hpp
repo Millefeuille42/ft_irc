@@ -53,6 +53,9 @@ class SockServer {
 		User *getUserByNick(const std::string &nick);
 		User *getUserByRealName(const std::string &realname);
 		User *getUserByUsername(const std::string &username);
+		static std::vector<User *> getUsersByNick(SockServer &, const std::string &nick);
+		static std::vector<User *> getUsersByRealName(SockServer &, const std::string &realname);
+		static std::vector<User *> getUsersByUsername(SockServer &, const std::string &username);
 
 		fdIterator begin();
 		fdIterator end();
@@ -83,7 +86,7 @@ class SockServer {
 		static void invite(SockServer &srv, std::vector<std::string> &, User& user);
 		static void error(const std::string& reason, User& user);
 
-		std::string password;
+	std::string password;
 };
 
 #endif //SOCKSERVER_HPP

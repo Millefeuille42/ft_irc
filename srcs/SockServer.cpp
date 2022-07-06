@@ -187,6 +187,36 @@ User *SockServer::getUserByUsername(const std::string &username) {
 	return NULL;
 }
 
+std::vector<User *> SockServer::getUsersByNick(SockServer &srv, const std::string &nick) {
+	std::vector<User *> ret;
+
+	for (std::map<int, User>::iterator it = srv._users.begin(); it != srv._users.end(); it++) {
+		if (it->second.nick == nick)
+			ret.push_back(&it->second);
+	}
+	return ret;
+}
+
+std::vector<User *> SockServer::getUsersByRealName(SockServer &srv, const std::string &realname) {
+	std::vector<User *> ret;
+
+	for (std::map<int, User>::iterator it = srv._users.begin(); it != srv._users.end(); it++) {
+		if (it->second.realName == realname)
+			ret.push_back(&it->second);
+	}
+	return ret;
+}
+
+std::vector<User *> SockServer::getUsersByUsername(SockServer &srv, const std::string &username) {
+	std::vector<User *> ret;
+
+	for (std::map<int, User>::iterator it = srv._users.begin(); it != srv._users.end(); it++) {
+		if (it->second.user == username)
+			ret.push_back(&it->second);
+	}
+	return ret;
+}
+
 std::string SockServer::readMessage(int fd, bool &err) {
 	std::string message;
 	size_t ret = BUFFER_SIZE;
