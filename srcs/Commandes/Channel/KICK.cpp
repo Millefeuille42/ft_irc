@@ -24,7 +24,7 @@ void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& use
 {
 	//TODO Verifier les arguments. Si plusieurs channels : obligatoirement le meme nombre de users. Si Un channel, possiblite d'avoir plusieurs users pour le meme channel
 	if (args.size() < 3 && args[0] != "KICK") {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0]	)) + "\n", std::cout);
 		return;
 	}
 	if (!cInSet(args[1][0], "#&+!")) { //Le deuxième argument n'est pas un channel

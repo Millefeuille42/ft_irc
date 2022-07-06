@@ -7,9 +7,9 @@
 void SockServer::user(SockServer &srv, std::vector<std::string>& args, User& user) {
 	if (args[0] != "USER" || args.size() < 5) {
 		if (user.nick.empty())
-			sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS_NONICK) + "\n", std::cout);
+			sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS_NONICK(args[0])) + "\n", std::cout);
 		else
-			sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+			sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
 		return;
 	}
 	if (!user.nick.empty() && !user.realName.empty()){

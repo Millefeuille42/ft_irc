@@ -42,7 +42,7 @@ void parseChan(std::map<std::string, std::string>& mChans, std::vector<std::stri
 
 void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& user) {
 	if (args[0] != "JOIN" || args.size() <= 1) {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
 		return;
 	}
 	std::map<std::string, std::string> mChans;

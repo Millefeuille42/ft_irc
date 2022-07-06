@@ -18,8 +18,8 @@
 # define ERR_CHANOPRIVSNEEDED(nick, channel) ":ircserv 482 " + nick + " " + channel + " :You're not channel operator"
 # define ERR_NOPRIVILEGES(nick) ":ircserv 481 " + nick + " :Permission Denied- You're not an IRC operator"
 
-# define ERR_NEEDMOREPARAMS(nick) ":ircserv 461 " + nick + " :Not enough parameters"
-# define ERR_NEEDMOREPARAMS_NONICK ":ircserv 461 * :Not enough parameters"
+# define ERR_NEEDMOREPARAMS(nick, command) ":ircserv 461 " + nick +  + " " + command +  " :Not enough parameters"
+# define ERR_NEEDMOREPARAMS_NONICK(command) ":ircserv 461 * " + command + " :Not enough parameters"
 
 # define ERR_ALREADYREGISTERED(nick) ":ircserv 462 " + nick + " :You may not reregister"
 
