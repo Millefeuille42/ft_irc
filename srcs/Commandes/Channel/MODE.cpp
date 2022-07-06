@@ -29,7 +29,7 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 		}
 		mess = chan.oMode(ar, target);
 		if (ar == '+')
-			SockServer::sendMessage(target->fd, YOUREOPER(target->nick) + "\n", std::cout);
+			SockServer::transmitToChannelFromServ(chan, CHANOPER(chan.getName(), target->nick));
 		i++;
 	}
 	//MODE <canal> +/-i
@@ -94,21 +94,20 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 	std::cout << mess;
 }
 
-static void callFunctionUser(SockServer &srv, char mode, char ar, User& target, User& user) {
+static void callFunctionUser(SockServer &, char mode, char ar, User& target, User& user) {
 	std::string mess = "";
 	if (mode == 'i') {
 		if (target.fd != user.fd)
-			mess = "You can't put someone else in invisible\n";
+			SockServer::sendMessage(user.fd, ERR_USERSDONTMATCH(user.nick) + "\n", std::cerr);
 		else if (ar == '+') {
 			target.modes['i'] = true;
 			mess = "Invisible mode actived for " + target.nick + "\n";
 		}
 		else if (ar == '-') {
-			target.modes['i'] = true;
+			target.modes['i'] = false;
 			mess = "Invisible mode not actived for " + target.nick + "\n";
 		}
-	}
-	if (mode == 'o') {
+	} else if (mode == 'o') {
 		if (user.modes['o'] == false)
 			mess = "Not an operator\n";
 		else if (ar == '+') {
@@ -119,21 +118,20 @@ static void callFunctionUser(SockServer &srv, char mode, char ar, User& target, 
 			target.modes['o'] = false;
 			mess = target.nick + " is not a global operator\n";
 		}
+	} else {
+		SockServer::sendMessage(user.fd, ERR_UMODEUNKNOWNFLAG(user.nick) + "\n", std::cerr);
 	}
-	if (mess != "")
-		srv.transmitServ(mess);
+	std::cout << mess;
 }
 
-static void sendModesUser(SockServer &srv, User &target, User& user) {
+static void sendModesUser(SockServer &, User &target, User& user) {
 	std::string mess = "";
 	if (target.modes['o'] == true)
 		mess.push_back('o');
 	if (target.modes['i'] == true)
 		mess.push_back('i');
-	if (mess != "") {
-		(void)srv;
-		(void)user;
-		std::cerr << "Modes for " + target.nick + " : [" + mess + "]\n";
+	if (!mess.empty()) {
+		SockServer::sendMessage(user.fd, UMODEIS(user.nick, target.nick) + mess + "\n", std::cout);
 	}
 }
 
@@ -242,5 +240,9 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 		for (size_t i = 1; i < rem.size(); i++) {
 			callFunctionUser(srv, rem[i], '-', *target, user);
 		}
+		std::string rep;
+		for (std::vector<std::string>::iterator arg = args.begin() + 1; arg != args.end(); arg++)
+			rep += *arg + " ";
+		sendMessage(user.fd, MODE(user.nick, user.user) + rep + "\n", std::cout);
 	}
 }

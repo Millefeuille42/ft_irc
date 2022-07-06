@@ -40,7 +40,7 @@ class Channels {
 		bool isEmpty();
 		bool isMode(char mode);
 
-		bool joinChannel(int fd, std::string key);
+		int joinChannel(int fd, std::string key);
 		void joinChannel(int fd);
 		int leaveChannel(int fd);
 

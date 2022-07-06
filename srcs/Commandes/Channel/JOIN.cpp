@@ -28,7 +28,7 @@ void parseChan(std::map<std::string, std::string>& mChans, std::vector<std::stri
 			while (itek != args[2].end() && *itek != ',')
 				itek++;
 			key.assign(itk, itek);
-			if (key != "x") //TODO IRSSI envoie x en mdp s'il n'y en a pas
+			if (key != "x")
 				mChans[chan] = key;
 			if (*itek == ',')
 				itek++;
@@ -60,17 +60,18 @@ void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& use
 			if (!srv._chans[it->first].getTopic().empty()) {
 				sendMessage(user.fd, TOPIC(user.nick, srv._chans[it->first].getName()) + srv._chans[it->first].getTopic() + "\n", std::cout);
 			}
+			transmitToChannelFromServ(srv._chans[it->first], CHANOPER(srv._chans[it->first].getName(), user.nick));
 			std::vector<std::string> a;
 			a.push_back("NAMES"); a.push_back(srv._chans[it->first].getName());
 			names(srv, a, user);
-			// TODO Cause un crash sans mode #channel
 		}
 		else {
 			if (itc->second.isMode('i') == true) {
-				std::cerr << itc->second.getName() << " is on invitation only" << std::endl;
+				sendMessage(user.fd, std::string(ERR_INVITEONLYCHAN(user.nick, itc->first)) + "\n", std::cout);
 				return ;
 			}
-			if (itc->second.joinChannel(user.fd, it->second)) {  //Channel rejoins
+			int ret = itc->second.joinChannel(user.fd, it->second);
+			if (!ret) {  //Channel rejoins
 				user.enterChannel(&itc->second, false);
 				transmitToChannelFromServ(itc->second, JOIN(user.nick, user.user, itc->first) + "\n");
 				if (!itc->second.getTopic().empty()) {
@@ -81,9 +82,15 @@ void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& use
 				names(srv, a, user);
 			}
 			else { //Channel Non-Rejoins
-				sendMessage(user.fd, "You can't join this channel", std::cerr);
+				if (ret == 1) {
+					sendMessage(user.fd, std::string(ERR_BADCHANNELKEY(user.nick, itc->first)) + "\n", std::cout);
+					return;
+				}
+				if (ret == 2) {
+					sendMessage(user.fd, std::string(ERR_CHANNELISFULL(user.nick, itc->first)) + "\n", std::cout);
+					return;
+				}
 			}
 		}
 	}
 }
-//TODO Mode Invit a ajouter

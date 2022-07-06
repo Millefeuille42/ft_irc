@@ -89,18 +89,21 @@ void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& use
 			break ;
 	}
 	for (std::map<Channels*, bool>::iterator cit = u_kill->channels.begin(); cit != u_kill->channels.end(); cit++) {
-		//TODO Appeler le bon truc et non part / quit?
-		transmitToChannel(*cit->first, User(), PART(u_kill->nick, u_kill->user, cit->first->getName()) + "disconnected\n");
+		transmitToChannelFromServ(*cit->first, PART(u_kill->nick, u_kill->user, cit->first->getName()) + "disconnected\n");
 		int fd_op = cit->first->leaveChannel(u_kill->fd);
 		if (fd_op != -1) {
 			srv._users[fd_op].channels[cit->first] = true;
-			sendMessage(user.fd, YOUREOPER(srv._users[fd_op].nick) + "\n", std::cout);
-			// TODO peut etre transmettre ?
+			transmitToChannelFromServ(*cit->first, CHANOPER(cit->first->getName(), srv._users[fd_op].nick));
 		}
 		if (cit->first->isEmpty())
 			srv._chans.erase(cit->first->getName());
 	}
 	u_kill->leaveAllChannels();
-	srv.transmit(User(), QUIT(u_kill->nick, u_kill->user) + mess, std::cout);
+	std::string rep;
+	for (std::vector<std::string>::iterator arg = args.begin() + 1; arg != args.end(); arg++)
+		rep += *arg + " ";
+	sendMessage(u_kill->fd, KILL(user.nick, user.user) + rep + "\n");
+	srv.transmitServ(QUIT(u_kill->nick, u_kill->user) + mess);
+	error("Kill", *u_kill);
 	srv.deleteClient(it);
 }

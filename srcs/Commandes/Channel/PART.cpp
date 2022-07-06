@@ -37,7 +37,7 @@ void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& use
 	int fd_op = user.leaveChannel(&chan->second);
 	if (fd_op != -1) {
 		srv._users[fd_op].channels[&chan->second] = true;
-		sendMessage(srv._users[fd_op].fd, YOUREOPER(srv._users[fd_op].nick) + "\n", std::cout);
+		transmitToChannelFromServ(chan->second, CHANOPER(chan->first, srv._users[fd_op].nick));
 	}
 	if (chan->second.isEmpty())
 		srv._chans.erase(chan->second.getName());

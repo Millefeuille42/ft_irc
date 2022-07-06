@@ -37,7 +37,7 @@ class SockServer {
 
 		int acceptConnection(SockAddress & addr) const;
 		void transmit(const User& user, std::string message, std::basic_ostream<char> & otp);
-		void transmitServ(std::string& message);
+		void transmitServ(const std::string& message);
 		static void transmitToChannel(Channels &chan, const User &user, const std::string& message);
 		static void transmitToChannelFromServ(Channels &chan, const std::string& message);
 		std::string readMessage(int fd, bool &err);

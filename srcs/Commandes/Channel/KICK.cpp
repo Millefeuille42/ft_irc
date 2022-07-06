@@ -67,13 +67,16 @@ void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& use
 		mess += " not provided";
 	mess += "\n";
 
+	std::string rep;
+	for (std::vector<std::string>::iterator arg = args.begin() + 1; arg != args.end(); arg++)
+		rep += *arg + " ";
+	transmitToChannelFromServ(chan->second, KICK(user.nick, user.user) + rep + "\n");
 	transmitToChannelFromServ(chan->second, PART(u_kick->nick, u_kick->user, chan->second.getName()) + mess);
 
 	int fd_op = u_kick->leaveChannel(&chan->second);
 	if (fd_op != -1) {
 		srv._users[fd_op].channels[&chan->second] = true;
-		sendMessage(user.fd, YOUREOPER(srv._users[fd_op].nick) + "\n", std::cout);
-		// TODO peut etre transmettre ?
+		transmitToChannelFromServ(chan->second, CHANOPER(chan->first, srv._users[fd_op].nick));
 	}
 	if (chan->second.isEmpty())
 		srv._chans.erase(chan->second.getName());
