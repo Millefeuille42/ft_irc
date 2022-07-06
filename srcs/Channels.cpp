@@ -124,20 +124,6 @@ std::string Channels::oMode(char ar, User *user) {
 	return ("\n");
 }
 
-//TODO un peu la flemme de faire le ban, comme lors de la déco il faudrait deban comme je pensais le faire avec les fd
-//Chiant et long pour rien.
-//void Channels::bMode(char ar, User *user) {
-//	if (user == NULL)
-//		return ; //Membre Introuvable
-//	if (ar == '+' && _members.find(user->fd) != _members.end()) {
-//		_fdBans.push_back(user->fd);
-//		leaveChannel(user->fd); //Rajouter un message de ban ?
-//	}
-//	else if (ar == '-') {
-//		std::find(_fdBans.begin(), user->fd);
-//	}
-//}
-
 std::string Channels::lMode(char ar, int nb, std::string snb) {
 	if (ar == '+') {
 		_modes['l'] = true;
@@ -177,7 +163,5 @@ bool Channels::isMode(char mode) {
 }
 
 bool Channels::isEmpty() {
-	if (_members.size() == 0)
-		return (true);
-	return (false);
+	return (_members.empty());
 }
