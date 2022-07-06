@@ -118,9 +118,17 @@ static void callFunctionUser(SockServer &srv, char mode, char ar, User& target, 
 		srv.transmitServ(mess);
 }
 
-static void sendModesUser(SockServer &srv, User &user) {
-	(void)srv;
-	(void)user;
+static void sendModesUser(SockServer &srv, User &target, User& user) {
+	std::string mess = "";
+	if (target.modes['o'] == true)
+		mess.push_back('o');
+	if (target.modes['i'] == true)
+		mess.push_back('i');
+	if (mess != "") {
+		(void)srv;
+		(void)user;
+		std::cerr << "Modes for " + target.nick + " : [" + mess + "]\n";
+	}
 }
 
 static void sendModesChan(SockServer &srv, Channels &chan, User& user) {
@@ -215,7 +223,7 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 			return;
 		}
 		if (args.size() == 2) {
-			sendModesUser(srv, *target);
+			sendModesUser(srv, *target, user);
 			return ;
 		}
 		for (size_t i = 1; i < add.size(); i++) {
