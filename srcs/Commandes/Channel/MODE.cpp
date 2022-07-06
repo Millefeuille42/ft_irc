@@ -61,6 +61,14 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 		}
 		if (i >= args.size()) //Plus d'argument à envoyer
 			return ;
+		for (size_t j = 0; j < args[i].size(); j++) {
+			if (std::isdigit(args[i][j]) == 0) {
+				mess = args[i] + " is not a number";
+				i++;
+				srv.transmitToChannelFromServ(chan, mess);
+				return ;
+			}
+		}
 		mess = chan.lMode(ar, atoi(args[i].c_str()), args[i]);
 		i++;
 	}
@@ -80,18 +88,34 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 		srv.transmitToChannelFromServ(chan, mess);
 }
 
-static void callFunctionUser(SockServer &srv, char mode, char ar, User& user, bool op) {
-	(void)srv;
-	(void)ar;
-	(void)user;
-	(void)op;
-
+static void callFunctionUser(SockServer &srv, char mode, char ar, User& target, User& user) {
+	std::string mess = "";
 	if (mode == 'i') {
-		//Call Invisible Function
+		if (target.fd != user.fd)
+			mess = "You can't put someone else in invisible\n";
+		else if (ar == '+') {
+			target.modes['i'] = true;
+			mess = "Invisible mode actived for " + target.nick + "\n";
+		}
+		else if (ar == '-') {
+			target.modes['i'] = true;
+			mess = "Invisible mode not actived for " + target.nick + "\n";
+		}
 	}
 	if (mode == 'o') {
-		//Call Server Operator Function
+		if (user.modes['o'] == false)
+			mess = "Not an operator\n";
+		else if (ar == '+') {
+			target.modes['o'] = true;
+			mess = target.nick + " is now a global operator\n";
+		}
+		else if (ar == '-') {
+			target.modes['o'] = false;
+			mess = target.nick + " is not a global operator\n";
+		}
 	}
+	if (mess != "")
+		srv.transmitServ(mess);
 }
 
 static void sendModesUser(SockServer &srv, User &user) {
@@ -195,10 +219,10 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 			return ;
 		}
 		for (size_t i = 1; i < add.size(); i++) {
-			callFunctionUser(srv, add[i], '+', *target, user.modes['o']);
+			callFunctionUser(srv, add[i], '+', *target, user);
 		}
 		for (size_t i = 1; i < rem.size(); i++) {
-			callFunctionUser(srv, rem[i], '-', *target, user.modes['o']);
+			callFunctionUser(srv, rem[i], '-', *target, user);
 		}
 	}
 }
