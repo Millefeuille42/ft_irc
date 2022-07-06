@@ -30,6 +30,8 @@ class Channels {
 
 		std::vector<int> getUsers();
 
+		std::string getKey();
+		size_t getMaxMembers();
 		std::string getName();
 		void setTopic(std::string& mess);
 		std::string getTopic();
@@ -43,7 +45,6 @@ class Channels {
 		int leaveChannel(int fd);
 
 		std::string oMode(char ar, User *user); //Rendre Operateur le user; (Vérifier si User est NULL)
-		//void bMode(char ar, User *user); //Ban le user;
 		std::string lMode(char ar, int nb = 0, std::string snb = ""); //Nombre limites de Users possibles
 		std::string kMode(char ar, std::string key = ""); //Mettre une clé pour entrer dans le channel
 		void allModes(char ar, char mode);
