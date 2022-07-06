@@ -94,11 +94,15 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 	std::cout << mess;
 }
 
-static void callFunctionUser(SockServer &, char mode, char ar, User& target, User& user) {
+static bool callFunctionUser(SockServer &, char mode, char ar, User& target, User& user) {
 	std::string mess = "";
 	if (mode == 'i') {
-		if (target.fd != user.fd)
-			SockServer::sendMessage(user.fd, ERR_USERSDONTMATCH(user.nick) + "\n", std::cerr);
+		if (target.fd != user.fd) {
+			SockServer::sendMessage(user.fd,
+									ERR_USERSDONTMATCH(user.nick) + "\n",
+									std::cerr);
+			return false;
+		}
 		else if (ar == '+') {
 			target.modes['i'] = true;
 			mess = "Invisible mode actived for " + target.nick + "\n";
@@ -122,6 +126,7 @@ static void callFunctionUser(SockServer &, char mode, char ar, User& target, Use
 		SockServer::sendMessage(user.fd, ERR_UMODEUNKNOWNFLAG(user.nick) + "\n", std::cerr);
 	}
 	std::cout << mess;
+	return true;
 }
 
 static void sendModesUser(SockServer &, User &target, User& user) {
@@ -130,9 +135,7 @@ static void sendModesUser(SockServer &, User &target, User& user) {
 		mess.push_back('o');
 	if (target.modes['i'] == true)
 		mess.push_back('i');
-	if (!mess.empty()) {
-		SockServer::sendMessage(user.fd, UMODEIS(user.nick, target.nick) + mess + "\n", std::cout);
-	}
+	SockServer::sendMessage(user.fd, UMODEIS(user.nick, target.nick) + mess + "\n", std::cout);
 }
 
 static void sendModesChan(SockServer &, Channels &chan, User& user) {
@@ -154,13 +157,28 @@ static void sendModesChan(SockServer &, Channels &chan, User& user) {
 			}
 		}
 	}
+	std::string mess;
 	if (!modes[0].empty()) {
-		std::string mess = modes[0];
+		mess = modes[0];
 		for (size_t i = 1; i < modes.size(); i++)
 			mess += " " + modes[i];
-
-		SockServer::sendMessage(user.fd, CHANNELMODEIS(user.nick, chan.getName()) + mess + "\n", std::cout);
 	}
+	SockServer::sendMessage(user.fd, CHANNELMODEIS(user.nick, chan.getName()) + mess + "\n", std::cout);
+}
+
+static void filterInputs(std::vector<std::string> &args, User& user, const std::string &chan) {
+	if (args.size() < 3)
+		return;
+	if (args[2] == "b") {
+		SockServer::sendMessage(user.fd, RPL_ENDOFBANLIST(user.nick, chan) + "\n", std::cout);
+	}
+	else if (args[2] == "e") {
+		SockServer::sendMessage(user.fd, RPL_ENDOFEXCEPTLIST(user.nick, chan) + "\n", std::cout);
+	}
+	else if (args[2] == "I") {
+		SockServer::sendMessage(user.fd, RPL_ENDOFINVITELIST(user.nick, chan) + "\n", std::cout);
+	}
+
 }
 
 void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& user) {
@@ -185,8 +203,17 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 				add.push_back(args[2][i]);
 			else if (c == '-')
 				rem.push_back(args[2][i]);
-			if (c == ' ')
-				return ; //Pas de + ou de -, donc ignorer la commande / message d'erreur
+			if (c == ' ') {
+				if (cInSet(args[1][0], "#&+!")) {
+					std::map<std::basic_string<char>, Channels>::iterator chan = srv._chans.find(args[1]);
+					if (chan == srv._chans.end()) {
+						sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cout);
+						return;
+					}
+					filterInputs(args, user, chan->first);
+					return;
+				}
+			}
 		}
 
 	for (size_t i = 3; i < args.size(); i++) {
@@ -235,10 +262,12 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 			return ;
 		}
 		for (size_t i = 1; i < add.size(); i++) {
-			callFunctionUser(srv, add[i], '+', *target, user);
+			if (!callFunctionUser(srv, add[i], '+', *target, user))
+				return;
 		}
 		for (size_t i = 1; i < rem.size(); i++) {
-			callFunctionUser(srv, rem[i], '-', *target, user);
+			if (!callFunctionUser(srv, rem[i], '-', *target, user))
+				return;
 		}
 		std::string rep;
 		for (std::vector<std::string>::iterator arg = args.begin() + 1; arg != args.end(); arg++)

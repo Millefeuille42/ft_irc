@@ -38,4 +38,8 @@
 #define KILL(nick, username) ":" + nick + "!" + username + "@ircserv.42 KILL "
 #define KICK(nick, username) ":" + nick + "!" + username + "@ircserv.42 KICK "
 
+#define RPL_ENDOFINVITELIST(nick, channel) ":ircserv 347 " + nick + " " + channel + " :End of channel invite list"
+#define RPL_ENDOFEXCEPTLIST(nick, channel) ":ircserv 349 " + nick + " " + channel + " :End of channel exception list"
+#define RPL_ENDOFBANLIST(nick, channel) ":ircserv 368 " + nick + " " + channel + " :End of channel ban list"
+
 #endif //RESPONSES_HPP
