@@ -24,6 +24,8 @@
 #define ENDOFINFO(nick) ":ircserv 374 " + nick + " ircserv :End of INFO list"
 #define NAMES(nick, channel) ":ircserv 353 " + nick + " = " + channel + " :"
 #define ENDOFNAMES(nick, channel) ":ircserv 366 " + nick + " " + channel + " :End of NAMES list"
+#define LIST(nick, channel, memberCount) ":ircserv 322 " + nick + " " + channel + " " + memberCount + " :"
+#define LISTEND(nick) ":ircserv 323 " + nick + " :End of LIST"
 #define ERROR_QUIT(nick, ip, reason) "ERROR :Closing Link " + nick + "[" + ip + "] (" + reason + ":: " + nick + ")"
 
 #define YOUREOPER(nick) ":ircserv 381 " + nick + " :You are now an IRC operator"
