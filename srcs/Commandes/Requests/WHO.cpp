@@ -19,57 +19,67 @@
 
 #include "../../includes/SockServer.hpp"
 
-void SockServer::who(SockServer &srv, std::vector<std::string> & args, User&)
-{
-	if ((cInSet(args[1][0], "#&+!") && args.size() < 3) || (args.size() < 3 && args[1] == "0"))
+typedef std::vector<User *>(*listFunc)(SockServer &, const std::string &);
+
+static void sendMessageByUserMatch(SockServer &srv, const User& sender, listFunc fc, const std::string& arg, const std::string& match) {
+	std::vector<User *> userList = fc(srv, arg);
+	if (userList.empty())
+		return;
+	SockServer::sendMessage(sender.fd, "WHO matches by " + match + "\n", std::cout);
+	for (std::vector<User *>::iterator uit = userList.begin(); uit != userList.end(); uit++) {
+		if (*uit == NULL)
+			continue ;
+		if ((*uit)->modes['i'])
+			continue;
+		SockServer::sendMessage(sender.fd, WHOREPLY(sender.nick, "*", (*uit)->user, (*uit)->nick, "", (*uit)->realName) + "\n", std::cout);
+	}
+	SockServer::sendMessage(sender.fd, ENDOFWHO(sender.nick, arg, match) + "\n", std::cout);
+}
+
+void SockServer::who(SockServer &srv, std::vector<std::string> & args, User& user) {
+	// Si y a rien ou 0 (tout lister)
+	if (args.size() < 2 || (args.size() < 3 && args[1] == "0"))
 	{
-		std::cout << "List of all connected users :" << std::endl;
-		for (size_t i = 1; i < srv._fds.size(); i++)
-			std::cout << "\t- Utilisateur " << i << " : " << srv._users[srv._fds[i].fd].realName << " -" << std::endl;
+		SockServer::sendMessage(user.fd, "WHO matches by global\n", std::cout);
+		// QUAND Global pas de @
+		// :fiery.ca.us.SwiftIRC.net 352 fess * ~caca CE7E5A6D.36C1EBC7.DF0F43E2.IP * fess H :0 danles fess
+		for (fdIterator fd = srv._fds.begin(); fd != srv._fds.end(); fd++) {
+			if (fd == srv._fds.begin())
+				continue;
+			User &dude = srv._users[fd->fd];
+			if (dude.modes['i'])
+				continue;
+			SockServer::sendMessage(user.fd, WHOREPLY(user.nick, "*", dude.user, dude.nick, "", dude.realName) + "\n", std::cout);
+		}
+		SockServer::sendMessage(user.fd, ENDOFWHO(user.nick, args[1], "global") + "\n", std::cout);
 		std::cout << "End of the list." << std::endl;
-	}
-	else if (!srv.getUserByNick(args[1]) && !srv.getUserByRealName(args[1]) && !srv.getUserByUsername(args[1]))
-	{
-		std::cout << "Informations on all connected users :" << std::endl;
-		for (size_t i = 1; i < srv._fds.size(); i++)
-		{
-			std::cout << "\t- Utilisateur " << srv._users[srv._fds[i].fd].user << " -" << std::endl;
-			std::cout << "\t   - " << srv._users[srv._fds[i].fd].ip << "" << std::endl;
-			std::cout << "\t   - " << srv._users[srv._fds[i].fd].user << "" << std::endl;
-			std::cout << "\t   - " << srv._users[srv._fds[i].fd].realName << "" << std::endl;
-			std::cout << "\t   - " << srv._users[srv._fds[i].fd].nick << "" << std::endl;
-		}
-		std::cout << "End of the list." << std::endl;
-	}
-	else if ((args.size() < 3 && args[1] != "0") || (args.size() < 4 && args[2] == "o" && args[1] != "0"))
-	{
-		if (args.size() < 3)
-		{
-			for (size_t i = 1; i < srv._fds.size(); i++)
-			{
-				std::cout << "Informations on the request user :" << std::endl;
-				std::cout << "\t- Utilisateur " << srv._users[srv._fds[i].fd].user << " -" << std::endl;
-				std::cout << "\t   - " << srv._users[srv._fds[i].fd].ip << std::endl;
-				std::cout << "\t   - " << srv._users[srv._fds[i].fd].user << std::endl;
-				std::cout << "\t   - " << srv._users[srv._fds[i].fd].realName << std::endl;
-				std::cout << "\t   - " << srv._users[srv._fds[i].fd].nick << std::endl;
+	} else {
+		// QUAND User non plus
+		// :fiery.ca.us.SwiftIRC.net 352 fess * ~caca CE7E5A6D.36C1EBC7.DF0F43E2.IP * fess H :0 danles fess
+		sendMessageByUserMatch(srv, user, getUsersByNick, args[1], "nick");
+		sendMessageByUserMatch(srv, user, getUsersByUsername, args[1], "username");
+		sendMessageByUserMatch(srv, user, getUsersByRealName, args[1], "realname");
+
+		// QUAND Channel, @ = operator channel
+		// :fiery.ca.us.SwiftIRC.net 352 fess #monzizienorme ~caca CE7E5A6D.36C1EBC7.DF0F43E2.IP * fess H@ :0 danles fess
+		bool operatorMode = false;
+		if (args.size() > 1 && *(args.end() - 1) == "o")
+			operatorMode = true;
+		for (channelsMap::iterator chan = srv._chans.begin(); chan != srv._chans.end(); chan++) {
+			if (chan->first != args[1])
+				continue;
+			SockServer::sendMessage(user.fd, "WHO matches by channel\n", std::cout);
+			std::vector<int> userList = chan->second.getUsers();
+			for (std::vector<int>::iterator userFd = userList.begin(); userFd != userList.end(); userFd++) {
+				User &dude = srv._users[*userFd];
+				if (dude.modes['i'])
+					continue;
+				if (chan->second.isOper(*userFd))
+					SockServer::sendMessage(user.fd, WHOREPLY(user.nick, chan->first, dude.user, dude.nick, "@", dude.realName) + "\n", std::cout);
+				else if (!operatorMode)
+					SockServer::sendMessage(user.fd, WHOREPLY(user.nick, chan->first, dude.user, dude.nick, "", dude.realName) + "\n", std::cout);
 			}
-		}
-		else if (args.size() < 4 && args[2] == "o")
-		{
-			for (size_t i = 1; i < srv._fds.size(); i++)
-			{
-				if (srv._users[srv._fds[i].fd].modes['o'] == true)
-				{
-					std::cout << "Informations on the request user :" << std::endl;
-					std::cout << "\t- Operateur " << srv._users[srv._fds[i].fd].user << " -" << std::endl;
-					std::cout << "\t   - " << srv._users[srv._fds[i].fd].ip << std::endl;
-					std::cout << "\t   - " << srv._users[srv._fds[i].fd].user << std::endl;
-					std::cout << "\t   - " << srv._users[srv._fds[i].fd].realName << std::endl;
-					std::cout << "\t   - " << srv._users[srv._fds[i].fd].nick << std::endl;
-				}
-			}
+			SockServer::sendMessage(user.fd, ENDOFWHO(user.nick, args[1], "by channel") + "\n", std::cout);
 		}
 	}
-	return ;
 }
