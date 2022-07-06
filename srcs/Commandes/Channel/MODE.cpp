@@ -39,27 +39,19 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 		//Call TopicMode Function
 		chan.allModes(ar, mode);
 		if (ar == '+')
-			mess = "Topic of " + chan.getName() + "can't be changed by everyone\n";
+			mess = "Topic of " + chan.getName() + " can't be changed by everyone\n";
 		else
-			mess = "Topic of " + chan.getName() + "can be changed by everyone\n";
+			mess = "Topic of " + chan.getName() + " can be changed by everyone\n";
 	}
 	//MODE <canal> +/-n
 	else if (mode == 'n') {
 		//Call LimitedChan Function
 		chan.allModes(ar, mode);
 		if (ar == '+')
-			mess = "Only member of the channel " + chan.getName() + "can send messages\n";
+			mess = "Only member of the channel " + chan.getName() + " can send messages\n";
 		else
 			mess = "Everbody can send messages in the channel " + chan.getName() + "\n";
 	}
-	//MODE <canal> +/- b <user>
-	//else if (mode == 'b') {
-	//	//Call Ban Function -> Envoyer args (Users)
-	//	if (i >= args.size()) //Plus d'argument à envoyer
-	//		return ;
-	//	chan.bMode(ar, srv.getUserByNick(args[i]));
-	//	i++;
-	//}
 	//MODE <canal> +/-l <Nb Limite>
 	else if (mode == 'l') {
 		//Call LimiteUser Function -> Envoyer args (Nombre limite)
@@ -102,6 +94,41 @@ static void callFunctionUser(SockServer &srv, char mode, char ar, User& user, bo
 	}
 }
 
+static void sendModesUser(SockServer &srv, User &user) {
+	(void)srv;
+	(void)user;
+}
+
+static void sendModesChan(SockServer &srv, Channels &chan, User& user) {
+	static const std::string m = "iknlt";
+	std::vector<std::string> modes;
+	modes.push_back("");
+	for (size_t i = 0; i < m.size(); i++) {
+		if (chan.isMode(m[i]) == true) {
+			if (modes[0] == "")
+				modes[0].push_back('+');
+			modes[0].push_back(m[i]);
+			if (m[i] == 'k') {
+				modes.push_back(chan.getKey());
+			}
+			if (m[i] == 'l') {
+				std::stringstream ss;
+				ss << chan.getMaxMembers();
+				modes.push_back(ss.str());
+			}
+		}
+	}
+	if (modes[0] != "") {
+		std::string mess = modes[0];
+		for (size_t i = 1; i < modes.size(); i++)
+			mess += " " + modes[i];
+
+		(void)srv;
+		(void)user;
+		std::cerr << mess << std::endl;
+	}
+}
+
 void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& user) {
 	if (args[0] != "MODE" && args.size() <= 1)
 		return ;
@@ -112,18 +139,19 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 	std::vector<std::string> argsV;
 
 	char c = ' ';
-	for (size_t i = 0; i < args[2].size(); i++) {
-		if (args[2][i] == '+')
-			c = '+';
-		else if (args[2][i] == '-')
-			c = '-';
-		else if (c == '+')
-			add.push_back(args[2][i]);
-		else if (c == '-')
-			rem.push_back(args[2][i]);
-		if (c == ' ')
-			return ; //Pas de + ou de -, donc ignorer la commande / message d'erreur
-	}
+	if (args.size() > 2)
+		for (size_t i = 0; i < args[2].size(); i++) {
+			if (args[2][i] == '+')
+				c = '+';
+			else if (args[2][i] == '-')
+				c = '-';
+			else if (c == '+')
+				add.push_back(args[2][i]);
+			else if (c == '-')
+				rem.push_back(args[2][i]);
+			if (c == ' ')
+				return ; //Pas de + ou de -, donc ignorer la commande / message d'erreur
+		}
 
 	for (size_t i = 3; i < args.size(); i++) {
 		argsV.push_back(args[i]);
@@ -134,6 +162,10 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 		if (chan == srv._chans.end()) {
 			sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cout);
 			return;
+		}
+		if (args.size() == 2) {
+			sendModesChan(srv, chan->second, user);
+			return ;
 		}
 		if (!user.channels.count(&chan->second)) {
 			std::cerr << "Not in channel" << std::endl;
@@ -157,6 +189,10 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 		if (!target) {
 			std::cerr << "No such user" << std::endl;
 			return;
+		}
+		if (args.size() == 2) {
+			sendModesUser(srv, *target);
+			return ;
 		}
 		for (size_t i = 1; i < add.size(); i++) {
 			callFunctionUser(srv, add[i], '+', *target, user.modes['o']);

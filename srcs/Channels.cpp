@@ -40,6 +40,14 @@ std::vector<int> Channels::getUsers() {
 	return (ret);
 }
 
+std::string Channels::getKey() {
+	return (_key);
+}
+
+size_t Channels::getMaxMembers() {
+	return (_maxMembers);
+}
+
 void Channels::setTopic(std::string &mess) {
 	_topic = mess;
 }
@@ -141,7 +149,7 @@ std::string Channels::kMode(char ar, std::string key) {
 	if (ar == '+') {
 		_modes['k'] = true;
 		_key = key;
-		return ("Channel " + _name + " is protected by a key\n");
+		return ("Channel " + _name + " is protected by a key: " + _key + "\n");
 	}
 	else if (ar == '-') {
 		_modes['k'] = false;
