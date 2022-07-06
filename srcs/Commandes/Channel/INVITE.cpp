@@ -45,5 +45,4 @@ void SockServer::invite(SockServer &srv, std::vector<std::string> &args, User& u
 	std::vector<std::string> a;
 	a.push_back("NAMES"); a.push_back(chan->second.getName());
 	names(srv, a, *u_invit);
-	// TODO Cause un crash sans mode #channel
 }

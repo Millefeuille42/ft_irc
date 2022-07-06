@@ -10,7 +10,7 @@
 # define ERR_NONICKNAMEGIVEN(nick) ":ircserv 431 " + nick + " :No nickname given"
 # define ERR_NONICKNAMEGIVEN_NONICK ":ircserv 431 * :No nickname given"
 
-# define ERR_NICKNAMEINUSE(nick) ":ircserv 433 " + nick + " :Nickname is already in use"
+# define ERR_NICKNAMEINUSE(nick) ":ircserv 433 * " + nick + " :Nickname is already in use"
 
 # define ERR_NOTONCHANNEL(nick, channel) ":ircserv 442 " + nick + " " + channel + " :You're not on that channel"
 # define ERR_USERONCHANNEL(nick, target, channel) ":ircserv 443 " + nick + " " + target + " " + channel + " :is already on channel"

@@ -20,12 +20,13 @@ void SockServer::nick(SockServer& srv, std::vector<std::string>& args, User& use
 		}
 		if (args[1] == *it) {
 			sendMessage(user.fd, ERR_NICKNAMEINUSE(args[1]) + "\n", std::cout);
+			//sendMessage(user.fd, NICK(args[1] + "_", user.user) + args[1] + "\n", std::cout);
 			return;
 		}
 	}
 	user.nick = args[1];
 	if (itu != srv.getNicks().end()) {
-		srv.transmit(User(), NICK(oldNick, user.user) + args[1] + "\n", std::cout);
+		sendMessage(user.fd, NICK(oldNick, user.user) + args[1] + "\n", std::cout);
 		srv.getNicks().erase(itu);
 	}
 	else

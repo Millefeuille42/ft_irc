@@ -23,7 +23,7 @@
 #include "../../includes/SockServer.hpp"
 
 
-std::vector<std::string> parseMess(std::string msg)
+static std::vector<std::string> parseMess(std::string msg)
 {
 	std::vector<std::string> args;
 	size_t pos;
@@ -44,7 +44,6 @@ void SockServer::names(SockServer &srv, std::vector<std::string> & args, User& u
     {
         for (channelsMap::iterator it = srv._chans.begin(); it != srv._chans.end(); it++)
         {
-            std::cout << it->first << std::endl;
             std::vector<int> user_list = it->second.getUsers();
 			std::string list;
             for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++) {

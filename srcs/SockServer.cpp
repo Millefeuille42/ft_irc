@@ -225,26 +225,26 @@ void SockServer::printStart() {
 // TODO Regarder la validité des arguments de macro, j'ai pas forcément regardé avec le c/c
 void SockServer::initCommands() {
 	_commands["PASS"] = pass; // Complete
-	_commands["NICK"] = nick; // A discuter
+	_commands["NICK"] = nick; // Complete
 	_commands["USER"] = user; // Complete
 	_commands["QUIT"] = quit; // Complete
-	_commands["OPER"] = oper; // A discuter
+	_commands["OPER"] = oper; // Complete
 
-	_commands["INVITE"] = invite;
+	_commands["INVITE"] = invite; // Complete
 	_commands["JOIN"] = join; // TODO Erreurs a gerer
 	_commands["KICK"] = kick; // TODO Ajouter diffusion message KICK
-	//_commands["LIST"] = list;
-	_commands["MODE"] = mode;
+	_commands["LIST"] = list; // Complete
+	_commands["MODE"] = mode; // TODO Erreurs a gerer
 	_commands["NAMES"] = names; // Complete
-	_commands["PART"] = part; // A discuter
+	_commands["PART"] = part; // Complete
 	_commands["TOPIC"] = topic; // Complete
 
-	_commands["PRIVMSG"] = privmsg; // A discuter
+	_commands["PRIVMSG"] = privmsg; // Complete
 
 	_commands["KILL"] = kill; // TODO Ajouter diffusion message kill
 	_commands["PING"] = ping; // Complete
 
-	_commands["WHO"] = who; // ALED
+	_commands["WHO"] = who; // TODO ALED
 
 	_commands["INFO"] = info; // Complete
 	_commands["TIME"] = time; // Complete
