@@ -5,7 +5,7 @@
 
 void SockServer::invite(SockServer &srv, std::vector<std::string> &args, User& user) {
 	if (args[0] != "INVITE" || args.size() <= 2) {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
 		return;
 	}
 
@@ -15,7 +15,7 @@ void SockServer::invite(SockServer &srv, std::vector<std::string> &args, User& u
 	}
 	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[2]); //Le channel n'existe pas
 	if (chan == srv._chans.end()) {
-		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[2])) + "\n", std::cout);
 		return;
 	}
 	if (!user.channels.count(&chan->second)) { //L'envoyeur n'est pas dans le channel
@@ -42,8 +42,8 @@ void SockServer::invite(SockServer &srv, std::vector<std::string> &args, User& u
 	if (!chan->second.getTopic().empty()) {
 		sendMessage(u_invit->fd, TOPIC(u_invit->nick, chan->second.getName()) + chan->second.getTopic() + "\n", std::cout);
 	}
-	//std::vector<std::string> a;
-	//a.push_back("NAMES"); a.push_back(chan->second.getName());
-	//names(srv, a, *u_invit);
-	// TODO a rajouter une fois mode #channel fait
+	std::vector<std::string> a;
+	a.push_back("NAMES"); a.push_back(chan->second.getName());
+	names(srv, a, *u_invit);
+	// TODO Cause un crash sans mode #channel
 }

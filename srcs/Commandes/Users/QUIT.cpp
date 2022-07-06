@@ -33,6 +33,7 @@ void SockServer::quit(SockServer &srv, std::vector<std::string>& args, User& use
 			srv._chans.erase(cit->first->getName());
 	}
 	user.leaveAllChannels();
+	error("Quit", user);
 	srv.transmit(User(), QUIT(user.nick, user.user) + mess, std::cout);
 	srv.deleteClient(it);
 }

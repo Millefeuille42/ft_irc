@@ -25,8 +25,7 @@ void SockServer::nick(SockServer& srv, std::vector<std::string>& args, User& use
 	}
 	user.nick = args[1];
 	if (itu != srv.getNicks().end()) {
-		std::string mess = oldNick + " rename in " + user.nick + "\n";
-		srv.transmitServ(mess);
+		srv.transmit(User(), NICK(oldNick, user.user) + args[1] + "\n", std::cout);
 		srv.getNicks().erase(itu);
 	}
 	else

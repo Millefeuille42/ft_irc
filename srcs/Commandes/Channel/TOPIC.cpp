@@ -5,7 +5,7 @@
 
 void SockServer::topic(SockServer &srv, std::vector<std::string> &args, User &user) {
 	if (args.size() < 2 && args[0] != "topic") {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
 		return;
 	}
 	if (!cInSet(args[1][0], "#&+!")) {

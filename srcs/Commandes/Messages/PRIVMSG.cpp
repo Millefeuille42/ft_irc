@@ -10,7 +10,7 @@
 // PRIVMSG millefeuille :hello hru
 void SockServer::privmsg(SockServer &srv, std::vector<std::string> &args, User &user) {
 	if (args.size() < 3) {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
 		return;
 	}
 

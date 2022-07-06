@@ -5,10 +5,7 @@
 
 void SockServer::oper(SockServer &, std::vector<std::string>& args, User& user) {
 	if (args.size() != 3 || args[0] != "OPER") {
-		if (user.nick.empty())
-			sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS_NONICK) + "\n", std::cout);
-		else
-			sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
 		return;
 	}
 	if (args[1] == "admin" && args[2] == "safepass42") {

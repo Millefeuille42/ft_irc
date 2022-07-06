@@ -55,8 +55,8 @@
 
 void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& user)
 {
-	if (args.empty() && args[0] != "KILL") {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick)) + "\n", std::cout);
+	if (args.size() < 2 && args[0] != "KILL") {
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
 		return;
 	}
 
@@ -89,7 +89,7 @@ void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& use
 			break ;
 	}
 	for (std::map<Channels*, bool>::iterator cit = u_kill->channels.begin(); cit != u_kill->channels.end(); cit++) {
-		//TODO Appeller le bon truc et non part / quit?
+		//TODO Appeler le bon truc et non part / quit?
 		transmitToChannel(*cit->first, User(), PART(u_kill->nick, u_kill->user, cit->first->getName()) + "disconnected\n");
 		int fd_op = cit->first->leaveChannel(u_kill->fd);
 		if (fd_op != -1) {

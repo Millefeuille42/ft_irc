@@ -114,8 +114,6 @@ void SockServer::transmitServ(std::string& message) {
 	std::cerr.flush();
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == _fds.begin()->fd) {
-//			if (it + 1 == _fds.end()) //S'il n'y a plus de clients, le serveur recevra tout de même le message.
-//				std::cerr << message; jsp pk c'est lq
 			continue;
 		}
 		sendMessage(it->fd, message);
@@ -232,8 +230,8 @@ void SockServer::initCommands() {
 	_commands["QUIT"] = quit; // Complete
 	_commands["OPER"] = oper; // A discuter
 
-	_commands["INVITE"] = invite; // TODO Faire les messages quand on rejoint
-	_commands["JOIN"] = join; // TODO Erreurs a gerer + les messages quand on rejoint
+	_commands["INVITE"] = invite;
+	_commands["JOIN"] = join; // TODO Erreurs a gerer
 	_commands["KICK"] = kick; // TODO Ajouter diffusion message KICK
 	//_commands["LIST"] = list;
 	_commands["MODE"] = mode;
@@ -243,8 +241,7 @@ void SockServer::initCommands() {
 
 	_commands["PRIVMSG"] = privmsg; // A discuter
 
-	//_commands[ERROR] = error;
-	_commands["KILL"] = kill; // A discuter
+	_commands["KILL"] = kill; // TODO Ajouter diffusion message kill
 	_commands["PING"] = ping; // Complete
 
 	_commands["WHO"] = who; // ALED

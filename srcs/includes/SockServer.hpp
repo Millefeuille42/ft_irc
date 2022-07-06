@@ -80,6 +80,7 @@ class SockServer {
 		static void topic(SockServer &srv, std::vector<std::string> &, User& user);
 		static void names(SockServer &srv, std::vector<std::string> & args, User&);
 		static void invite(SockServer &srv, std::vector<std::string> &, User& user);
+		static void error(const std::string& reason, User& user);
 
 		std::string password;
 };
