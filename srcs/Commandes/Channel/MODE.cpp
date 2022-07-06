@@ -15,14 +15,21 @@
 
 #include "../../includes/SockServer.hpp"
 
-static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<std::string> args, Channels &chan, size_t &i) {
+static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<std::string> args, Channels &chan, size_t &i, User &user) {
 	std::string mess = "";
 	//MODE <canal> +/-o <user>
 	if (mode == 'o') {
 		//Call Operator Function -> Envoyer args (Users)
 		if (i >= args.size()) //Plus d'argument à envoyer
 			return ;
-		mess = chan.oMode(ar, srv.getUserByNick(args[i]));
+		User *target = srv.getUserByNick(args[i]);
+		if (target == NULL) {
+			SockServer::sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[i])) + "\n", std::cout);
+			return;
+		}
+		mess = chan.oMode(ar, target);
+		if (ar == '+')
+			SockServer::sendMessage(target->fd, YOUREOPER(target->nick) + "\n", std::cout);
 		i++;
 	}
 	//MODE <canal> +/-i
@@ -76,8 +83,7 @@ static void callFunctionChan(SockServer &srv, char mode, char ar, std::vector<st
 		mess = chan.kMode(ar, args[i]);
 		i++;
 	}
-	if (mess != "")
-		srv.transmitToChannelFromServ(chan, mess);
+	std::cout << mess;
 }
 
 static void callFunctionUser(SockServer &srv, char mode, char ar, User& user, bool op) {
@@ -99,13 +105,13 @@ static void sendModesUser(SockServer &srv, User &user) {
 	(void)user;
 }
 
-static void sendModesChan(SockServer &srv, Channels &chan, User& user) {
+static void sendModesChan(SockServer &, Channels &chan, User& user) {
 	static const std::string m = "iknlt";
 	std::vector<std::string> modes;
 	modes.push_back("");
 	for (size_t i = 0; i < m.size(); i++) {
 		if (chan.isMode(m[i]) == true) {
-			if (modes[0] == "")
+			if (modes[0].empty())
 				modes[0].push_back('+');
 			modes[0].push_back(m[i]);
 			if (m[i] == 'k') {
@@ -118,20 +124,20 @@ static void sendModesChan(SockServer &srv, Channels &chan, User& user) {
 			}
 		}
 	}
-	if (modes[0] != "") {
+	if (!modes[0].empty()) {
 		std::string mess = modes[0];
 		for (size_t i = 1; i < modes.size(); i++)
 			mess += " " + modes[i];
 
-		(void)srv;
-		(void)user;
-		std::cerr << mess << std::endl;
+		SockServer::sendMessage(user.fd, CHANNELMODEIS(user.nick, chan.getName()) + mess + "\n", std::cout);
 	}
 }
 
 void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& user) {
-	if (args[0] != "MODE" && args.size() <= 1)
-		return ;
+	if (args[0] != "MODE" && args.size() <= 1) {
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
+		return;
+	}
 
 	std::vector<char> add(1, '+');
 	std::vector<char> rem(1, '-');
@@ -168,26 +174,30 @@ void SockServer::mode(SockServer &srv, std::vector<std::string> &args, User& use
 			return ;
 		}
 		if (!user.channels.count(&chan->second)) {
-			std::cerr << "Not in channel" << std::endl;
+			sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cout);
 			return;
 		}
-		if (chan->second.isOper(user.fd) == false) {
-			std::cerr << "Not an operator" << std::endl;
+		if (chan->second.isOper(user.fd) == false) { //L'envoyeur n'est pas opérateur
+			sendMessage(user.fd, std::string(ERR_CHANOPRIVSNEEDED(user.nick, chan->first)) + "\n", std::cout);
 			return ;
 		}
 		size_t j = 0;
 		for (size_t i = 1; i < add.size(); i++) {
-			callFunctionChan(srv, add[i], '+', argsV, chan->second, j);
+			callFunctionChan(srv, add[i], '+', argsV, chan->second, j, user);
 		}
 		for (size_t i = 1; i < rem.size(); i++) {
-			callFunctionChan(srv, rem[i], '-', argsV,chan->second, j);
+			callFunctionChan(srv, rem[i], '-', argsV,chan->second, j, user);
 		}
+		std::string rep;
+		for (std::vector<std::string>::iterator arg = args.begin() + 1; arg != args.end(); arg++)
+			rep += *arg + " ";
+		transmitToChannelFromServ(chan->second, MODE(user.nick, user.user) + rep + "\n");
 	}
 
 	else { //Mode pour User
 		User *target = srv.getUserByNick(args[1]);
 		if (!target) {
-			std::cerr << "No such user" << std::endl;
+			sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[1])) + "\n", std::cout);
 			return;
 		}
 		if (args.size() == 2) {

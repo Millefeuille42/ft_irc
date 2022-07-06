@@ -47,7 +47,9 @@ void SockServer::names(SockServer &srv, std::vector<std::string> & args, User& u
             std::vector<int> user_list = it->second.getUsers();
 			std::string list;
             for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++) {
-				if (srv._users[*it2].channels[&it->second])
+				if (srv._users[*it2].modes['i'])
+					continue;
+				if (it->second.isOper(*it2))
 					list += "@";
 				list += srv._users[*it2].nick + " ";
 			}
@@ -71,8 +73,13 @@ void SockServer::names(SockServer &srv, std::vector<std::string> & args, User& u
 		        return ;
             std::vector<int> user_list = chan->second.getUsers();
 			std::string list;
-            for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++)
+            for (std::vector<int>::iterator it2 = user_list.begin(); it2 != user_list.end(); it2++) {
+				if (srv._users[*it2].modes['i'])
+					continue;
+				if (chan->second.isOper(*it2))
+					list += "@";
 				list += srv._users[*it2].nick + " ";
+			}
 			sendMessage(user.fd, NAMES(user.nick, *i) + list + "\n", std::cout);
 			sendMessage(user.fd, ENDOFNAMES(user.nick, *i) + "\n", std::cout);
         }

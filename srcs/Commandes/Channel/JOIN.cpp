@@ -79,7 +79,6 @@ void SockServer::join(SockServer &srv, std::vector<std::string>& args, User& use
 				std::vector<std::string> a;
 				a.push_back("NAMES"); a.push_back(itc->second.getName());
 				names(srv, a, user);
-				// TODO Cause un crash sans mode #channel
 			}
 			else { //Channel Non-Rejoins
 				sendMessage(user.fd, "You can't join this channel", std::cerr);

@@ -28,12 +28,14 @@
 #define LISTEND(nick) ":ircserv 323 " + nick + " :End of LIST"
 #define ERROR_QUIT(nick, ip, reason) "ERROR :Closing Link " + nick + "[" + ip + "] (" + reason + ":: " + nick + ")"
 
+#define CHANNELMODEIS(nick, channel) ":ircserv 324 " + nick + " " + channel + " "
+
 #define YOUREOPER(nick) ":ircserv 381 " + nick + " :You are now an IRC operator"
 
 #define NICK(nick, username) ":" + nick + "!" + username + "@localhost" + " NICK :"
 #define QUIT(nick, username) ":" + nick + "!" + username + "@localhost" + " QUIT :"
 #define JOIN(nick, username, channel) ":" + nick + "!" + username + "@localhost" + " JOIN " + channel
 #define PART(nick, username, channel) ":" + nick + "!" + username + "@localhost" + " PART " + channel + " :"
-#define PRIVMSG(nick, username, to) ":" + nick + "!" + username + " PRIVMSG " + to + " :"
-
+#define PRIVMSG(nick, username, to) ":" + nick + "!" + username + "@localhost PRIVMSG " + to + " :"
+#define MODE(nick, username) ":" + nick + "!" + username + "@localhost MODE "
 #endif //RESPONSES_HPP
