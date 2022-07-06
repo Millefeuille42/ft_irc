@@ -18,6 +18,9 @@
 # define ERR_CHANOPRIVSNEEDED(nick, channel) ":ircserv 482 " + nick + " " + channel + " :You're not channel operator"
 # define ERR_NOPRIVILEGES(nick) ":ircserv 481 " + nick + " :Permission Denied- You're not an IRC operator"
 
+# define ERR_USERSDONTMATCH(nick) ":ircserv 502 " + nick + " :Cannot change mode for other users"
+# define ERR_UMODEUNKNOWNFLAG(nick) ":ircserv 501 " + nick + " :Unknown MODE flag"
+
 # define ERR_NEEDMOREPARAMS(nick, command) ":ircserv 461 " + nick +  + " " + command +  " :Not enough parameters"
 # define ERR_NEEDMOREPARAMS_NONICK(command) ":ircserv 461 * " + command + " :Not enough parameters"
 
@@ -29,5 +32,8 @@
 # define ERR_NOSUCHNICK(nick, target) ":ircserv 401 " + nick + " " + target + " :No such nick"
 # define ERR_NOSUCHCHANNEL(nick, target) ":ircserv 403 " + nick + " " + target + " :No such channel"
 
+# define ERR_INVITEONLYCHAN(nick, channel)":ircserv 473 " + nick + " " + channel + " :Cannot join channel (+i)"
+# define ERR_BADCHANNELKEY(nick, channel)":ircserv 475 " + nick + " " + channel + " :Cannot join channel (+k)"
+# define ERR_CHANNELISFULL(nick, channel)":ircserv 471 " + nick + " " + channel + " :Cannot join channel (+l)"
 
 #endif //ERRORS_HPP

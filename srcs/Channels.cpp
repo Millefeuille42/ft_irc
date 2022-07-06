@@ -68,13 +68,13 @@ void Channels::joinChannel(int fd) {
 	_members[fd] = false;
 }
 
-bool Channels::joinChannel(int fd, std::string key) {
+int Channels::joinChannel(int fd, std::string key) {
 	if (_modes['k'] == true && key != _key)
-		return (false);
+		return (1);
 	if (_modes['l'] == true && _members.size() >= _maxMembers)
-		return (false);
+		return (2);
 	_members[fd] = false;
-	return (true);
+	return (0);
 }
 
 int Channels::leaveChannel(int fd) {

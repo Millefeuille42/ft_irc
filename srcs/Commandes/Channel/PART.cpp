@@ -37,9 +37,7 @@ void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& use
 	int fd_op = user.leaveChannel(&chan->second);
 	if (fd_op != -1) {
 		srv._users[fd_op].channels[&chan->second] = true;
-		sendMessage(user.fd, YOUREOPER(srv._users[fd_op].nick) + "\n", std::cout);
-		// TODO peut etre transmettre ?
-		//std::cout << srv._users[fd_op].nick + " is now op on the channel " + chan->second.getName() << std::endl;
+		transmitToChannelFromServ(chan->second, CHANOPER(chan->first, srv._users[fd_op].nick));
 	}
 	if (chan->second.isEmpty())
 		srv._chans.erase(chan->second.getName());

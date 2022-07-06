@@ -109,7 +109,7 @@ void SockServer::transmit(const User& user, std::string message, std::basic_ostr
 	}
 }
 
-void SockServer::transmitServ(std::string& message) {
+void SockServer::transmitServ(const std::string& message) {
 	std::cerr << "\tBRDC -> " << message;
 	std::cerr.flush();
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
@@ -222,7 +222,6 @@ void SockServer::printStart() {
 	std::cout << "Started server on port: " << _port << std::endl;
 }
 
-// TODO Regarder la validité des arguments de macro, j'ai pas forcément regardé avec le c/c
 void SockServer::initCommands() {
 	_commands["PASS"] = pass; // Complete
 	_commands["NICK"] = nick; // Complete
@@ -231,17 +230,17 @@ void SockServer::initCommands() {
 	_commands["OPER"] = oper; // Complete
 
 	_commands["INVITE"] = invite; // Complete
-	_commands["JOIN"] = join; // TODO Erreurs a gerer
-	_commands["KICK"] = kick; // TODO Ajouter diffusion message KICK
+	_commands["JOIN"] = join; // Complete
+	_commands["KICK"] = kick; // Complete
 	_commands["LIST"] = list; // Complete
-	_commands["MODE"] = mode; // TODO Erreurs a gerer
+	_commands["MODE"] = mode; // Complete
 	_commands["NAMES"] = names; // Complete
 	_commands["PART"] = part; // Complete
 	_commands["TOPIC"] = topic; // Complete
 
 	_commands["PRIVMSG"] = privmsg; // Complete
 
-	_commands["KILL"] = kill; // TODO Ajouter diffusion message kill
+	_commands["KILL"] = kill; // Complete
 	_commands["PING"] = ping; // Complete
 
 	_commands["WHO"] = who; // TODO ALED
