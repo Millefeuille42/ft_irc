@@ -5,7 +5,7 @@
 
 void SockServer::oper(SockServer &, std::vector<std::string>& args, User& user) {
 	if (args.size() != 3 || args[0] != "OPER") {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cerr);
 		return;
 	}
 	if (args[1] == "admin" && args[2] == "safepass42") {
@@ -13,5 +13,5 @@ void SockServer::oper(SockServer &, std::vector<std::string>& args, User& user) 
 		sendMessage(user.fd, YOUREOPER(user.nick) + "\n", std::cout);
 	}
 	else
-		sendMessage(user.fd, ERR_PASSWDMISMATCH(user.nick) + "\n", std::cout);
+		sendMessage(user.fd, ERR_PASSWDMISMATCH(user.nick) + "\n", std::cerr);
 }

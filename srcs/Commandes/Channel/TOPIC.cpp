@@ -5,7 +5,7 @@
 
 void SockServer::topic(SockServer &srv, std::vector<std::string> &args, User &user) {
 	if (args.size() < 2 && args[0] != "topic") {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cerr);
 		return;
 	}
 	if (!cInSet(args[1][0], "#&+!")) {
@@ -14,15 +14,15 @@ void SockServer::topic(SockServer &srv, std::vector<std::string> &args, User &us
 	}
 	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]);
 	if (chan == srv._chans.end()) {
-		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cerr);
 		return;
 	}
 	if (!user.channels.count(&chan->second)) {
-		sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cerr);
 		return;
 	}
 	if (chan->second.isMode('t') && chan->second.isOper(user.fd) == false) {
-		sendMessage(user.fd, std::string(ERR_CHANOPRIVSNEEDED(user.nick, chan->first)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_CHANOPRIVSNEEDED(user.nick, chan->first)) + "\n", std::cerr);
 		return;
 	}
 	if (args.size() == 2) {

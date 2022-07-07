@@ -6,9 +6,9 @@
 void SockServer::nick(SockServer& srv, std::vector<std::string>& args, User& user) {
 	if (args.size() != 2 || args[0] != "NICK") {
 		if (user.nick.empty())
-			sendMessage(user.fd, std::string(ERR_NONICKNAMEGIVEN_NONICK) + "\n", std::cout);
+			sendMessage(user.fd, std::string(ERR_NONICKNAMEGIVEN_NONICK) + "\n", std::cerr);
 		else
-			sendMessage(user.fd, std::string(ERR_NONICKNAMEGIVEN(user.nick)) + "\n", std::cout);
+			sendMessage(user.fd, std::string(ERR_NONICKNAMEGIVEN(user.nick)) + "\n", std::cerr);
 		return;
 	}
 	std::string oldNick;
@@ -19,7 +19,7 @@ void SockServer::nick(SockServer& srv, std::vector<std::string>& args, User& use
 			oldNick = user.nick;
 		}
 		if (args[1] == *it) {
-			sendMessage(user.fd, ERR_NICKNAMEINUSE(args[1]) + "\n", std::cout);
+			sendMessage(user.fd, ERR_NICKNAMEINUSE(args[1]) + "\n", std::cerr);
 			//sendMessage(user.fd, NICK(args[1] + "_", user.user) + args[1] + "\n", std::cout);
 			return;
 		}

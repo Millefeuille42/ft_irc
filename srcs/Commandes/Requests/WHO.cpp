@@ -52,7 +52,6 @@ void SockServer::who(SockServer &srv, std::vector<std::string> & args, User& use
 			SockServer::sendMessage(user.fd, WHOREPLY(user.nick, "*", dude.user, dude.nick, "", dude.realName) + "\n", std::cout);
 		}
 		SockServer::sendMessage(user.fd, ENDOFWHO(user.nick, args[1], "global") + "\n", std::cout);
-		std::cout << "End of the list." << std::endl;
 	} else {
 		// QUAND User non plus
 		// :fiery.ca.us.SwiftIRC.net 352 fess * ~caca CE7E5A6D.36C1EBC7.DF0F43E2.IP * fess H :0 danles fess

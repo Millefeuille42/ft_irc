@@ -6,7 +6,7 @@
 void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& user) {
 	// TODO On peut quitter plusieurs channels d'un coup, meme syntaxe que join
 	if (args.size() < 2 && args[0] != "PART") {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cerr);
 		return;
 	}
 	if (!cInSet(args[1][0], "#&+!")) {
@@ -15,11 +15,11 @@ void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& use
 	}
 	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]);
 	if (chan == srv._chans.end()) {
-		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cerr);
 		return;
 	}
 	if (!user.channels.count(&chan->second)) {
-		sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cerr);
 		return;
 	}
 	std::string mess = "Reason";
