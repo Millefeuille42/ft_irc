@@ -3,13 +3,15 @@
 
 #include "../../includes/SockServer.hpp"
 
-void SockServer::oper(SockServer &srv, std::vector<std::string>& args, User& user) {
-	if (args.size() != 3 || args[0] != "OPER")
-		return ;
+void SockServer::oper(SockServer &, std::vector<std::string>& args, User& user) {
+	if (args.size() != 3 || args[0] != "OPER") {
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cerr);
+		return;
+	}
 	if (args[1] == "admin" && args[2] == "safepass42") {
-		user.modes["o"] = true;
-		srv.sendMessage(user.fd, user.nick + ", You are now an Operator !\n", std::cout);
+		user.modes['o'] = true;
+		sendMessage(user.fd, YOUREOPER(user.nick) + "\n", std::cout);
 	}
 	else
-		srv.sendMessage(user.fd, "Bad combinaison to be an operator.\n", std::cout);
+		sendMessage(user.fd, ERR_PASSWDMISMATCH(user.nick) + "\n", std::cerr);
 }

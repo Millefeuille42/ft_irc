@@ -34,3 +34,11 @@
 cmake-build*
 .idea
 ircserv*
+
+version.txt
+
+#teo casse les couilles avec son mac et son vscode
+.vscode/configurationCache.log
+.vscode/dryrun.log
+.vscode/settings.json
+.vscode/targets.log

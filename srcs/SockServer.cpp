@@ -5,12 +5,12 @@
 #include "includes/SockServer.hpp"
 
 SockServer::SockServer():
-_port(), _serverFd(), _fds(), _users(), _nicks() {}
+_port(), _serverFd(), _fds(), _users(), _nicks(), _chans() {}
 
 SockServer::SockServer(const std::string & port):
 _port(port),
 _serverFd(generatePollFd(socketConf(_port.c_str()), DATA_IN)),
-_fds(fdVector(0)), _users(userMap()), _nicks(stringVector(0)) {
+_fds(fdVector(0)), _users(userMap()), _nicks(stringVector(0)), _chans(channelsMap()) {
 	_fds.push_back(_serverFd);
 	initCommands();
 	printStart();
@@ -23,6 +23,10 @@ SockServer::SockServer(const SockServer &src) : _serverFd() {
 SockServer::~SockServer() {
 	for (fdIterator it = _fds.begin(); it != _fds.end(); it++)
 		close(it->fd);
+	_fds.clear();
+	_users.clear();
+	_nicks.clear();
+	_chans.clear();
 }
 
 SockServer &SockServer::operator=(const SockServer &src) {
@@ -38,8 +42,10 @@ SockServer &SockServer::operator=(const SockServer &src) {
 }
 
 void SockServer::deleteClient(const fdIterator &client) {
-	transmit(_users[client->fd], "disconnected\n", std::cerr);
-	std::cerr.flush();
+	if (!_users[client->fd].nick.empty())
+		std::cerr << _users[client->fd].nick + ": disconnected" << std::endl;
+	else
+		std::cerr << _users[client->fd].ip + ": disconnected" << std::endl;
 	for (stringVector::iterator it = _nicks.begin(); it != _nicks.end(); it++) {
 		if (_users[client->fd].nick == *it) {
 			_nicks.erase(it);
@@ -65,7 +71,7 @@ int SockServer::check() {
 	SockAddress addr = SockAddress(IPV4, ANY_CLIENT, _port.c_str());
 	int newFd = acceptConnection(addr);
 	_fds.push_back(generatePollFd(newFd, POLLIN));
-	if (password == "")
+	if (password.empty())
 		_users[newFd] = User(newFd, addr.getIP(), 1);
 	else
 		_users[newFd] = User(newFd, addr.getIP());
@@ -84,32 +90,53 @@ int SockServer::acceptConnection(SockAddress &addr) const {
 }
 
 void SockServer::sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp) {
-	otp << message;
-	send(target, message.c_str(), message.size(), 0);
+	otp << "\tSENT -> " << message;
+	otp.flush();
+	send(target, message.c_str(), message.size(), MSG_NOSIGNAL);
 }
 
-void SockServer::transmit(User& user, std::string message, std::basic_ostream<char> & otp) {
-	if (!user.nick.empty())
-		message = user.nick + ": " + message + "\n";
-	else
-		message = user.ip + ": " + message + "\n";
-	otp << message;
+void SockServer::sendMessage(int target, const std::string & message) {
+	send(target, message.c_str(), message.size(), MSG_NOSIGNAL);
+}
+
+void SockServer::transmit(const User& user, const std::string& message, std::basic_ostream<char> & otp) {
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == user.fd || it->fd == _fds.begin()->fd)
 			continue;
-		sendMessage(it->fd, message, otp); //TODO Ce serait pas mieux si c'etait hors de la boucle ? Pour recevoir une seule fois
+		sendMessage(it->fd, message);
 	}
+	otp << "\tBRDC -> "<< message;
+	otp.flush();
 }
 
-void SockServer::transmitServ(std::string& message) {
+void SockServer::transmitServ(const std::string& message) {
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == _fds.begin()->fd) {
-			if (it + 1 == _fds.end()) //S'il n'y a plus de clients, le serveur recevra tout de même le message.
-				std::cerr << message;
 			continue;
 		}
-		sendMessage(it->fd, message, std::cerr); //TODO J'ai c/c ici, donc meme question (Si préférence dans la boucle, je laisse)
+		sendMessage(it->fd, message);
 	}
+	std::cerr << "\tBRDC -> " << message;
+	std::cerr.flush();
+}
+
+void SockServer::transmitToChannel(Channels &chan, const User &user, const std::string& message) {
+	std::vector<int> users = chan.getUsers();
+	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++) {
+		if (*it == user.fd)
+			continue;
+		sendMessage(*it, message);
+	}
+	std::cout << "\tBRDC -> " << message;
+	std::cout.flush();
+}
+
+void SockServer::transmitToChannelFromServ(Channels &chan, const std::string& message) {
+	std::vector<int> users = chan.getUsers();
+	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++)
+		sendMessage(*it, message);
+	std::cout << "\tBRDC -> " << message;
+	std::cout.flush();
 }
 
 t_pollfd *SockServer::getFds() {
@@ -134,6 +161,60 @@ fdIterator SockServer::end() {
 
 int SockServer::getFd() const {
 	return _serverFd.fd;
+}
+
+User *SockServer::getUserByNick(const std::string &nick) {
+	for (std::map<int, User>::iterator it = _users.begin(); it != _users.end(); it++) {
+		if (it->second.nick == nick)
+			return &it->second;
+	}
+	return NULL;
+}
+
+User *SockServer::getUserByRealName(const std::string &realname) {
+	for (std::map<int, User>::iterator it = _users.begin(); it != _users.end(); it++) {
+		if (it->second.realName == realname)
+			return &it->second;
+	}
+	return NULL;
+}
+
+User *SockServer::getUserByUsername(const std::string &username) {
+	for (std::map<int, User>::iterator it = _users.begin(); it != _users.end(); it++) {
+		if (it->second.user == username)
+			return &it->second;
+	}
+	return NULL;
+}
+
+std::vector<User *> SockServer::getUsersByNick(SockServer &srv, const std::string &nick) {
+	std::vector<User *> ret;
+
+	for (std::map<int, User>::iterator it = srv._users.begin(); it != srv._users.end(); it++) {
+		if (it->second.nick == nick)
+			ret.push_back(&it->second);
+	}
+	return ret;
+}
+
+std::vector<User *> SockServer::getUsersByRealName(SockServer &srv, const std::string &realname) {
+	std::vector<User *> ret;
+
+	for (std::map<int, User>::iterator it = srv._users.begin(); it != srv._users.end(); it++) {
+		if (it->second.realName == realname)
+			ret.push_back(&it->second);
+	}
+	return ret;
+}
+
+std::vector<User *> SockServer::getUsersByUsername(SockServer &srv, const std::string &username) {
+	std::vector<User *> ret;
+
+	for (std::map<int, User>::iterator it = srv._users.begin(); it != srv._users.end(); it++) {
+		if (it->second.user == username)
+			ret.push_back(&it->second);
+	}
+	return ret;
 }
 
 std::string SockServer::readMessage(int fd, bool &err) {
@@ -172,34 +253,31 @@ void SockServer::printStart() {
 }
 
 void SockServer::initCommands() {
-	_commands["PASS"] = pass;
-	_commands["NICK"] = nick;
-	_commands["USER"] = user;
-	_commands["QUIT"] = quit;
-	//_commands["MODE"] = mode;
-	_commands["OPER"] = oper;
+	_commands["PASS"] = pass; // Complete
+	_commands["NICK"] = nick; // Complete
+	_commands["USER"] = user; // Complete
+	_commands["QUIT"] = quit; // Complete
+	_commands["OPER"] = oper; // Complete
 
-	//_commands[INVITE] = invite;
-	//_commands[JOIN] = join;
-	//_commands[KICK] = kick;
-	//_commands[LIST] = list;
-	//_commands[MODE] = mode;
-	//_commands[NAMES] = names;
-	//_commands[PART] = part;
-	//_commands[TOPIC] = topic;
+	_commands["INVITE"] = invite; // Complete
+	_commands["JOIN"] = join; // Complete
+	_commands["KICK"] = kick; // Complete
+	_commands["LIST"] = list; // Complete
+	_commands["MODE"] = mode; // Complete
+	_commands["NAMES"] = names; // Complete
+	_commands["PART"] = part; // Complete
+	_commands["TOPIC"] = topic; // Complete
 
-	//_commands[PRIVMSG] = privmsg;
+	_commands["PRIVMSG"] = privmsg; // Complete
 
-	//_commands[ERROR] = error;
-	//_commands[KILL] = kill;
-	_commands["PING"] = ping;
-	//_commands[PONG] = pong;
+	_commands["KILL"] = kill; // Complete
+	_commands["PING"] = ping; // Complete
 
-	//_commands[WHO] = who;
+	_commands["WHO"] = who; // TODO ALED
 
-	//_commands[INFO] = info;
-	//_commands[TIME] = time;
-	//_commands[VERSION] = versions;
+	_commands["INFO"] = info; // Complete
+	_commands["TIME"] = time; // Complete
+	_commands["VERSION"] = version; // Complete
 }
 
 void SockServer::messageRouter(int fd, std::string &msg) {
@@ -210,8 +288,11 @@ void SockServer::messageRouter(int fd, std::string &msg) {
 		if (usr.pass == 0 && args[0] != "PASS")
 			return;
 	}
-
-	std::cout << "[" << args[0] << "]" << std::endl;
+	std::transform(args[0].begin(), args[0].end(),args[0].begin(), ::toupper);
+	std::string disp = usr.ip;
+	if (!usr.nick.empty())
+		disp = usr.nick;
+	std::cout << "[" << args[0] << "] - " << disp << std::endl;
 	if (args[0] == usr.nick + ':')
 		args.erase(args.begin());
 
@@ -219,10 +300,5 @@ void SockServer::messageRouter(int fd, std::string &msg) {
 		command tmp = _commands.find(args[0])->second;
 		tmp(*this, args, usr);
 		return;
-	}
-
-	if (!usr.realName.empty()) {
-		transmit(usr, msg, std::cout);
-		std::cout.flush();
 	}
 }

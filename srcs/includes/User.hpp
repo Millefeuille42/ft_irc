@@ -7,6 +7,7 @@
 
 #include <string>
 #include <map>
+#include "Channels.hpp"
 
 class User {
 public:
@@ -18,6 +19,10 @@ public:
 
 	User &operator=(const User &src);
 
+	void enterChannel(Channels* chan, bool op);
+	int leaveChannel(Channels* chan);
+	void leaveAllChannels();
+
 	void initModes();
 
 public:
@@ -28,7 +33,8 @@ public:
 	std::string ip;
 	std::string buffer;
 	int fd;
-	std::map<std::string, bool> modes;
+	std::map<Channels*, bool> channels;
+	std::map<char, bool> modes;
 };
 
 

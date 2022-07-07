@@ -2,7 +2,6 @@
 // Created by mlabouri on 6/3/22.
 //
 
-#include <cerrno>
 #include "includes/SockServer.hpp"
 #include "includes/SockAddress.hpp"
 
@@ -16,6 +15,7 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
+	std::cout << getCurrentTime() << " ["  << getVersion() << ']' << std::endl;
 	SockServer server = SockServer(argv[1]);
 	server.password = argv[2];
 	signal(SIGTERM, catchSig);
@@ -44,10 +44,11 @@ int main(int argc, char **argv) {
 				continue;
 
 			// If there is data to read
-			if (it->revents == POLLIN) {
+			if (it->revents == DATA_IN) {
 				acNum--;
 				bool err;
 				std::string msg = server.readMessage(it->fd, err);
+				std::cout << "\tRECV -> " << msg << std::endl;
 				if (!msg.empty()) {
 					server.messageRouter(it->fd, msg);
 				}

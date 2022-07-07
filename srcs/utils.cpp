@@ -27,7 +27,46 @@ std::vector<std::string> parseMessage(std::string msg) {
 void SockServer::welcome(SockServer& srv, const std::vector<std::string>&, User& user) {
 	if (user.nick.empty() || user.user.empty())
 		return;
-	srv.sendMessage(user.fd, WELCOME(user.nick, user.user) + "localhost\n", std::cout);
-	std::cout.flush();
+	sendMessage(user.fd, RPL_WELCOME(user.nick, user.user) + "\n", std::cout);
+	std::vector<std::string> args;
+	args.push_back("NAMES");
+	names(srv, args, user);
 }
 
+std::string getCurrentTime() {
+	std::time_t t = std::time(NULL);
+	std::tm* now = std::localtime(&t);
+	std::ostringstream ss("");
+
+	ss << now->tm_mday << '-'
+			<< (now->tm_mon + 1) << '-'
+			<< (now->tm_year + 1900) << " - "
+			<< now->tm_hour << ':'
+			<< now->tm_min << ':'
+			<< now->tm_sec;
+	return ss.str();
+}
+
+std::string getVersion() {
+	std::ifstream versionFile;
+	versionFile.open("version.txt", std::ios::out);
+	if (!versionFile.is_open()) {
+		std::cerr << std::strerror(errno) << std::endl;
+		return "N/A";
+	}
+
+	std::string ret;
+	getline(versionFile, ret);
+	versionFile.close();
+	if (ret.empty())
+		return "N/A";
+	return ret;
+}
+
+bool cInSet(const char c, const std::string &set) {
+	for (std::string::const_iterator it = set.begin(); it != set.end(); it++) {
+		if (*it == c)
+			return true;
+	}
+	return false;
+}

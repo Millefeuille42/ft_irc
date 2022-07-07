@@ -8,23 +8,40 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -pedantic -std=c++
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -Wall -Werror -Wextra -pedantic -std=c++98")
 
 add_executable(ft_irc
-        srcs/main.cpp
+		srcs/main.cpp
 
-		srcs/socketConf.cpp
-		srcs/SockAddress.cpp
-		srcs/SockServer.cpp
 		srcs/utils.cpp
 		srcs/User.cpp
+		srcs/socketConf.cpp
+		srcs/SockAddress.cpp
+		srcs/_SockServer_Commands.cpp
+		srcs/SockServer.cpp
+		srcs/Channels.cpp
 
-		srcs/includes/SockServer.hpp
-		srcs/includes/User.hpp
-		srcs/includes/_SockServer_Errors.hpp
-		srcs/includes/ft_irc.hpp
-		srcs/includes/SockAddress.hpp
-		srcs/includes/responses.hpp
+		srcs/Commandes/Server/INFO.cpp
+		srcs/Commandes/Server/TIME.cpp
+		srcs/Commandes/Server/VERSION.cpp
 
-		srcs/Commandes/Users/NICK.cpp
-		srcs/Commandes/Users/USER.cpp
 		srcs/Commandes/Users/PASS.cpp
 		srcs/Commandes/Users/QUIT.cpp
-		srcs/Commandes/Users/OPER.cpp)
+		srcs/Commandes/Users/USER.cpp
+		srcs/Commandes/Users/NICK.cpp
+		srcs/Commandes/Users/OPER.cpp
+
+		srcs/Commandes/Requests/WHO.cpp
+
+		srcs/Commandes/Messages/PRIVMSG.cpp
+
+		srcs/Commandes/Channel/KICK.cpp
+		srcs/Commandes/Channel/TOPIC.cpp
+		srcs/Commandes/Channel/JOIN.cpp
+		srcs/Commandes/Channel/MODE.cpp
+		srcs/Commandes/Channel/INVITE.cpp
+		srcs/Commandes/Channel/LIST.cpp
+		srcs/Commandes/Channel/NAMES.cpp
+		srcs/Commandes/Channel/PART.cpp
+
+		srcs/Commandes/Other/KILL.cpp
+		srcs/Commandes/Other/PING.cpp
+		srcs/Commandes/Other/ERROR.cpp
+		)
