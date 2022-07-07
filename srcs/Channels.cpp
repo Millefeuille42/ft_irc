@@ -3,7 +3,7 @@
 Channels::Channels() {
 }
 
-Channels::Channels(int creator, std::string name, std::string key) : _name(name), _creator(creator), _topic(""), _key(key) {
+Channels::Channels(int creator, const std::string& name, const std::string& key) : _name(name), _creator(creator), _topic(""), _key(key) {
 	std::cout << "new Channel : " + _name << std::endl;
 	_members = std::map<int, bool>();
 	_modes = std::map<char, bool>();
@@ -68,7 +68,7 @@ void Channels::joinChannel(int fd) {
 	_members[fd] = false;
 }
 
-int Channels::joinChannel(int fd, std::string key) {
+int Channels::joinChannel(int fd, const std::string& key) {
 	if (_modes['k'] == true && key != _key)
 		return (1);
 	if (_modes['l'] == true && _members.size() >= _maxMembers)
@@ -111,51 +111,51 @@ Channels& Channels::operator=(const Channels& src) {
 	return *this;
 }
 
-std::string Channels::oMode(char ar, User *user) {
+int Channels::oMode(char ar, User *user) {
 	if (user == NULL || _members.find(user->fd) == _members.end())
-		return ("Member not found\n"); //Membre Introuvable dans le Channel
+		return NO_MEMBER; //Membre Introuvable dans le Channel
 	if (ar == '+') {
 		_members[user->fd] = true;
 		user->channels[this] = true;
 		_nbop++;
-		return (user->nick + " is now operator in the channel " + _name + "\n");
+		return ALL_GOOD;
 	}
 	else if (ar == '-') {
 		if (_nbop == 1 && isOper(user->fd)) {
-			return (user->nick + " is the last operator.\n");
+			return LAST_OPER;
 		}
 		_members[user->fd] = false;
 		user->channels[this] = false;
 		_nbop--;
-		return (user->nick + " is not an operator in the channel " + _name + "\n");
+		return ALL_GOOD;
 	}
-	return ("\n");
+	return WRONG_DECLARATION;
 }
 
-std::string Channels::lMode(char ar, int nb, std::string snb) {
+int Channels::lMode(char ar, int nb, const std::string&) {
 	if (ar == '+') {
 		_modes['l'] = true;
 		_maxMembers = nb;
-		return ("Limit member on the channel " + _name + " is now " + snb + "\n");
+		return ALL_GOOD;
 	}
 	else if (ar == '-') {
 		_modes['l'] = false;
-		return ("There is no limit member on the channel " + _name + "\n");
+		return ALL_GOOD;
 	}
-	return ("\n");
+	return WRONG_DECLARATION;
 }
 
-std::string Channels::kMode(char ar, std::string key) {
+int Channels::kMode(char ar, const std::string& key) {
 	if (ar == '+') {
 		_modes['k'] = true;
 		_key = key;
-		return ("Channel " + _name + " is protected by a key: " + _key + "\n");
+		return ALL_GOOD;
 	}
 	else if (ar == '-') {
 		_modes['k'] = false;
-		return ("Channel " + _name + " is not protected by a key\n");
+		return ALL_GOOD;
 	}
-	return ("\n");
+	return WRONG_DECLARATION;
 }
 
 

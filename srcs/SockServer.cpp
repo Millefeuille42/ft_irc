@@ -92,51 +92,51 @@ int SockServer::acceptConnection(SockAddress &addr) const {
 void SockServer::sendMessage(int target, const std::string & message, std::basic_ostream<char> & otp) {
 	otp << "\tSENT -> " << message;
 	otp.flush();
-	send(target, message.c_str(), message.size(), 0);
+	send(target, message.c_str(), message.size(), MSG_NOSIGNAL);
 }
 
 void SockServer::sendMessage(int target, const std::string & message) {
-	send(target, message.c_str(), message.size(), 0);
+	send(target, message.c_str(), message.size(), MSG_NOSIGNAL);
 }
 
-void SockServer::transmit(const User& user, std::string message, std::basic_ostream<char> & otp) {
-	otp << "\tBRDC -> "<< message;
-	otp.flush();
+void SockServer::transmit(const User& user, const std::string& message, std::basic_ostream<char> & otp) {
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == user.fd || it->fd == _fds.begin()->fd)
 			continue;
 		sendMessage(it->fd, message);
 	}
+	otp << "\tBRDC -> "<< message;
+	otp.flush();
 }
 
 void SockServer::transmitServ(const std::string& message) {
-	std::cerr << "\tBRDC -> " << message;
-	std::cerr.flush();
 	for (const_fdIterator it = _fds.begin(); it != _fds.end(); it++) {
 		if (it->fd == _fds.begin()->fd) {
 			continue;
 		}
 		sendMessage(it->fd, message);
 	}
+	std::cerr << "\tBRDC -> " << message;
+	std::cerr.flush();
 }
 
 void SockServer::transmitToChannel(Channels &chan, const User &user, const std::string& message) {
-	std::cout << "\tBRDC -> " << message;
-	std::cout.flush();
 	std::vector<int> users = chan.getUsers();
 	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++) {
 		if (*it == user.fd)
 			continue;
 		sendMessage(*it, message);
 	}
+	std::cout << "\tBRDC -> " << message;
+	std::cout.flush();
 }
 
 void SockServer::transmitToChannelFromServ(Channels &chan, const std::string& message) {
-	std::cout << "\tBRDC -> " << message;
-	std::cout.flush();
 	std::vector<int> users = chan.getUsers();
 	for (std::vector<int>::iterator it = users.begin(); it != users.end(); it++)
 		sendMessage(*it, message);
+	std::cout << "\tBRDC -> " << message;
+	std::cout.flush();
 }
 
 t_pollfd *SockServer::getFds() {

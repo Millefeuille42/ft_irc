@@ -58,7 +58,7 @@ void SockServer::names(SockServer &srv, std::vector<std::string> & args, User& u
         }
 		std::string list;
 		for (userMap::iterator it = srv._users.begin(); it != srv._users.end(); it++)
-			if (it->second.channels.empty())
+			if (it->second.channels.empty() && !it->second.modes['i'])
 				list += it->second.nick + " ";
 		sendMessage(user.fd, NAMES(user.nick, "*") + list + "\n", std::cout);
 		sendMessage(user.fd, ENDOFNAMES(user.nick, "*") + "\n", std::cout);

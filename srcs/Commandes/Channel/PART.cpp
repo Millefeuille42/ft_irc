@@ -4,9 +4,8 @@
 #include "../../includes/SockServer.hpp"
 
 void SockServer::part(SockServer &srv, std::vector<std::string> &args, User& user) {
-	// TODO On peut quitter plusieurs channels d'un coup, meme syntaxe que join
 	if (args.size() < 2 && args[0] != "PART") {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cerr);
 		return;
 	}
 	std::string mess = "Reason";

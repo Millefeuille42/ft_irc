@@ -35,24 +35,24 @@ void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& use
 	}
 	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]); //Le channel n'existe pas
 	if (chan == srv._chans.end()) {
-		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cerr);
 		return;
 	}
 	if (!user.channels.count(&chan->second)) { //L'envoyeur n'est pas dans le channel
-		sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cerr);
 		return ;
 	}
 	if (chan->second.isOper(user.fd) == false) { //L'envoyeur n'est pas opérateur
-		sendMessage(user.fd, std::string(ERR_CHANOPRIVSNEEDED(user.nick, chan->first)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_CHANOPRIVSNEEDED(user.nick, chan->first)) + "\n", std::cerr);
 		return ;
 	}
 	User *u_kick = srv.getUserByNick(args[2]);
 	if (u_kick == NULL) { //La cible n'existe pas
-		sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[2])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[2])) + "\n", std::cerr);
 		return;
 	}
 	if (!u_kick->channels.count(&chan->second)) { //La cible n'est pas dans le channel
-		sendMessage(user.fd, std::string(ERR_USERNOTINCHANNEL(user.nick, u_kick->nick , chan->first)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_USERNOTINCHANNEL(user.nick, u_kick->nick , chan->first)) + "\n", std::cerr);
 		return ;
 	}
 

@@ -27,7 +27,9 @@
 #define UMODEIS(nick, target) ":ircserv 221 " + nick + " " + target + " "
 
 #define YOUREOPER(nick) ":ircserv 381 " + nick + " :You are now an IRC operator"
-#define CHANOPER(channel, to) ":ircserv PRIVMSG " + channel + " :" + to + " is now a channel operator\n"
+#define CHANOPER(channel, to) ":ircserv PRIVMSG " + channel + " :" + to + " now has godly powers\n"
+#define CHANNOOPER(channel, to) ":ircserv PRIVMSG " + channel + " :" + to + " is just a boring human\n"
+#define CHANNLASTOPER(channel, to) ":ircserv PRIVMSG " + channel + " :" + to + " can't do that, you are the last man standing\n"
 
 #define NICK(nick, username) ":" + nick + "!" + username + "@ircserv.42" + " NICK :"
 #define QUIT(nick, username) ":" + nick + "!" + username + "@ircserv.42" + " QUIT :"

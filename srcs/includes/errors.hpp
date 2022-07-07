@@ -20,6 +20,7 @@
 
 # define ERR_USERSDONTMATCH(nick) ":ircserv 502 " + nick + " :Cannot change mode for other users"
 # define ERR_UMODEUNKNOWNFLAG(nick) ":ircserv 501 " + nick + " :Unknown MODE flag"
+# define ERR_UNKNOWNMODE(nick, mode, channel) ":ircserv 472 " + nick + " " + mode + " :is unknown mode char to me for " + channel
 
 # define ERR_NEEDMOREPARAMS(nick, command) ":ircserv 461 " + nick +  + " " + command +  " :Not enough parameters"
 # define ERR_NEEDMOREPARAMS_NONICK(command) ":ircserv 461 * " + command + " :Not enough parameters"
