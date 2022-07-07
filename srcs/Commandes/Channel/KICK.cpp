@@ -18,6 +18,8 @@
 // KICK #Finnish John :Speaking English ; Kick John de #Finnish en spécifiant "Speaking English" comme raison (commentaire).
 // :WiZ KICK #Finnish John ; Message KICK de WiZ pour retirer John du canal #Finnish
 
+
+
 #include "../../includes/SockServer.hpp"
 
 void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& user)
@@ -66,10 +68,10 @@ void SockServer::kick(SockServer &srv, std::vector<std::string>& args, User& use
 	if (mess == "Was kicked. Reason")
 		mess += " not provided";
 	mess += "\n";
-
 	std::string rep;
 	for (std::vector<std::string>::iterator arg = args.begin() + 1; arg != args.end(); arg++)
 		rep += *arg + " ";
+
 	transmitToChannelFromServ(chan->second, KICK(user.nick, user.user) + rep + "\n");
 	transmitToChannelFromServ(chan->second, PART(u_kick->nick, u_kick->user, chan->second.getName()) + mess);
 
