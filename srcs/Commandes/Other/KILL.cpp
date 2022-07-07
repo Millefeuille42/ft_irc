@@ -56,12 +56,12 @@
 void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& user)
 {
 	if (args.size() < 2 && args[0] != "KILL") {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cerr);
 		return;
 	}
 
 	if (user.modes['o'] == false) {
-		sendMessage(user.fd, std::string(ERR_NOPRIVILEGES(user.nick)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOPRIVILEGES(user.nick)) + "\n", std::cerr);
 		return ;
 	}
 
@@ -80,7 +80,7 @@ void SockServer::kill(SockServer &srv, std::vector<std::string> &args, User& use
 
 	User *u_kill = srv.getUserByNick(args[1]);
 	if (!u_kill) {
-		sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[1])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[1])) + "\n", std::cerr);
 		return;
 	}
 	fdVector::iterator it;

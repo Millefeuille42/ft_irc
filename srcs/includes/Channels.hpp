@@ -7,6 +7,12 @@
 
 class User;
 
+#define ALL_GOOD 0
+#define NO_MEMBER 1
+#define LAST_OPER 2
+#define WRONG_DECLARATION 3
+
+
 class Channels {
 	private:
 		std::string _name;
@@ -21,7 +27,7 @@ class Channels {
 
 	public:
 		Channels();
-		Channels(int creator, std::string name, std::string key);
+		Channels(int creator, const std::string& name, const std::string& key);
 		Channels(const Channels& src);
 		~Channels();
 		Channels &operator=(const Channels& src);
@@ -40,13 +46,13 @@ class Channels {
 		bool isEmpty();
 		bool isMode(char mode);
 
-		int joinChannel(int fd, std::string key);
+		int joinChannel(int fd, const std::string& key);
 		void joinChannel(int fd);
 		int leaveChannel(int fd);
 
-		std::string oMode(char ar, User *user); //Rendre Operateur le user; (Vérifier si User est NULL)
-		std::string lMode(char ar, int nb = 0, std::string snb = ""); //Nombre limites de Users possibles
-		std::string kMode(char ar, std::string key = ""); //Mettre une clé pour entrer dans le channel
+		int oMode(char ar, User *user); //Rendre Operateur le user; (Vérifier si User est NULL)
+		int lMode(char ar, int nb = 0, const std::string& snb = ""); //Nombre limites de Users possibles
+		int kMode(char ar, const std::string& key = ""); //Mettre une clé pour entrer dans le channel
 		void allModes(char ar, char mode);
 };
 

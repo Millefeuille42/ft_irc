@@ -5,7 +5,7 @@
 
 void SockServer::invite(SockServer &srv, std::vector<std::string> &args, User& user) {
 	if (args[0] != "INVITE" || args.size() <= 2) {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cerr);
 		return;
 	}
 
@@ -15,25 +15,25 @@ void SockServer::invite(SockServer &srv, std::vector<std::string> &args, User& u
 	}
 	std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[2]); //Le channel n'existe pas
 	if (chan == srv._chans.end()) {
-		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[2])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[2])) + "\n", std::cerr);
 		return;
 	}
 	if (!user.channels.count(&chan->second)) { //L'envoyeur n'est pas dans le channel
-		sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cerr);
 		return;
 	}
 	if (chan->second.isOper(user.fd) == false && chan->second.isMode('i') == true) { //L'envoyeur n'est pas opérateur et le mode 'i' est actif
-		sendMessage(user.fd, std::string(ERR_CHANOPRIVSNEEDED(user.nick, chan->first)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_CHANOPRIVSNEEDED(user.nick, chan->first)) + "\n", std::cerr);
 		return;
 	}
 
 	User *u_invit = srv.getUserByNick(args[1]);
 	if (u_invit == NULL) { //La cible n'existe pas
-		sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[1])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[1])) + "\n", std::cerr);
 		return;
 	}
 	if (u_invit->channels.count(&chan->second)) { //La cible est deja dans le channel
-		sendMessage(user.fd, std::string(ERR_USERONCHANNEL(user.nick, u_invit->nick , chan->first)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_USERONCHANNEL(user.nick, u_invit->nick , chan->first)) + "\n", std::cerr);
 		return;
 	}
 	chan->second.joinChannel(u_invit->fd); //Channel rejoins

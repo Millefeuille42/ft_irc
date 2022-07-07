@@ -5,7 +5,7 @@
 
 void SockServer::ping(SockServer &, std::vector<std::string> &args, User& user) {
 	if (args.size() < 2) {
-		sendMessage(user.fd, ERR_NOORIGIN(user.nick), std::cout);
+		sendMessage(user.fd, ERR_NOORIGIN(user.nick), std::cerr);
 		return;
 	}
 	sendMessage(user.fd, "PONG ircserv\n", std::cout);

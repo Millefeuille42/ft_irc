@@ -10,12 +10,12 @@
 // PRIVMSG millefeuille :hello hru
 void SockServer::privmsg(SockServer &srv, std::vector<std::string> &args, User &user) {
 	if (args.size() < 3) {
-		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NEEDMOREPARAMS(user.nick, args[0])) + "\n", std::cerr);
 		return;
 	}
 
 	if (*args[2].begin() != ':') { //Le message doit commencer par : et peut contenir des espaces
-		sendMessage(user.fd, std::string(ERR_NOTEXTTOSEND(user.nick)) + "\n", std::cout);
+		sendMessage(user.fd, std::string(ERR_NOTEXTTOSEND(user.nick)) + "\n", std::cerr);
 		return;
 	}
 	args[2].erase(0,1);
@@ -27,18 +27,18 @@ void SockServer::privmsg(SockServer &srv, std::vector<std::string> &args, User &
 	if (cInSet(args[1][0], "#&+!")) {
 		std::map<std::basic_string<char>, Channels >::iterator chan = srv._chans.find(args[1]);
 		if (chan == srv._chans.end()) {
-			sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cout);
+			sendMessage(user.fd, std::string(ERR_NOSUCHCHANNEL(user.nick, args[1])) + "\n", std::cerr);
 			return;
 		}
 		if (chan->second.isMode('n') && !user.channels.count(&chan->second)) {
-			sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cout);
+			sendMessage(user.fd, std::string(ERR_NOTONCHANNEL(user.nick, chan->first)) + "\n", std::cerr);
 			return;
 		}
 		transmitToChannel(chan->second, user, PRIVMSG(user.nick, user.user, args[1]) + message + "\n");
 	} else {
 		User *target = srv.getUserByNick(args[1]);
 		if (!target) {
-			sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[1])) + "\n", std::cout);
+			sendMessage(user.fd, std::string(ERR_NOSUCHNICK(user.nick, args[1])) + "\n", std::cerr);
 			return;
 		}
 		sendMessage(target->fd, PRIVMSG(user.nick, user.user, target->nick) + message + "\n", std::cout);
